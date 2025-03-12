@@ -1,0 +1,430 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    justify-content: space-between;
+    background-color: #14272A;
+}
+
+/* Zentriert das Bild in der Mitte */
+.center-image {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 300px;
+    z-index: 13;
+}
+
+/* Hauptkreis */
+.center-image img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    position: absolute;
+    z-index: 13;
+    transition: opacity 0.5s ease, background-color 0.3s ease;
+    animation: pulse 2s infinite;
+    box-shadow: 0px 8px 25px rgba(0, 0, 0, 30);
+
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1); /* Ausgangsgröße */
+    }
+    50% {
+        transform: scale(1.09); /* Etwas vergrößern */
+    }
+    100% {
+        transform: scale(1); /* Zurück zur Ausgangsgröße */
+    }
+}
+
+.center-image .main-text {
+    position: absolute;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    opacity: 0;  /* Standardmäßig unsichtbar */
+    transition: opacity 0.3s ease;
+    z-index: 13;  /* Der Text ist über dem Bild */
+    flex-direction: row;  /* Anordnung von Text und Bild nebeneinander */
+}
+
+
+
+/* Strecken des vsc.png Bildes und Verhindern von abgerundeten Ecken */
+.center-image .main-text img {
+    width: 10%;  /* Beispielbreite */
+    height: 100%;  /* Beispielhöhe */
+    object-fit: cover;  /* Sorgt dafür, dass das Bild das Element ausfüllt */
+    border-radius: 0;  /* Keine abgerundeten Ecken */
+    margin-left: 4%;
+}
+
+.center-image:hover {
+    animation: none;
+    z-index: 13;
+}
+
+.center-image:hover .vsc-image {
+    opacity: 1; /* Bild wird sichtbar */
+    z-index: 13;
+}
+
+.center-image:hover .main-text {
+    margin-top: 130px;
+    opacity: 1; /* Text wird sichtbar */
+    z-index: 13;
+}
+
+.center-image .main-text
+{
+    margin-top: 130px;
+    margin-left: 30px;
+    opacity: 0; /* Text wird sichtbar */
+}
+
+
+.vsc-image
+{
+    width: 10%;
+    height: 10%;
+   
+    z-index: 2;
+    transition: opacity 0.5s ease, background-color 0.3s ease;
+}
+
+/* Grauer Hintergrund beim Hover für das Hauptbild */
+.center-image:hover {
+    background-color: #111111; /* Grauer Hintergrund */
+    border-radius: 50%;
+    z-index: 13;
+}
+
+/* Das Bild im Hover-Effekt wird etwas transparenter */
+.center-image:hover .main-image {
+    opacity: 0.2;  /* Bild wird transparenter */
+}
+
+/* Hover-Effekt für den Text */
+.center-image:hover .main-text {
+    opacity: 1; /* Text wird sichtbar */
+}
+
+/* Hover-Effekt für das vsc-Logo */
+.center-image:hover .vsc-image {
+    opacity: 1; /* Das vsc-Logo wird sichtbar */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Viertelkreise */
+.quarter-circle {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    overflow: hidden;
+    opacity: 0;  /* Standardmäßig unsichtbar */
+    transition: opacity 0.5s ease, transform 0.5s ease, background 0.3s ease;
+    z-index: 2; /* Liegt unter dem Bild */
+    border-radius: 50%; /* Macht die Kanten weicher */
+    box-shadow: 0px 8px 30px rgba(0, 0, 0, 30); /* Schattiger Effekt für weichere Kanten */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+/* Bilder in den Viertelkreisen */
+.quarter-circle img {
+    width: 200%;
+    height: 200%;
+    object-fit: cover;
+    position: absolute;
+}
+
+/* Text im Viertelkreis */
+.quarter-circle .text {
+    opacity: 0; 
+    font-size: 10px;  /* Schriftgröße */
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    transition: opacity 0.3s ease;
+    z-index: 2;  /* Der Text ist über dem Bild */
+}
+
+/* 🎯 Top-Left */
+.quarter-circle.top-left {
+    top: 0;
+    left: 0;
+    border-radius: 100% 0 0 0;
+    transform-origin: bottom right;
+    z-index: 3;
+}
+
+.quarter-circle.top-left img {
+    left: 0;
+    top: 0;
+    object-position: 110% -40px; 
+    transform: translate(0, 0);
+}
+
+/* 🎯 Top-Right */
+.quarter-circle.top-right {
+    top: 0;
+    right: 0;
+    border-radius: 0 100% 0 0;
+    transform-origin: bottom left;
+}
+
+.quarter-circle.top-right img {
+    right: 0;
+    top: 0;
+    object-position: 80px 0px; 
+    object-position: -135px -60px; 
+}
+
+/* 🎯 Bottom-Left */
+.quarter-circle.bottom-left {
+    bottom: 0;
+    left: 0;
+    border-radius: 0 0 0 100%;
+    transform-origin: top right;
+}
+
+.quarter-circle.bottom-left img {
+    left: 0;
+    bottom: 0;
+    object-position: 70% 70%;
+    object-position: -60px 60px; 
+}
+
+/* 🎯 Bottom-Right */
+.quarter-circle.bottom-right {
+    bottom: 0;
+    right: 0;
+    border-radius: 0 0 100% 0;
+    transform-origin: top left;
+}
+
+.quarter-circle.bottom-right img {
+    right: 0;
+    bottom: 0;
+    object-position: 60px 85px; 
+}
+
+/* 🏆 Hover-Effekt: Alle Viertelkreise werden sichtbar und bewegen sich auseinander */
+.center-image:hover .quarter-circle {
+    opacity: 1;
+    transform: scale(1.2) translateX(var(--x)) translateY(var(--y)); 
+}
+
+/* 🎯 Auseinanderbewegung der Viertelkreise */
+.quarter-circle.top-left { --x: -55%; --y: -55%; }
+.quarter-circle.top-right { --x: 55%; --y: -55%; }
+.quarter-circle.bottom-left { --x: -55%; --y: 55%; }
+.quarter-circle.bottom-right { --x: 55%; --y: 55%; }
+
+/* Text im Viertelkreis */
+.quarter-circle .text {
+    position: absolute;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    opacity: 1;  /* Text bleibt immer sichtbar */
+    pointer-events: none; /* Damit der Text den Hover-Effekt nicht beeinflusst */
+    z-index: 2; /* Damit der Text über dem Bild liegt */
+}
+
+/* 🎯 Hover-Effekt für den Viertelkreis */
+.quarter-circle:hover {
+    background-color:#111111; /* Grauer Hintergrund beim Hover */
+}
+
+/* 🎯 Top-Left Hover */
+.quarter-circle.top-left:hover img {
+    opacity: 0.2; /* Das Bild wird beim Hover transparent */
+}
+
+/* 🎯 Top-Right Hover */
+.quarter-circle.top-right:hover img {
+    opacity: 0.2;
+}
+
+/* 🎯 Bottom-Left Hover */
+.quarter-circle.bottom-left:hover img {
+    opacity: 0.2;
+}
+
+/* 🎯 Bottom-Right Hover */
+.quarter-circle.bottom-right:hover img {
+    opacity: 0.2;
+}
+
+.quarter-circle .text {
+    opacity: 0; 
+    font-size: 10px;
+}
+
+.quarter-circle:hover .text {
+    opacity: 1;
+    font-size: 10px;
+}
+
+
+
+
+
+
+
+
+
+
+/* Stelle sicher, dass das Canvas den gesamten Bildschirm ausfüllt */
+#particleCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+footer {
+    position: relative;
+    width: 100%;
+    background-color: #333; /* Dunkler Hintergrund */
+    padding: 10px 0;
+    overflow: hidden; /* Verhindert, dass der Scrollbereich sichtbar ist */
+    z-index: 2;
+}
+
+.loop-slider {
+    display: flex;
+    white-space: nowrap; /* Verhindert Zeilenumbruch der Tags */
+    animation: scroll 30s linear infinite; /* Scrollen über eine Zeit von 30 Sekunden */
+    flex-wrap: nowrap;
+    z-index: 2;
+}
+
+.loop-slider .inner {
+    display: flex;
+    flex: 0 0 auto; /* Stellt sicher, dass der Inhalt nicht umbricht */
+}
+
+/* Styling der Tags */
+.tag {
+    display: flex;
+    align-items: center;  /* Vertikal zentrieren */
+    justify-content: center;  /* Horizontal zentrieren */
+    margin: 10px;
+    padding: 5px;
+    color: white;
+    font-weight: bold;
+}
+
+/* Bildgrößen und Styling */
+.tag img {
+    width: 30px; /* Bildbreite */
+    height: 30px; /* Bildhöhe */
+    margin-right: 5px; /* Abstand zwischen Bild und Text */
+    border-radius: 0%; /* Kein Radius, um das Bild quadratisch zu halten */
+    object-fit: cover; /* Bild gut anpassen */
+}
+
+/* Keyframes für das nahtlose Scrollen */
+@keyframes scroll {
+    0% {
+        transform: translateX(0); /* Beginnt am Anfang */
+    }
+    100% {
+        transform: translateX(-100%); /* Scrollt komplett aus dem Container */
+    }
+}
+
+/* Hinzufügen einer Wiederholung der Tags, damit der Scroll-Effekt nahtlos ist */
+.loop-slider .inner::after {
+    content: "";
+    flex: 0 0 100%; /* Fügt einen minimalen Abstand ein, um das Scrollen fortzusetzen */
+}
+
+
+
+
+
+
+/* Grundlegende Sidebar-Stile */
+.sidebar {
+    position: absolute;
+    top: 0;
+    left: -500px; /* Sidebar außerhalb des Bildschirms */
+    width: 500px;
+    height: 100%;
+    background: linear-gradient(135deg, #1a1a1a, #222);
+    transition: left 0.3s ease-in-out;
+    z-index: 1;
+    box-shadow: 0px 8px 25px rgba(0, 0, 0, 30);
+}
+
+.sidebar-content {
+    
+    padding-top: 60px;
+    padding-left: 10px;
+    padding-left: 10px;
+    justify-content: center;  /* Horizontale Zentrierung */
+    align-items: center;      /* Vertikale Zentrierung */
+    height: 100%;      
+
+}
+
+.sidebar-content h1,h2
+{
+    
+    color: white;
+    font-size: 35px;
+    text-align: center;
+}
+
+.sidebar-content ul li
+{
+    color: white;
+    font-size: 25px;
+}
+
+
+
+/* Sidebar sichtbar machen, wenn über das Bild gehovt wird */
+.center-image:hover + .sidebar {
+    left: 0;
+}
+
+
+
+/* Stile für das Hover-Ereignis auf dem Bild */
+.center-image:hover {
+    cursor: pointer;
+    opacity: 0.8;
+}
+
