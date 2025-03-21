@@ -9,34 +9,70 @@ body {
     display: flex;
 }
 
+
+
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 50px; /* Noch mehr Abstand zwischen den Kästchen */
+    grid-template-columns: repeat(4, 1fr); /* Standard 4 Spalten */
+    gap: 50px;
     padding: 50px;
-    max-width: 1300px; /* Mehr Platz für größere Kästchen */
+    padding-top: 100px;
+    max-width: 1300px;
     margin: auto;
+    grid-auto-rows: 1fr; /* Alle Zeilen haben die gleiche Höhe */
 }
 
 .chapter {
-    background-color: white;
-    padding: 40px; /* Größere Innenabstände für größere Kästchen */
-    height: 90px; /* Höhe der Kästchen erhöht */
-    border-radius: 12px;
-    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.1);
-    font-size: 22px;
-    font-weight: bold;
-    transition: transform 0.2s, box-shadow 0.2s;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background-color: #f4f4f4;
+    padding: 20px;
     text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width:300px;
+    height: 150px; /* Gleiche Höhe für alle Container */
+    transition: all 0.3s ease;
+    box-sizing: border-box; /* Verhindert, dass Padding und Border die Größe beeinflussen */
+}
+
+.chapterText {
+    font-weight: bold;
+}
+
+/* Responsivität */
+@media (max-width: 1200px) {
+    .grid-container {
+        grid-template-columns: repeat(3, 1fr); /* 3 Spalten */
+    }
+}
+
+@media (max-width: 900px) {
+    .grid-container {
+        grid-template-columns: repeat(2, 1fr); /* 2 Spalten */
+    }
+}
+
+@media (max-width: 600px) {
+    .grid-container {
+        grid-template-columns: 1fr; /* 1 Spalte */
+    }
 }
 
 .chapter:hover {
     transform: translateY(-5px);
     box-shadow: 0px 8px 14px rgba(0, 0, 0, 0.2);
+}
+.chapter:hover .chapterText
+{
+    opacity: 1;
+}
+
+.chapterText
+{
+    opacity: 0;
+    color:black
 }
 
 
