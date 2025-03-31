@@ -1,0 +1,135 @@
+/* Allgemeine Einstellungen */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #14272A;
+}
+
+header {
+    background-color: #2d3e50;
+    background-color: #333;
+    padding: 10px 0;
+    text-align: center;
+}
+
+header nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+header nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+header nav ul li a {
+    color: white;
+    text-decoration: none;
+}
+
+header nav ul li a:hover {
+    text-decoration: underline;
+}
+
+/* Container für Hauptinhalt */
+.container {
+    display: flex;
+    margin: 20px;
+    background-color: #222; /* Setzt den Hintergrund für den Container */
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background-color: #222; /* Setzt den Hintergrund für die Sidebar */
+    padding: 20px;
+    margin-right: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin: 10px 0;
+}
+
+.sidebar ul li a {
+    text-decoration: none;
+    color: #fff; /* Weißer Text für die Links */
+    font-size: 1.2em;
+}
+
+.sidebar ul li a:hover {
+    text-decoration: underline;
+}
+
+/* Forum Posts */
+.forum-posts {
+    flex: 1;
+    background-color: #222; /* Setzt den Hintergrund für die Forum-Posts */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.forum-posts h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: white; /* Setzt den Textfarbe für die Überschrift */
+}
+
+.post {
+    background-color: #333; /* Etwas dunklerer Hintergrund für Beiträge */
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+}
+
+.post h3 {
+    margin: 0;
+    font-size: 1.5em;
+    color: white; /* Weißer Text für Post-Titel */
+}
+
+.post p {
+    font-size: 0.9em;
+    color: #bbb; /* Heller Text für den Beitragstext */
+}
+
+.new-post-btn {
+    display: block;
+    width: 200px;
+    padding: 10px;
+    background-color: #2d3e50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2em;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.new-post-btn:hover {
+    background-color: #1a2b38;
+}
+
+/* Footer */
+footer {
+    background-color: #2d3e50;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
