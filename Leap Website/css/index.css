@@ -370,61 +370,48 @@ footer {
     flex: 0 0 100%; /* Fügt einen minimalen Abstand ein, um das Scrollen fortzusetzen */
 }
 
-
-
-
-
-
-/* Grundlegende Sidebar-Stile */
-.sidebar {
-    position: absolute;
-    top: 0;
-    left: -500px; /* Sidebar außerhalb des Bildschirms */
-    width: 500px;
-    height: 100%;
-    background: linear-gradient(135deg, #1a1a1a, #222);
-    transition: left 0.3s ease-in-out;
-    z-index: 1;
-    box-shadow: 0px 8px 25px rgba(0, 0, 0, 30);
+.gradient-transition {
+    height: 100px; /* oder mehr, je nachdem wie smooth du es willst */
+    background: linear-gradient(#14272A, #111);
 }
 
-.sidebar-content {
-    
-    padding-top: 60px;
-    padding-left: 10px;
-    padding-left: 10px;
-    justify-content: center;  /* Horizontale Zentrierung */
-    align-items: center;      /* Vertikale Zentrierung */
-    height: 100%;      
 
-}
-
-.sidebar-content h1,h2
+.info-section
 {
-    
+    padding-top: 0px; /* Text erst sichtbar nach Scroll */
+    background-color: #111;
     color: white;
-    font-size: 35px;
-    text-align: center;
+    padding-left: 3rem;
+    padding-right: 3rem;
+    padding-bottom: 4rem;
 }
 
-.sidebar-content ul li
-{
-    color: white;
-    font-size: 25px;
+.info-section h1, 
+.info-section h2 {
+    color: #fff;
+    margin-bottom: 10px;
 }
 
-
-
-/* Sidebar sichtbar machen, wenn über das Bild gehovt wird */
-.center-image:hover + .sidebar {
-    left: 0;
+.info-section p {
+    max-width: 800px;
+    margin: 0 auto 30px auto;
+    line-height: 1.6;
+    color: #ccc;
 }
 
-
-
-/* Stile für das Hover-Ereignis auf dem Bild */
-.center-image:hover {
-    cursor: pointer;
-    opacity: 0.8;
+/* Oberer Bereich */
+.Main {
+    height: 100vh;
+    position:absolute;
+    background-color: #14272A;
+    position: relative;
+    overflow: hidden;
 }
 
+.notMain {
+
+}
+
+.info-section-main-pic {
+
+}

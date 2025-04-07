@@ -11,7 +11,7 @@ let interval = 1; // Standardmäßig 1 Sekunde (1000 Millisekunden)
 
 // Funktion zum Setzen der Zeichen-Geschwindigkeit
 function setParticleInterval(seconds) {
-    interval = seconds * 300; // Umrechnung in Millisekunden
+    interval = seconds * 1; // Umrechnung in Millisekunden
 }
 
 // Partikel-Klasse
@@ -62,7 +62,7 @@ function connectParticles() {
             let distance = Math.sqrt(dx * dx + dy * dy);
 
             if (distance < 100) {
-                ctx.strokeStyle = `rgba(255, 255, 255, ${1 - distance / 100})`;
+                ctx.strokeStyle = `rgba(255, 255, 255, ${1 - distance / 10000})`;
                 ctx.lineWidth = 1;
                 ctx.beginPath();
                 ctx.moveTo(particles[i].x, particles[i].y);
