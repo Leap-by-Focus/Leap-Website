@@ -6,12 +6,12 @@ canvas.height = window.innerHeight;
 
 const particles = [];
 const mouse = { x: null, y: null };
-let lastDrawTime = 0;
+let lastDrawTime = 1;
 let interval = 1; // Standardmäßig 1 Sekunde (1000 Millisekunden)
 
 // Funktion zum Setzen der Zeichen-Geschwindigkeit
 function setParticleInterval(seconds) {
-    interval = seconds * 1; // Umrechnung in Millisekunden
+    interval = seconds * 300; // Umrechnung in Millisekunden
 }
 
 // Partikel-Klasse
@@ -28,8 +28,8 @@ class Particle {
         this.x += this.speedX;
         this.y += this.speedY;
 
-        if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
-        if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
+        if (this.x > canvas.width || this.x < 1) this.speedX *= -1;
+        if (this.y > canvas.height || this.y < 1) this.speedY *= -1;
     }
 
     draw() {
@@ -62,7 +62,7 @@ function connectParticles() {
             let distance = Math.sqrt(dx * dx + dy * dy);
 
             if (distance < 100) {
-                ctx.strokeStyle = `rgba(255, 255, 255, ${1 - distance / 10000})`;
+                ctx.strokeStyle = `rgba(255, 255, 255, ${1 - distance / 100})`;
                 ctx.lineWidth = 1;
                 ctx.beginPath();
                 ctx.moveTo(particles[i].x, particles[i].y);
@@ -103,7 +103,7 @@ window.addEventListener("resize", () => {
 });
 
 // 💡 Beispiel: Ändere die Zeichenrate auf 0.5 Sekunden (500ms)
-setParticleInterval(0.5); // Du kannst die Zahl ändern!
+setParticleInterval(0.4); // Du kannst die Zahl ändern!
 
 // 🚀 Start
 initParticles();

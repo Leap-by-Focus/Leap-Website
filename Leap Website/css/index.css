@@ -415,3 +415,209 @@ footer {
 .info-section-main-pic {
 
 }
+
+.loginDiv {
+    position: fixed;
+    top: 90px;
+    right: 30px;
+    background-color: transparent;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-family: sans-serif;
+    z-index: 100000;
+    cursor: pointer;
+    transition: all 0.25s ease-in-out;
+    width: 300px;
+    height: 50px;
+
+    /* NEU */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+}
+
+
+
+.loginButton,
+.registerButton {
+    background-color: #444;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-family: sans-serif;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.25s ease-in-out;
+
+    /* Optional: Gleiche Höhe wie loginDiv */
+    height: 60%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1; /* Beide gleich breit */
+    margin: 0 5px; /* Abstand innen */
+}
+
+/* Hover-Effekt */
+.loginButton:hover
+{
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    background-color: green;
+}
+.registerButton:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    background-color: white;
+    color:black
+}
+
+.loginFormularDiv {
+    position: fixed;
+    top: 155px;
+    right: 50px;
+    background-color: transparent;
+    color: black;
+    padding: 10px 15px;
+    border-radius: 20px;
+    font-family: sans-serif;
+    z-index: 100000;
+    cursor: pointer;
+    transition: all 0.25s ease-in-out;
+    width: 260px;
+    height: 220px;
+    opacity: 0; /* Unsichtbar */
+    visibility: hidden; /* Formular unsichtbar und nicht interaktiv */
+    transform: translateY(-20px); /* Anfangszustand für die Animation */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color:white;
+    flex-direction: column;
+    padding-top:5px; 
+}
+
+.loginFormularDiv.open {
+    opacity: 1; /* Sichtbar */
+    visibility: visible; /* Interaktionen möglich */
+    transform: translateY(0); /* Normaler Zustand */
+    background-color: #444; /* Hintergrundfarbe sichtbar */
+    color:white;
+}
+
+.loginForm {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+}
+
+label {
+    font-size: 14px;
+    color:white;
+    font-weight: bolder;
+    text-align: center;
+}
+
+input {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #333;
+    font-size: 14px;
+}
+
+.submitButton {
+    background-color: #444;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.25s ease-in-out;
+}
+
+.submitButton:hover {
+    background-color: green;
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+
+
+
+
+
+
+
+
+
+.registerFormularDiv {
+    position: fixed;
+    top: 155px;
+    right: 50px;
+    background-color: transparent;
+    color: black;
+    padding: 10px 15px;
+    border-radius: 20px;
+    font-family: sans-serif;
+    z-index: 100000;
+    cursor: pointer;
+    transition: all 0.25s ease-in-out;
+    width: 260px;
+    height: 300px;  /* Höhe des Formulars */
+    opacity: 0; /* Unsichtbar */
+    visibility: hidden; /* Formular unsichtbar und nicht interaktiv */
+    transform: translateY(-20px); /* Anfangszustand für die Animation */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    flex-direction: column;
+    padding-top: 5px;
+}
+
+.registerFormularDiv.open {
+    opacity: 1; /* Sichtbar */
+    visibility: visible; /* Interaktionen möglich */
+    transform: translateY(0); /* Normaler Zustand */
+    background-color: #444; /* Hintergrundfarbe sichtbar */
+    color: white;
+}
+
+.registerForm {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+label {
+    font-size: 14px;
+    color: white;
+    font-weight: bolder;
+    text-align: center;
+}
+
+input {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #333;
+    font-size: 14px;
+}
+
+.submitButton {
+    background-color: #444;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.25s ease-in-out;
+}
+
+.submitButton:hover {
+    background-color: green;
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
