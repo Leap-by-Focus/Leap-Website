@@ -408,13 +408,7 @@ footer {
     overflow: hidden;
 }
 
-.notMain {
 
-}
-
-.info-section-main-pic {
-
-}
 
 .loginDiv {
     position: fixed;
@@ -621,3 +615,113 @@ input {
     transform: scale(1.05);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
 }
+
+
+
+.socialButtons {
+    position: relative;
+    top: 30px;
+    left: 20px;
+    z-index: 10;
+    width: 250px;
+  }
+  
+  .socialButtonWrapper {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0px;
+    position: relative;
+  }
+  
+  .socialButton {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .socialButton img {
+    width: 60%;
+    height: auto;
+    border-radius: 50%;
+  }
+  
+  /* Farbige Buttons */
+  .socialButtonYoutube { background-color: transparent }
+  .socialButtonInsta   { background-color: transparent }
+  .socialButtonTwitter { background-color: transparent }
+  /* Info-Div: Standardzustand (versteckt) */
+  .socialInfo {
+    background-color: #333;
+    color: white;
+    padding: 0px 0px;
+    border-radius: 20px;
+    margin-left: 0px;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.3s ease-in-out;
+    white-space: nowrap;
+    pointer-events: none;
+    font-size: 14px;
+  }
+  
+  /* Wenn Wrapper gehovt wird, Info anzeigen */
+  .socialButton:hover + .socialInfo {
+    opacity: 1;
+    transform: translateX(0);
+
+  }
+
+  .socialButton img {
+    transition: transform 0.3s ease;
+  }
+  
+  .socialButton:hover img {
+    transform: scale(1.3);
+  }
+
+
+
+  .welcomeMessage {
+    position: relative;
+    top: 40%;
+    right: 40%;
+    width: 100px;
+    height: 20px;
+    background-color: #4CAF50; /* Beispiel für eine grüne Hintergrundfarbe */
+    color: white;
+    text-align: center;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+
+.userinfo {
+    position: fixed;
+    top: 100px; /* Positioniert den Button 100px vom oberen Rand */
+    left: 50%; /* Zentriert den Button horizontal */
+    transform: translateX(-50%); /* Korrigiert die horizontale Positionierung */
+    width: 100px;
+    height: 50px; /* Etwas mehr Höhe für den Button */
+    background-color: #f44336; /* Rote Hintergrundfarbe */
+    color: white;
+    text-align: center;
+    line-height: 50px; /* Vertikale Zentrierung des Texts */
+    font-size: 16px;
+    border-radius: 5px; /* Abgerundete Ecken */
+    display: none; /* Standardmäßig ausgeblendet */
+    cursor: pointer; /* Mauszeiger auf 'Pointer' setzen */
+    z-index: 20; /* Über anderen Elementen sichtbar */
+    transition: background-color 0.3s ease; /* Übergangseffekt für den Hintergrund */
+}
+
+.userinfo:hover {
+    background-color: #d32f2f; /* Etwas dunklerer Rotton beim Hover */
+}
+
+
+
+

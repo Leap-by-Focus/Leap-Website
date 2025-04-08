@@ -5,44 +5,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leap - Leichtigkeit macht den Unterschied!</title>
     <link rel="stylesheet" href="../css/index.css">
-
-
-
+    <script type="module" src="../js/firebaseauth.js" defer></script>
+    <script src="../js/afterLogIn.js" defer></script>
 
     
     
 
 </head>
 <body>
+   
+
     <div class="Main">
 
+
+        <div class="userinfo" style="display: none;">
+            <button>Logout</button>
+          </div>
+
         <div class="loginDiv">
-            <div class="loginButton">Login</button></div>
-            <div class="registerButton">Register</div>
+            <!-- Diese Formulare sind standardmäßig sichtbar, aber werden ausgeblendet, wenn der Benutzer eingeloggt ist -->
+            <div class="loginButton" id="loginButton">Login</div>
+            <div class="registerButton" id="registerButton">Register</div>
+        
             <div class="loginFormularDiv">
                 <div class="loginForm">
                     <label for="username">Benutzername:</label>
-                    <input type="text" id="username" name="username" placeholder="Benutzername">
+                    <input type="text" id="logUsername" name="username" placeholder="Benutzername">
                     <label for="password">Passwort:</label>
-                    <input type="password" id="password" name="password" placeholder="Passwort">
-                    <button class="submitButton">Anmelden</button>
+                    <input type="password" id="logPassword" placeholder="Passwort" />
+                    <button class="submitButton" id="submitbuttonlogin">Anmelden</button>
+                    <div id="signInMessage" class="alert"></div>
                 </div>
             </div>
+        
             <div class="registerFormularDiv">
                 <div class="registerForm">
                     <label for="username">Benutzername:</label>
-                    <input type="text" id="username" name="username" placeholder="Benutzername">
-                    
+                    <input type="text" id="regUsername" name="username" placeholder="Benutzername">
                     <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" placeholder="Email">
-                    
+                    <input type="email" id="regEmail" name="email" placeholder="Email">
                     <label for="password">Passwort:</label>
-                    <input type="password" id="password" name="password" placeholder="Passwort">
-                    
-                    <button class="submitButton">Registrieren</button>
+                    <input type="password" id="regPassword" placeholder="Passwort" />
+                    <button class="submitButton" id="submitbuttonregister">Registrieren</button>
                 </div>
             </div>
         </div>
+        
+        <!-- Willkommen-Text, wird nur angezeigt, wenn der Benutzer eingeloggt ist -->
+        <div id="welcomeMessage" class="welcomeMessage" style="display: none;">
+            <p>Willkommen, <span id="usernameDisplay"></span>!</p>
+        </div>
+
+    
+        
         
 
 
@@ -131,6 +146,29 @@
                 </div>
             </div>
         </footer>
+
+        <div class="socialButtons">
+            <a class="socialButtonWrapper" href="https://www.youtube.com/@Focus_Management" target="_blank">
+              <div class="socialButton socialButtonYoutube">
+                <img src="../assets/images/youtube_logo.png" alt="">
+              </div>
+              <div class="socialInfo">YouTube</div>
+            </a>
+          
+            <a class="socialButtonWrapper" href="https://www.instagram.com/official_focus_management/" target="_blank">
+              <div class="socialButton socialButtonInsta">
+                <img src="../assets/images/insta_logo.png" alt="">
+              </div>
+              <div class="socialInfo">Instagram</div>
+            </a>
+          
+            <a class="socialButtonWrapper" href="https://x.com/Leap_Management" target="_blank">
+              <div class="socialButton socialButtonTwitter">
+                <img src="../assets/images/X_logo.jpg" alt="">
+              </div>
+              <div class="socialInfo">X</div>
+            </a>
+          </div>
     </div>
     <div class="gradient-transition"></div>
     <div class="notMain">
