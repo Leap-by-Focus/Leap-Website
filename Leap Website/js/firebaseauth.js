@@ -122,42 +122,46 @@ document.getElementById("submitbuttonlogin").addEventListener("click", async (ev
   }
 });
 
-// Prüfen, ob der Benutzer eingeloggt ist und den Logout-Button anzeigen
+// Prüfen, ob der Benutzer eingeloggt ist und das UI entsprechend anpassen
 window.addEventListener("DOMContentLoaded", () => {
   const userId = localStorage.getItem("loggedInUserId");
-  const logoutButton = document.querySelector('.userinfo');
-  const loginButton = document.querySelector('#loginButton');
-  const registerButton = document.querySelector('#registerButton');
+  const loginButton = document.getElementById("loginButton");
+  const registerButton = document.getElementById("registerButton");
+  const logoutButton = document.getElementById("submitlogout");
 
   // Wenn der Benutzer eingeloggt ist
   if (userId) {
-    logoutButton.style.display = "block";
     loginButton.style.display = "none";
     registerButton.style.display = "none";
+    logoutButton.style.display = "block";
   } else {
-    logoutButton.style.display = "none";
     loginButton.style.display = "block";
     registerButton.style.display = "block";
+    logoutButton.style.display = "none";
+  }
+
+  // LOGOUT-Funktion (Standard SignOut Methode)
+  if (logoutButton) {
+    logoutButton.addEventListener("click", async () => {
+      try {
+        // Firebase SignOut
+        await signOut(auth);
+
+        // Entferne die Benutzer-ID aus dem lokalen Speicher
+        localStorage.removeItem("loggedInUserId");
+
+        // Weiterleiten oder Seite neu laden
+        window.location.href = "index.html"; // Zum Beispiel zur Index-Seite weiterleiten
+      } catch (error) {
+        alert("Fehler beim Logout: " + error.message);
+      }
+    });
   }
 });
 
-// LOGOUT
-document.querySelector('.userinfo button').addEventListener("click", async () => {
-  try {
-    // Firebase logout
-    await signOut(auth);
 
-    // Entferne den Benutzer aus dem lokalen Speicher und setze den Button zurück
-    localStorage.removeItem("loggedInUserId");
 
-    // Setze die Anzeige zurück
-    document.querySelector('.userinfo').style.display = 'none'; // Verstecke den Logout-Button
-    document.querySelector('#loginButton').style.display = 'block';
-    document.querySelector('#registerButton').style.display = 'block';
-    
-    // Weiterleitung zur Login-Seite oder Refresh
-    window.location.href = "index.html"; // Zum Beispiel zur Login-Seite
-  } catch (error) {
-    showMessage("Fehler beim Logout: " + error.message, "signInMessage");
-  }
-});
+
+
+
+

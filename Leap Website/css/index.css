@@ -699,7 +699,7 @@ input {
 }
 
 
-.userinfo {
+.dev {
     position: fixed;
     top: 100px; /* Positioniert den Button 100px vom oberen Rand */
     left: 50%; /* Zentriert den Button horizontal */
@@ -718,10 +718,32 @@ input {
     transition: background-color 0.3s ease; /* Übergangseffekt für den Hintergrund */
 }
 
-.userinfo:hover {
+.dev:hover {
     background-color: #d32f2f; /* Etwas dunklerer Rotton beim Hover */
 }
 
 
 
-
+.userinfo {
+    position: fixed;
+    top: 90px;
+    right: 30px;
+    background-color: red;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-family: sans-serif;
+    z-index: 100000;
+    cursor: pointer;
+    width: 300px;
+    height: 50px;
+    display: none; /* wird im JS sichtbar gemacht */
+  }
+  
+  .userinfo .logout {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+  }
