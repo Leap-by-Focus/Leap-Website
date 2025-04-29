@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../css/index.css">
     <script type="module" src="../js/firebaseauth.js" defer></script>
     <script src="../js/afterLogIn.js" defer></script>
+    <script src="../js/userNameShorter.js" defer></script>
 
     
     
@@ -17,44 +18,50 @@
 
     <div class="Main">
 
+        <div class="loginDiv">
+            <div class="loginButton" id="loginButton">Login</div>
+            <div class="registerButton" id="registerButton">Register</div>
+          
+            <div class="loginFormularDiv">
+              <form class="loginForm" id="loginForm">
+                <label for="logUsername">Benutzername:</label>
+                <input type="text" id="logUsername" name="username" placeholder="Benutzername" required>
+                <label for="logPassword">Passwort:</label>
+                <input type="password" id="logPassword" placeholder="Passwort" required />
+                <button type="submit" class="submitButton" id="submitbuttonlogin">Anmelden</button>
+                <div id="signInMessage" class="alert"></div>
+              </form>
+            </div>
+          
+            <div class="registerFormularDiv">
+              <form class="registerForm" id="registerForm">
+                <label for="regUsername">Benutzername:</label>
+                <input type="text" id="regUsername" name="username" placeholder="Benutzername" required>
+                <label for="regEmail">Email:</label>
+                <input type="email" id="regEmail" name="email" placeholder="Email" required>
+                <label for="regPassword">Passwort:</label>
+                <input type="password" id="regPassword" placeholder="Passwort" required />
+                <button type="submit" class="submitButton" id="submitbuttonregister">Registrieren</button>
+              </form>
+            </div>
+          </div>
+        
+        <div class="userinfo">
+            <div class="character"> Note: Character Bild von SkinLab</div>
+            <div class="welcomeNote"> Willkommen</div>
+            <div class="CharacterName"></div>
+            <div id="submitlogout" class="logoutButton" style="display: none;">⎋ Logout</div>
+        </div>
+        <!-- Willkommen-Text, wird nur angezeigt, wenn der Benutzer eingeloggt ist -->
+        <div id="welcomeMessage" class="welcomeMessage" style="display: none;">
+            <p>Willkommen, <span id="usernameDisplay"></span>!</p>
+        </div>
         
         
 
           
 
-        <div class="loginDiv">
-            <!-- Diese Formulare sind standardmäßig sichtbar, aber werden ausgeblendet, wenn der Benutzer eingeloggt ist -->
-            <div class="loginButton" id="loginButton">Login</div>
-            <div class="registerButton" id="registerButton">Register</div>
         
-            <div class="loginFormularDiv">
-                <div class="loginForm">
-                    <label for="username">Benutzername:</label>
-                    <input type="text" id="logUsername" name="username" placeholder="Benutzername">
-                    <label for="password">Passwort:</label>
-                    <input type="password" id="logPassword" placeholder="Passwort" />
-                    <button class="submitButton" id="submitbuttonlogin">Anmelden</button>
-                    <div id="signInMessage" class="alert"></div>
-                </div>
-            </div>
-        
-            <div class="registerFormularDiv">
-                <div class="registerForm">
-                    <label for="username">Benutzername:</label>
-                    <input type="text" id="regUsername" name="username" placeholder="Benutzername">
-                    <label for="email">Email:</label>
-                    <input type="email" id="regEmail" name="email" placeholder="Email">
-                    <label for="password">Passwort:</label>
-                    <input type="password" id="regPassword" placeholder="Passwort" />
-                    <button class="submitButton" id="submitbuttonregister">Registrieren</button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Willkommen-Text, wird nur angezeigt, wenn der Benutzer eingeloggt ist -->
-        <div id="welcomeMessage" class="welcomeMessage" style="display: none;">
-            <p>Willkommen, <span id="usernameDisplay"></span>!</p>
-        </div>
 
     
         

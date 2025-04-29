@@ -1,9 +1,13 @@
 // Firebase imports
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDocs, collection, query, where } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+import {
+  getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut
+} from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+import {
+  getFirestore, doc, setDoc, getDoc, getDocs, collection, query, where
+} from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
-// Konfiguration
+// Firebase Konfiguration
 const firebaseConfig = {
   apiKey: "AIzaSyBGs1Xx3VH2XZHT-k12Xsf_1Nz0gJBNB-Y",
   authDomain: "leap-001.firebaseapp.com",
@@ -13,7 +17,7 @@ const firebaseConfig = {
   appId: "1:177255891538:web:9a7cc6d28f874aadc7d58b"
 };
 
-// Firebase initialisieren
+// Initialisierung
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -21,10 +25,7 @@ const db = getFirestore(app);
 // Nachricht anzeigen
 function showMessage(message, divId, type = "error") {
   const messageDiv = document.getElementById(divId);
-  if (!messageDiv) {
-    console.warn(`Fehlendes Message-Element mit ID: ${divId}`);
-    return;
-  }
+  if (!messageDiv) return console.warn(`Fehlendes Message-Element mit ID: ${divId}`);
 
   messageDiv.className = "alert";
   messageDiv.classList.add(type === "success" ? "alert-success" : "alert-error");
@@ -40,9 +41,10 @@ function showMessage(message, divId, type = "error") {
   }, 5000);
 }
 
-// REGISTRIERUNG
+// Registrierung mit E-Mail und Passwort
 document.getElementById("submitbuttonregister").addEventListener("click", async (event) => {
   event.preventDefault();
+
   const email = document.getElementById("regEmail").value.trim();
   const password = document.getElementById("regPassword").value;
   const username = document.getElementById("regUsername").value.trim();
@@ -61,52 +63,31 @@ document.getElementById("submitbuttonregister").addEventListener("click", async 
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    const userData = { email, username };
-    await setDoc(doc(db, "users", user.uid), userData);
+    await setDoc(doc(db, "users", user.uid), {
+      email,
+      username
+    });
 
-    showMessage("Account erfolgreich erstellt!", "signUpMessage", "success");
+    showMessage("Registrierung erfolgreich!", "signUpMessage", "success");
     localStorage.setItem("loggedInUserId", user.uid);
     window.location.href = "index.html";
   } catch (error) {
-    if (error.code === "auth/email-already-in-use") {
-      showMessage("Diese E-Mail-Adresse wird bereits verwendet.", "signUpMessage");
-    } else {
-      showMessage("Fehler bei der Registrierung: " + error.message, "signUpMessage");
-    }
+    showMessage("Fehler bei der Registrierung: " + error.message, "signUpMessage");
   }
 });
 
-// LOGIN (per Benutzername statt E-Mail!)
+// LOGIN mit E-Mail und Passwort
 document.getElementById("submitbuttonlogin").addEventListener("click", async (event) => {
   event.preventDefault();
-  const username = document.getElementById("logUsername").value.trim();
+  const email = document.getElementById("logEmail").value.trim();
   const password = document.getElementById("logPassword").value;
 
-  if (!username || !password) {
-    showMessage("Bitte Benutzername und Passwort eingeben.", "signInMessage");
+  if (!email || !password) {
+    showMessage("Bitte E-Mail und Passwort eingeben.", "signInMessage");
     return;
   }
 
   try {
-    // Suche E-Mail zur Benutzernamen
-    const usersRef = collection(db, "users");
-    const q = query(usersRef, where("username", "==", username));
-    const querySnapshot = await getDocs(q);
-
-    if (querySnapshot.empty) {
-      showMessage("Benutzername existiert nicht.", "signInMessage");
-
-      // Direktes Anpassen der Styles
-      const messageDiv = document.getElementById("signInMessage");
-      messageDiv.style.padding = "-10px";
-      messageDiv.style.margin = "-10px";
-      return;
-    }
-
-    const userData = querySnapshot.docs[0].data();
-    const email = userData.email;
-
-    // Login mit E-Mail und Passwort
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
@@ -115,53 +96,78 @@ document.getElementById("submitbuttonlogin").addEventListener("click", async (ev
     window.location.href = "index.html";
   } catch (error) {
     if (error.code === "auth/invalid-credential" || error.code === "auth/wrong-password") {
-      showMessage("Falscher Benutzername oder Passwort.", "signInMessage");
+      showMessage("Falsche E-Mail oder Passwort.", "signInMessage");
     } else {
       showMessage("Fehler beim Login: " + error.message, "signInMessage");
     }
   }
 });
 
-// Prüfen, ob der Benutzer eingeloggt ist und das UI entsprechend anpassen
-window.addEventListener("DOMContentLoaded", () => {
+// ENTER-Taste: Login/Registrierung
+["regPassword", "logPassword"].forEach(id => {
+  document.getElementById(id).addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      document.getElementById(id === "regPassword" ? "submitbuttonregister" : "submitbuttonlogin").click();
+    }
+  });
+});
+
+// UI beim Start
+window.addEventListener("DOMContentLoaded", async () => {
   const userId = localStorage.getItem("loggedInUserId");
   const loginButton = document.getElementById("loginButton");
   const registerButton = document.getElementById("registerButton");
   const logoutButton = document.getElementById("submitlogout");
+  const userinfoBox = document.querySelector(".userinfo");
+  const characterNameBox = document.querySelector(".CharacterName");
 
-  // Wenn der Benutzer eingeloggt ist
+  // Benutzerinfo und Buttons anzeigen, wenn der Benutzer eingeloggt ist
   if (userId) {
     loginButton.style.display = "none";
     registerButton.style.display = "none";
-    logoutButton.style.display = "block";
+    logoutButton.style.display = "block";  // Zeige den Logout-Button an
+    if (userinfoBox) userinfoBox.style.display = "flex";  // Benutzerinfo anzeigen
+
+    try {
+      const userDocSnap = await getDoc(doc(db, "users", userId));
+      if (userDocSnap.exists()) {
+        characterNameBox.textContent = userDocSnap.data().username;
+      } else {
+        characterNameBox.textContent = "Unbekannter Nutzer";
+      }
+    } catch (error) {
+      characterNameBox.textContent = "Fehler beim Laden des Benutzernamens";
+    }
   } else {
     loginButton.style.display = "block";
     registerButton.style.display = "block";
-    logoutButton.style.display = "none";
+    logoutButton.style.display = "none";  // Verstecke den Logout-Button
+    if (userinfoBox) userinfoBox.style.display = "none";  // Verstecke die Benutzerinfo
+    characterNameBox.textContent = "";
   }
 
-  // LOGOUT-Funktion (Standard SignOut Methode)
+  // LOGOUT – Logout-Button Event Listener hinzufügen
   if (logoutButton) {
     logoutButton.addEventListener("click", async () => {
       try {
-        // Firebase SignOut
+        // Firebase Logout
         await signOut(auth);
 
-        // Entferne die Benutzer-ID aus dem lokalen Speicher
+        // Entferne Benutzer-ID aus dem localStorage
         localStorage.removeItem("loggedInUserId");
 
-        // Weiterleiten oder Seite neu laden
-        window.location.href = "index.html"; // Zum Beispiel zur Index-Seite weiterleiten
+        // UI anpassen: Logout-Button und Benutzerinfo verstecken
+        loginButton.style.display = "block";  // Zeige den Login-Button
+        registerButton.style.display = "block";  // Zeige den Register-Button
+        logoutButton.style.display = "none";  // Verstecke den Logout-Button
+        if (userinfoBox) userinfoBox.style.display = "none";  // Verstecke die Benutzerinfo
+
+        // Weiterleitung zur Login-Seite oder Startseite
+        window.location.href = "index.html";  // Leite den Benutzer zurück zur Startseite
       } catch (error) {
-        alert("Fehler beim Logout: " + error.message);
+        alert("Fehler beim Logout: " + error.message);  // Fehler anzeigen
       }
     });
   }
 });
-
-
-
-
-
-
-

@@ -728,7 +728,7 @@ input {
     position: fixed;
     top: 90px;
     right: 30px;
-    background-color: red;
+    background-color: #333;
     color: white;
     padding: 10px 15px;
     border-radius: 6px;
@@ -737,13 +737,125 @@ input {
     cursor: pointer;
     width: 300px;
     height: 50px;
-    display: none; /* wird im JS sichtbar gemacht */
+    display: none;
+  
+    display: flex;                /* Flexbox aktivieren */
+    align-items: center;         /* Vertikal zentrieren */
+    justify-content: space-between; /* optional – verteilt Inhalte */
   }
   
+  /* Button innerhalb .userinfo */
   .userinfo .logout {
     background: none;
     border: none;
     color: white;
     font-size: 16px;
     cursor: pointer;
+  }
+  
+  /* Optional – Logout-Button-Stil */
+  .logoutButton {
+    position: fixed;
+    right:40px;
+    top:100px;
+    width: 70px;
+    height:40px;
+    padding: 6px 10px;
+    background-color: #e74c3c;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    z-index: 9999;
+    font-weight: bold;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    transition: background-color 0.3s ease;
+    font-size: smaller;
+    display: flex;
+    align-items: center; /* Vertikale Zentrierung */
+    
+    
+  }
+
+  .safelogout
+  {
+    position: relative;
+    width: 70px;
+    height:40px;
+    padding: 6px 10px;
+    background-color: #e74c3c;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    z-index: 9999;
+    font-weight: bold;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    transition: background-color 0.3s ease;
+    font-size: smaller;
+    display: flex;
+    align-items: center; /* Vertikale Zentrierung */
+  }
+  
+  .logoutButton:hover {
+    background-color: #c0392b;
+  }
+
+  .character
+  {
+    position: fixed;
+    width:50px;
+    height:50px;
+    display: flex;
+    justify-content: center;
+    background-color: gray;
+    border-radius: 50%;
+    font-size: 8px;
+  }
+
+  .welcomeNote
+  {
+    right:182px;
+    position: fixed;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+  } 
+
+  .CharacterName {
+    padding-top: 20px;
+    color: white;
+    font-weight: bolder;
+    font-size: 20px;
+    z-index: 1000000;
+    margin-left: 50px;
+    margin-right: 85px;
+    text-align: center;
+    font-family: monospace;
+    letter-spacing: 3px;
+    animation: colorRotate 2s linear 0s infinite;
+    
+    overflow: hidden;        /* Verhindert das Überlaufen */
+    white-space: nowrap;     /* Verhindert den Zeilenumbruch */
+    text-overflow: ellipsis; /* Zeigt '...' am Ende an, wenn der Text nicht passt */
+  }
+
+
+
+
+
+  @keyframes colorRotate {
+    from {
+      color: #6666ff;
+    }
+    10% {
+      color: #0099ff;
+    }
+    50% {
+      color: #00ff00;
+    }
+    75% {
+      color: #ff3399;
+    }
+    100% {
+      color: #6666ff;
+    }
   }

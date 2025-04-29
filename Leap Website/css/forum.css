@@ -1,16 +1,28 @@
 /* Allgemeine Einstellungen */
+/* Grund-Design (Dark Mode als Standard) */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
     background-color: #14272A;
+    color: #ffffff; /* Textfarbe */
 }
 
 header {
-    background-color: #2d3e50;
     background-color: #333;
     padding: 10px 0;
     text-align: center;
+}
+
+/* Light Mode */
+body.light-mode {
+    background-color: #f2f2f2;
+    color: #000000;
+}
+
+body.light-mode header {
+    background-color: #e0e0e0;
+    color: #000000;
 }
 
 
@@ -46,6 +58,16 @@ header img
 header .logo {
     display: flex;
     align-items: center;
+    position: fixed;
+}
+
+h1
+{
+    display: flex;              /* Verwendet Flexbox für das Layout */
+  justify-content: center;    /* Zentriert den Text horizontal */
+  align-items: center;        /* Zentriert den Text vertikal */
+  height: 100px;              /* Höhe des Containers (für vertikale Zentrierung wichtig) */
+  text-align: center;
 }
 
 /* Container für Hauptinhalt */
@@ -148,4 +170,12 @@ footer {
     position: fixed;
     bottom: 0;
     width: 100%;
+}
+
+.lightMode
+{
+    float: right;
+    padding-right: 20px;
+    background-color: white;
+    border-radius: 10%;
 }
