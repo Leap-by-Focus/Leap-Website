@@ -9,6 +9,12 @@ body {
     background-color: #111;
 }
 
+h1
+{
+    color:white;
+    text-align: center;
+}
+
 /* Zentriert das Bild in der Mitte */
 .center-image {
     position: absolute;
@@ -742,7 +748,7 @@ input {
     display: flex;                /* Flexbox aktivieren */
     align-items: center;         /* Vertikal zentrieren */
     justify-content: space-between; /* optional – verteilt Inhalte */
-  }
+}
   
   /* Button innerhalb .userinfo */
   .userinfo .logout {
@@ -908,34 +914,98 @@ input {
   }
   
   /* Farben basierend auf Visual Studio Code / C# Syntax */
-.import {
-    color: #dcdcaa; /* leicht gelblich für "import" (wie C# using) */
+  .import {color: #dcdcaa; /* leicht gelblich für "import" (wie C# using) */}
+  .keyword {color: #569CD6; /* z.B. var */}
+  .namespace {color: #4EC9B0; /* z.B. Leap.Core */}
+  .method {color: #FFD700; /* kräftiges Gelb für Methoden wie Write */}
+  .operator {color: #D4D4D4; /* z.B. = */}
+  .string {color: #CE9178; /* Strings */}
+  .variable {color: #9CDCFE; /* z.B. helloUser */}
+  .bracket {color: #FFFFFF; /* Klammern */}
+
+
+
+
+  .notMain {
+    width: 100%;
+    height: 100vh; /* Vollbildhöhe */
+    position: relative; /* Wichtig für Positionierung innerhalb von notMain */
   }
   
-  .keyword {
-    color: #569CD6; /* z.B. var */
+  .TwoBoxSetup {
+    display: none;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+    position: absolute;
+    bottom: 0; /* Stellen sicher, dass es unten oder nach Belieben positioniert wird */
+    width: 100%;
   }
   
-  .namespace {
-    color: #4EC9B0; /* z.B. Leap.Core */
+  .TwoBoxSetup.show {
+    display: block;
+    opacity: 1;
   }
   
-  .method {
-    color: #FFD700; /* kräftiges Gelb für Methoden wie Write */
+  .vsc_fade-out {
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
   }
   
-  .operator {
-    color: #D4D4D4; /* z.B. = */
+  .animate-helloUser {
+    position: absolute;
+    top: 38.5%;  /* Startposition */
+    left: 3%;    /* Startposition */
+    z-index: 9999;
+    color: #ffcc00;  /* Farbe der Textzeile */
+    font-size: 18px;
+    animation: moveAndGrow 2s ease-in-out forwards; /* Die Animation, die die Zeile bewegt */
   }
   
-  .string {
-    color: #CE9178; /* Strings */
+  /* Keyframes für die Bewegung und Vergrößerung */
+  @keyframes moveAndGrow {
+    0% {
+      top: 21%;   /* Startposition */
+      left: 3%;     /* Startposition */
+      transform: scale(1);  /* Anfangsgröße */
+    }
+    100% {
+      top: 5%;      /* Endposition oben */
+      left: 40%;    /* Endposition Mitte */
+      transform: scale(2.5); /* Endgröße */
+    }
   }
-  
-  .variable {
-    color: #9CDCFE; /* z.B. helloUser */
+
+  .TwoBoxSetup
+  {
+    width:100%;
+    height:100%;
   }
-  
-  .bracket {
-    color: #FFFFFF; /* Klammern */
+
+  .livechat
+  {
+    margin-top:5%;
+    position: relative;
+    width:25%;
+    height:90%;
+    background-color: green;
+    float:right;
+    margin-right: 1%;
+    
+    }
+
+  .newestGithubCommits
+  {
+    float: left;
+    margin-top: 5%;
+    margin-left: 1%;
+    position: relative;
+    width:70%;
+    height:90%;
+    right:0%;
+    background-color: blue;
+  }
+
+  .whyUs
+  {
+    margin-top:1050px;
   }
