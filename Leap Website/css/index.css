@@ -6,7 +6,7 @@ body {
     flex-direction: column;
     min-height: 100vh;
     justify-content: space-between;
-    background-color: #14272A;
+    background-color: #111;
 }
 
 /* Zentriert das Bild in der Mitte */
@@ -858,4 +858,84 @@ input {
     100% {
       color: #6666ff;
     }
+  }
+
+  .vsc_editor-container {
+    width: 100vw;
+    height: 100vh;
+    background-color: #111;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+  }
+  
+  .vsc_editor {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    font-family: Consolas, monospace;
+    font-size: 2vw; /* Einheitlich große Schrift */
+    line-height: 1.4;
+    color: white;
+    box-sizing: border-box;
+  }
+  
+  .vsc_editor-lines {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    text-align: right;
+    padding-top: 40px; /* nur oben Padding */
+    padding-right: 20px;
+    color: #555;
+    font-size: 2vw;
+    line-height: 1.4;
+    user-select: none;
+  }
+  
+  .vsc_code-block {
+    flex: 1;
+    padding-top: 8px; /* gleich wie lines */
+    padding-left: 0;
+    padding-right: 40px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    font-size: 2vw;
+    line-height: 1.4;
+  }
+  
+  /* Farben basierend auf Visual Studio Code / C# Syntax */
+.import {
+    color: #dcdcaa; /* leicht gelblich für "import" (wie C# using) */
+  }
+  
+  .keyword {
+    color: #569CD6; /* z.B. var */
+  }
+  
+  .namespace {
+    color: #4EC9B0; /* z.B. Leap.Core */
+  }
+  
+  .method {
+    color: #FFD700; /* kräftiges Gelb für Methoden wie Write */
+  }
+  
+  .operator {
+    color: #D4D4D4; /* z.B. = */
+  }
+  
+  .string {
+    color: #CE9178; /* Strings */
+  }
+  
+  .variable {
+    color: #9CDCFE; /* z.B. helloUser */
+  }
+  
+  .bracket {
+    color: #FFFFFF; /* Klammern */
   }
