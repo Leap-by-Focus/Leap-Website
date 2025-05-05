@@ -1,3 +1,11 @@
+@font-face {
+    font-family: "MeineSchriftart"; /* Der Name der Schriftart */
+    src: url("../assets/font/JetBrainsMono-2/fonts/webfonts/JetBrainsMono-Medium.woff2") format("woff2"),
+         url("../assets/fonts/meine-schriftart.woff") format("woff");
+    font-weight: normal; /* Optional: Gewicht der Schriftart, z.B. normal oder bold */
+    font-style: normal;  /* Optional: Stil der Schriftart, z.B. normal oder italic */
+  }
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -872,7 +880,6 @@ input {
     background-color: #111;
     display: flex;
     justify-content: center;
-    overflow: hidden;
   }
   
   .vsc_editor {
@@ -981,31 +988,155 @@ input {
     height:100%;
   }
 
-  .livechat
-  {
-    margin-top:5%;
-    position: relative;
-    width:25%;
-    height:90%;
-    background-color: green;
-    float:right;
+  .newestGithubCommits {
+    margin-top: 10%;
+    position: sticky;
+    top: 170px; /* Abstand vom oberen Viewport beim Festkleben */
+    width: 25%;
+    height:70%;
+    height: auto; /* Oder fix, je nach Inhalt */
+    border: solid 1px #ccc;
+    float: right;
     margin-right: 1%;
-    
-    }
-
-  .newestGithubCommits
-  {
-    float: left;
-    margin-top: 5%;
-    margin-left: 1%;
-    position: relative;
-    width:70%;
-    height:90%;
-    right:0%;
-    background-color: blue;
+    z-index: 5;
   }
 
-  .whyUs
+
+
+    .whyUs {
+        margin-top: 10%;
+        right: 0%;
+        width: 70%;
+    }
+    
+    .whyUs h1 {
+        color: white;
+        font-weight: bold;
+        font-size: 3em;
+    }
+    
+    .whyUs .gradient-text {
+        background-image: linear-gradient(to right, #50e9ba, #148fac, #e6f0f4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: bold;
+    }
+
+    .whyUs h2 {
+        padding-left: 5%;
+        color: white;
+        font-size: 1.2em;
+        line-height: 1.5em;
+        margin-top: 20px;
+    }
+/* Container für den Bildvergleich */
+.image-compare-container {
+    position: relative;
+    width: 100%;
+    max-width: 1000px;
+    height: 500px; /* Höhe der Bilder */
+    margin: 0 auto;
+    overflow: hidden;
+  }
+  
+  /* Beide Bilder im Container */
+  .img-comp-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+  }
+  
+  /* Das "Before"-Bild */
+  .img-comp-before img {
+    width: 100%;
+    height: auto;
+  }
+  
+  /* Das "After"-Bild */
+  .img-comp-overlay img {
+    width: 100%;
+    height: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2; /* Overlay über das erste Bild */
+  }
+  
+  /* Der Schieberegler */
+  .img-comp-slider {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 6px;
+    background-color: #2196F3;
+    cursor: ew-resize;
+    z-index: 3;
+  }
+
+  .compare-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px; /* Abstand zwischen Bild und Text */
+  }
+  
+  .image-compare {
+    position: relative;
+    overflow: hidden;
+    width: 30%; /* Bild-Compare nimmt 70% des Containers ein */
+    border: solid 1px #ccc;
+    box-shadow: 10px 10px 20px rgba(128, 128, 128, 0.5); /* Schatten hinzufügen */
+  }
+
+  
+  
+  .compare-text1 {
+
+    position: relative;
+    color: white;
+    font-size: 13px;
+    font-family: monospace;
+    text-align: justify; /* Blocksatz */
+    z-index: 4; /* Über dem Bild */
+    width:40%; /* Textbereich nimmt 30% des Containers ein */
+    padding-right: 100px; /* Ein bisschen Abstand vom Bild */
+    margin-left:100px;
+  }
+
+  .compare-text1 p
   {
-    margin-top:1050px;
+    padding-bottom: 20px;
+  }
+  
+  .icv__circle {
+    width: 10px !important; /* Standard ist 50px */
+    height: 10px !important;
+    background: white !important;
+  }
+  
+  .icv__control-line {
+    background-color: #148fac !important; /* Standardfarbe */
+  }
+
+  .text1 h2
+  {
+    color: white;
+    font-weight: bold;
+    font-size: 1.9em;
+    text-align: center;
+    font-family: monospace;
+  }
+
+  .newestGithubCommits ul#commitList,
+  .newestGithubCommits ul#commitList li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    color: white;
+    font-weight: bold;
+    padding-left: 30px;
   }
