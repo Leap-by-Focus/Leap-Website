@@ -100,7 +100,7 @@ const codeLines = [
 
   function triggerHelloUserAnimation() {
     const allLines = codeBlock.querySelectorAll("div");
-    const originalLine = allLines[3]; // Die Zeile: var helloUser = ...
+    const originalLine = allLines[3]; // "var helloUser = ..." ist die Zeile, die du animieren möchtest
   
     if (!originalLine) return;
   
@@ -112,20 +112,12 @@ const codeLines = [
     // Optional: editorContainer ausblenden
     const editorContainer = document.querySelector(".vsc_editor-container");
     if (editorContainer) {
-      editorContainer.classList.add("vsc_fade-out"); // Versteckt den Editor
+      editorContainer.classList.add("vsc_fade-out");  // Versteckt den Editor
     }
   
-    // Sobald die Animation abgeschlossen ist, wird TwoBoxSetup angezeigt und der Editor entfernt
+    // Sobald die Animation abgeschlossen ist, zeigen wir TwoBoxSetup an
     clone.addEventListener("animationend", () => {
-      // Zwei Boxen Setup sichtbar machen
-      const twoBoxSetup = document.querySelector(".TwoBoxSetup");
-      if (twoBoxSetup) {
-        twoBoxSetup.classList.add("show");
-      }
-  
-      // Entfernen des Editors nach der Animation
-      if (editorContainer) {
-        editorContainer.remove(); // Entfernt den Editor vollständig
-      }
+      // TwoBoxSetup sichtbar machen
+      document.querySelector(".TwoBoxSetup").classList.add("show");
     }, { once: true });
   }

@@ -1,61 +1,58 @@
 // githubCommits.js
-
 document.addEventListener("DOMContentLoaded", () => {
-    const repos = ["Leap-Website", "Leap-VSCPlugin", "Leap-Syntax"];
+    // exakt so, wie sie in "name" stehen
+    const repos = [
+      "Leap-Website",
+      "Leap-VSCode-Plugin",
+      "Leap-Syntax-Highlighter"
+    ];
     const commitsPerRepo = 5;
   
     const container = document.querySelector(".newestGithubCommits");
-    if (!container) {
-      console.error("❌ Kein .newestGithubCommits-Container gefunden");
-      return;
-    }
+    if (!container) return console.error("Kein .newestGithubCommits-Container gefunden");
   
-    let ul = container.querySelector("#commitList");
+    // wir legen hier eine UL an, wenn noch keine da ist
+    let ul = document.getElementById("commitList");
     if (!ul) {
       ul = document.createElement("ul");
       ul.id = "commitList";
+      ul.style.listStyle = "none";
+      ul.style.padding = "0";
       container.appendChild(ul);
     }
+    ul.innerHTML = "";
   
-    async function fetchLatestCommits(repoName, count = 5) {
+    async function fetchLatestCommits(repoName, count = commitsPerRepo) {
       const url = `https://api.github.com/repos/Leap-by-Focus/${repoName}/commits?per_page=${count}`;
       const res = await fetch(url);
-      if (!res.ok) throw new Error(`GitHub API ${res.status} für ${repoName}`);
+      if (!res.ok) throw new Error(`GitHub ${res.status} für ${repoName}`);
       return res.json();
     }
   
     async function renderCommits() {
-      ul.innerHTML = "";
-  
       for (let repo of repos) {
         // Repo-Überschrift
         const headerLi = document.createElement("li");
-        headerLi.innerHTML = `<strong style="display:block; margin-top:1em;">${repo}</strong>`;
+        headerLi.textContent = repo;
+        headerLi.style.color = "#fff";
+        headerLi.style.fontWeight = "bold";
+        headerLi.style.marginTop = "1em";
         ul.appendChild(headerLi);
   
         try {
-          const commits = await fetchLatestCommits(repo, commitsPerRepo);
-          if (!Array.isArray(commits) || commits.length === 0) {
-            const emptyLi = document.createElement("li");
-            emptyLi.textContent = "Keine Commits gefunden.";
-            ul.appendChild(emptyLi);
-            continue;
-          }
-  
-          for (let c of commits) {
+          const commits = await fetchLatestCommits(repo);
+          commits.forEach(c => {
             const date = new Date(c.commit.author.date)
               .toLocaleDateString("de-DE", {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
+                day: "2-digit", month: "2-digit", year: "numeric"
               });
-            const message = c.commit.message.split("\n")[0];
-            const author = c.commit.author.name;
-  
             const li = document.createElement("li");
-            li.textContent = `${date} | ${message} | ${author}`;
+            li.textContent = `${date} | ${c.commit.message.split("\n")[0]} | ${c.commit.author.name}`;
+            li.style.color = "#fff";
+            li.style.fontWeight = "bold";
+            li.style.marginLeft = "1em";
             ul.appendChild(li);
-          }
+          });
         } catch (err) {
           const errLi = document.createElement("li");
           errLi.textContent = `Fehler bei ${repo}: ${err.message}`;

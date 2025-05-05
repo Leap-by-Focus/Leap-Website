@@ -989,15 +989,12 @@ input {
   }
 
   .newestGithubCommits {
-    margin-top: 10%;
     position: sticky;
-    top: 170px; /* Abstand vom oberen Viewport beim Festkleben */
+    top: 170px;        /* Abstand zum Viewport-Top sobald geklebt */
     width: 25%;
-    height:70%;
-    height: auto; /* Oder fix, je nach Inhalt */
-    border: solid 1px #ccc;
-    float: right;
     margin-right: 1%;
+    float: right;
+    border: 1px solid #ccc;
     z-index: 5;
   }
 
@@ -1087,7 +1084,7 @@ input {
   .image-compare {
     position: relative;
     overflow: hidden;
-    width: 30%; /* Bild-Compare nimmt 70% des Containers ein */
+    width: 38%; /* Bild-Compare nimmt 70% des Containers ein */
     border: solid 1px #ccc;
     box-shadow: 10px 10px 20px rgba(128, 128, 128, 0.5); /* Schatten hinzufügen */
   }
@@ -1131,12 +1128,47 @@ input {
     font-family: monospace;
   }
 
-  .newestGithubCommits ul#commitList,
-  .newestGithubCommits ul#commitList li {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    color: white;
-    font-weight: bold;
-    padding-left: 30px;
+  .newestGithubCommits ul li {
+    cursor: default; /* kein Pointer */
   }
+  .newestGithubCommits ul li a {
+    pointer-events: none; /* falls Du doch mal <a> verwendet hast */
+    color: inherit;
+    text-decoration: none;
+  }
+
+  
+
+
+
+
+
+
+  /* 1. Keyframes definieren */
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* 2. Anfangszustand: unsichtbar und nach unten verschoben */
+.newestGithubCommits,
+.whyUs {
+  opacity: 0;
+  transform: translateY(50px);
+}
+
+/* 3. Wenn TwoBoxSetup “show” hat, starte die Animationen */
+.TwoBoxSetup.show .newestGithubCommits {
+  animation: slideUp 0.6s ease-out forwards;
+}
+
+.TwoBoxSetup.show .whyUs {
+  /* leichte Verzögerung, damit es nacheinander kommt */
+  animation: slideUp 0.6s ease-out 0.2s forwards;
+}

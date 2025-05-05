@@ -3,3 +3,5 @@
 
 Falls sich .DS_Store auch in Unterordnern befindet
 **/.DS_Store
+# Umgebungsvariablen
+.env
