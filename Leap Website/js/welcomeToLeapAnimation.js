@@ -121,3 +121,47 @@ const codeLines = [
       document.querySelector(".TwoBoxSetup").classList.add("show");
     }, { once: true });
   }
+
+  
+
+
+// direkt unter deinen Variablen am Anfang:
+const skipBtn = document.getElementById("skipAnimation");
+skipBtn.addEventListener("click", skipAnimation);
+
+// wenn die Animation startet (z.B. in checkScroll(), direkt bevor typeLine() gerufen wird):
+function checkScroll() {
+  const editor = document.querySelector(".vsc_editor-container");
+  const rect = editor.getBoundingClientRect();
+
+  if (!animationStarted && rect.top <= 0) {
+    animationStarted = true;
+
+    // Skip-Button einblenden
+    skipBtn.classList.add("show");
+
+    typeLine();
+  }
+}
+
+// die Skip-Funktion:
+function skipAnimation() {
+  // 1) Tippen abbrechen
+  currentLine = codeLines.length;  // damit typeLine direkt zum Ende springt
+
+  // 2) Editor ausblenden
+  const editorContainer = document.querySelector(".vsc_editor-container");
+  if (editorContainer) {
+    editorContainer.classList.add("vsc_fade-out");
+  }
+
+  // 3) TwoBoxSetup anzeigen
+  const twoBox = document.querySelector(".TwoBoxSetup");
+  if (twoBox) {
+    twoBox.classList.add("show");
+  }
+
+  // 4) Skip-Button ausblenden
+  skipBtn.classList.remove("show");
+  skipBtn.classList.add("vsc_fade-out");
+}

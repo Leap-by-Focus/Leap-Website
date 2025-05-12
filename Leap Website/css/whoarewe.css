@@ -1,0 +1,191 @@
+/* --- Font & Grundsetup --- */
+@font-face {
+    font-family: "MeineSchriftart";
+    src: url("../assets/font/JetBrainsMono-2/fonts/webfonts/JetBrainsMono-Medium.woff2") format("woff2"),
+         url("../assets/fonts/meine-schriftart.woff") format("woff");
+}
+body {
+    font-family: Arial, sans-serif;
+    margin: 0; padding: 0;
+    background-color: #111;
+}
+
+/* --- VSC-Editor Container für Animation --- */
+.notMain {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    background: #111;
+    overflow: hidden;
+}
+.vsc_editor-container {
+    width: 100vw; height: 100vh;
+    background-color: #111;
+    display: flex; justify-content: center;
+}
+.vsc_editor {
+    display: flex; width: 100%; height: 100%;
+    font-family: Consolas, monospace; font-size: 2vw;
+    line-height: 1.4; color: white; box-sizing: border-box;
+}
+.vsc_editor-lines {
+    display: flex; flex-direction: column; justify-content: flex-start;
+    text-align: right; padding-top: 40px; padding-right: 20px;
+    color: #555; font-size: 2vw; line-height: 1.4;
+    user-select: none;
+}
+.vsc_code-block {
+    flex: 1; padding-top: 8px; padding-right: 40px;
+    white-space: pre-wrap; word-break: break-word;
+    display: flex; flex-direction: column; justify-content: flex-start;
+    font-size: 2vw; line-height: 1.4;
+}
+
+/* --- Syntax-Highlighting wie in VS Code / C# --- */
+.import    { color: #dcdcaa; }
+.keyword   { color: #569CD6; }
+.namespace { color: #4EC9B0; }
+.method    { color: #FFD700; }
+.operator  { color: #D4D4D4; }
+.string    { color: #CE9178; }
+.variable  { color: #9CDCFE; }
+.bracket   { color: #FFFFFF; }
+
+/* --- Typing + Move & Grow Animation --- */
+.animate-helloUser {
+    position: absolute;
+    top: 38.5%;
+    left: 3%;
+    z-index: 9999;
+    color: #ffcc00;
+    font-size: 18px;
+    font-family: monospace;
+    animation: moveAndGrow 2s ease-in-out forwards;
+}
+@keyframes moveAndGrow {
+    0% {
+        top: 21%; left: 3%;
+        transform: scale(1);
+    }
+    100% {
+        top: 5%; left: 40%;
+        transform: scale(2.5);
+    }
+}
+
+/* --- TwoBoxSetup & Fade-Out des Editors --- */
+.TwoBoxSetup {
+    display: none;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 100%; /* nimmt vollen Viewport */
+}
+.TwoBoxSetup.show {
+    display: block;
+    opacity: 1;
+}
+.vsc_fade-out {
+    opacity: 0 !important;
+    transition: opacity 1s ease-in-out !important;
+}
+
+/* --- Skip-Button --- */
+#skipAnimation {
+    position: fixed; bottom: 20px; right: 20px;
+    padding: 8px 12px;
+    font-family: monospace;
+    background: #ffcc00;
+    border: none; border-radius: 4px;
+    cursor: pointer;
+    opacity: 0; transition: opacity 0.5s ease-in-out;
+    z-index: 10000;
+}
+#skipAnimation.show {
+    opacity: 1;
+}
+#skipAnimation.vsc_fade-out {
+    opacity: 0;
+}
+
+/* --- WhoAreWe / TwoBoxSetup Inhalt: Slide-Up Animation --- */
+@keyframes slideUp {
+  from { transform: translateY(50px); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+.newestGithubCommits,
+.whyUs {
+  opacity: 0;
+  transform: translateY(50px);
+}
+.TwoBoxSetup.show .newestGithubCommits {
+  animation: slideUp 0.6s ease-out forwards;
+}
+.TwoBoxSetup.show .whyUs {
+  animation: slideUp 0.6s ease-out 0.2s forwards;
+}
+
+/* --- Newest GitHub Commits Box --- */
+.newestGithubCommits {
+    position: sticky;
+    top: 170px;
+    width: 25%;
+    margin-right: 1%;
+    float: right;
+    border: 1px solid #ccc;
+    background: #222;
+    padding: 1rem;
+    color: white;
+    font-family: monospace;
+}
+.newestGithubCommits h1 {
+    margin-top: 0; font-size: 1.5em;
+}
+.newestGithubCommits ul {
+    list-style: none; padding: 0; margin: 0;
+}
+.newestGithubCommits li {
+    margin: .5em 0;
+    font-size: 0.9em;
+    cursor: default;
+}
+
+/* --- WhoAreWe Text-Sektion --- */
+.whyUs {
+    margin-top: 10%;
+    width: 70%;
+    color: white;
+    font-family: monospace;
+}
+.whyUs .text-column {
+    margin-bottom: 2rem;
+}
+.whyUs h1 {
+    font-size: 2.5em;
+    font-weight: bold;
+}
+.whyUs .gradient-text {
+    background-image: linear-gradient(to right, #50e9ba, #148fac, #e6f0f4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.whyUs h2, .whyUs p {
+    font-size: 1.1em;
+    line-height: 1.5;
+}
+
+/* --- Compare-Container (falls du einen Bildvergleich hast) --- */
+.compare-container {
+  display: flex; align-items: center; justify-content: space-between; gap: 30px;
+}
+.image-compare {
+  position: relative; overflow: hidden;
+  width: 38%; border: 1px solid #ccc;
+  box-shadow: 10px 10px 20px rgba(128,128,128,0.5);
+}
+/* optional: dein Slider-Plugin-Styles hier */
+
+/* --- Footer und Rest (falls nötig) --- */
+/* ... */

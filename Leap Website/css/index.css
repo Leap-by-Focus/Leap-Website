@@ -1074,6 +1074,37 @@ input {
     z-index: 3;
   }
 
+/* Standard: unsichtbar */
+#skipAnimation {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 8px 12px;
+  font-family: monospace;
+  background: #ffcc00;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  z-index: 10000;
+}
+
+/* wird beim Start der Animation hinzugefügt */
+#skipAnimation.show {
+  opacity: 1;
+}
+
+/* zum sanften Ausblenden nach Skip oder Ende */
+#skipAnimation.vsc_fade-out {
+  opacity: 0;
+}
+  
+  .vsc_fade-out {
+    opacity: 0 !important;
+    transition: opacity 0.5s ease-in-out !important;
+  }
+
   .compare-container {
     display: flex;
     align-items: center;
@@ -1171,4 +1202,55 @@ input {
 .TwoBoxSetup.show .whyUs {
   /* leichte Verzögerung, damit es nacheinander kommt */
   animation: slideUp 0.6s ease-out 0.2s forwards;
+}
+
+
+
+
+/* in eurer index.css oder githubCommits.css */
+
+.newestGithubCommits {
+  /* bereits vorhandenes Styling… */
+}
+
+/* Avatar in der Liste */
+.commit-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin-right: 8px;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Wrapper für Avatar-Tooltip */
+.avatar-wrapper {
+  display: inline-block;
+}
+
+/* Tooltip-Text, erst beim Hovern sichtbar */
+.avatar-tooltip {
+  display: none;
+  position: absolute;
+  bottom: 100%; /* direkt oberhalb des Bildes */
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 3px;
+  white-space: nowrap;
+  font-size: 0.75em;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Bei Hover über das Avatar-Wrapper den Tooltip einblenden */
+.avatar-wrapper:hover .avatar-tooltip {
+  display: block;
+}
+
+/* Autor-Name verschwindet beim Hover über die gesamte List-Zeile */
+.newestGithubCommits li:hover .commit-author {
+  display: none;
 }
