@@ -1,67 +1,67 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Who Are We – Leap</title>
-  <!-- Deine Haupt-CSS -->
-  <!-- Falls Du ein eigenes CSS für diese Seite willst -->
-  <link rel="stylesheet" href="../css/index.css" />
-  <!-- ganz unten in whoarewe.html -->
-<script src="../js/whoAreWeAnimation.js" defer></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Leap – Who Are We?</title>
+  <link rel="stylesheet" href="../css/whoarewe.css" />
+  <link rel="stylesheet" href="../css/index.css">
+  <script src="../js/particlesMenu.js" defer></script>
+  <script type="module" src="../js/firebaseauth.js" defer></script>
+  <script src="../js/loginFormularDiv.js" defer></script>
+  <script src="../js/openLogin.js" defer></script>
+  <script src="../js/whoareweAnimation.js" defer></script>
 </head>
 <body>
-
-  <!-- Container für die Typing-Animation -->
-  <div class="notMain">
-    <!-- VSCode-Style Editor -->
-    <div class="vsc_editor-container">
-      <div class="vsc_editor-lines">
-        <!-- Zeilennummern -->
-        <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div>
-        <div>6</div><div>7</div><div>8</div><div>9</div><div>10</div>
-        <div>11</div><div>12</div><div>13</div><div>14</div><div>15</div>
-        <div>16</div><div>17</div><div>18</div><div>19</div>
-      </div>
-      <pre class="vsc_code-block" id="typedCode"></pre>
-    </div>
-
-    <!-- Skip-Button -->
-    <button id="skipAnimation">Skip Animation</button>
-
-    <!-- Dein TwoBoxSetup (GitHub + WhoAreWe) -->
-    <div class="TwoBoxSetup">
-      <!-- Neuesten Commits -->
-      <div class="newestGithubCommits">
-        <h1>Newest GitHub Commits</h1>
-        <ul id="commitList"></ul>
-      </div>
-
-      <!-- Who Are We Section -->
-      <div class="whyUs">
-        <div class="text-column">
-          <h1>Weil du <span class="gradient-text">verstehen</span> willst, was du tust.</h1>
-          <h2>Einfacher Syntax</h2>
-          <h2>Verstehen statt Kopieren</h2>
-          <h2>Sprachbasiert, was du willst</h2>
-          <h2>VSC Integrierbar</h2>
-        </div>
-        <!-- Optional: Bild-Vergleich oder Illustration -->
-        <div class="compare-container">
-          <div class="compare-text1">
-            <p>Leap ist unser Springbrett in die Programmierwelt: klare, deutschsprachige Befehle, keine unnötige Boilerplate und volle VSC-Integration.</p>
-          </div>
-          <div class="image-compare custom-compare">
-            <img src="../assets/images/team_photo.jpg" alt="Unser Team" />
-          </div>
-        </div>
-      </div>
+  <div class="hauptMenu">
+    <canvas id="particleCanvas"></canvas>
+    <div class="backToMainLogo">
+      <a href="index.html">
+        <img src="../assets/images/Leap.png" alt="">
+      </a>
     </div>
   </div>
 
-  <!-- Deine JS für Typing-Animation, Skip-Funktion, GitHub-Fetch, Slider etc. -->
-  <script src="../js/welcomeToLeapAnimation.js" defer></script>
-  <script src="../js/githubCommits.js" defer></script>
-  <script src="../js/moveslider.js" defer></script>
+  <div class="loginDiv">
+    <div class="loginButton" id="loginButton">Login</div>
+    <div class="registerButton" id="registerButton">Register</div>
+    <div class="loginFormularDiv">
+      <form class="loginForm" id="loginForm">
+        <label for="logUsername">Benutzername:</label>
+        <input type="text" id="logUsername" name="username" placeholder="Benutzername" required>
+        <label for="logPassword">Passwort:</label>
+        <input type="password" id="logPassword" placeholder="Passwort" required />
+        <button type="submit" class="submitButton" id="submitbuttonlogin">Anmelden</button>
+        <div id="signInMessage" class="alert"></div>
+      </form>
+    </div>
+    <div class="registerFormularDiv">
+      <form class="registerForm" id="registerForm">
+        <label for="regUsername">Benutzername:</label>
+        <input type="text" id="regUsername" name="username" placeholder="Benutzername" required>
+        <label for="regEmail">Email:</label>
+        <input type="email" id="regEmail" name="email" placeholder="Email" required>
+        <label for="regPassword">Passwort:</label>
+        <input type="password" id="regPassword" placeholder="Passwort" required />
+        <button type="submit" class="submitButton" id="submitbuttonregister">Registrieren</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="userinfo">
+    <div class="character"> Note: Character Bild von SkinLab</div>
+    <div class="welcomeNote"> Willkommen</div>
+    <div class="CharacterName"></div>
+    <div id="submitlogout" class="logoutButton" style="display: none;">⎋ Logout</div>
+  </div>
+  <div id="welcomeMessage" class="welcomeMessage" style="display: none;">
+    <p>Willkommen, <span id="usernameDisplay"></span>!</p>
+  </div>
+  
+  <div class="gradient-transition"></div>
+  <div class="start">
+    <h1 span class="gradient-text">Die Entwickler von Leap</h1>
+
+  </div>
 </body>
 </html>

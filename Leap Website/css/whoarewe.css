@@ -1,191 +1,338 @@
-/* --- Font & Grundsetup --- */
-@font-face {
-    font-family: "MeineSchriftart";
-    src: url("../assets/font/JetBrainsMono-2/fonts/webfonts/JetBrainsMono-Medium.woff2") format("woff2"),
-         url("../assets/fonts/meine-schriftart.woff") format("woff");
-}
+/* 1. Reset für Vollbild (Body + HTML) */
+html,
 body {
-    font-family: Arial, sans-serif;
-    margin: 0; padding: 0;
-    background-color: #111;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
 }
 
-/* --- VSC-Editor Container für Animation --- */
-.notMain {
-    width: 100%;
-    height: 100vh;
-    position: relative;
-    background: #111;
-    overflow: hidden;
-}
-.vsc_editor-container {
-    width: 100vw; height: 100vh;
-    background-color: #111;
-    display: flex; justify-content: center;
-}
-.vsc_editor {
-    display: flex; width: 100%; height: 100%;
-    font-family: Consolas, monospace; font-size: 2vw;
-    line-height: 1.4; color: white; box-sizing: border-box;
-}
-.vsc_editor-lines {
-    display: flex; flex-direction: column; justify-content: flex-start;
-    text-align: right; padding-top: 40px; padding-right: 20px;
-    color: #555; font-size: 2vw; line-height: 1.4;
-    user-select: none;
-}
-.vsc_code-block {
-    flex: 1; padding-top: 8px; padding-right: 40px;
-    white-space: pre-wrap; word-break: break-word;
-    display: flex; flex-direction: column; justify-content: flex-start;
-    font-size: 2vw; line-height: 1.4;
+.welcome
+{
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
 }
 
-/* --- Syntax-Highlighting wie in VS Code / C# --- */
-.import    { color: #dcdcaa; }
-.keyword   { color: #569CD6; }
-.namespace { color: #4EC9B0; }
-.method    { color: #FFD700; }
-.operator  { color: #D4D4D4; }
-.string    { color: #CE9178; }
-.variable  { color: #9CDCFE; }
-.bracket   { color: #FFFFFF; }
-
-/* --- Typing + Move & Grow Animation --- */
-.animate-helloUser {
-    position: absolute;
-    top: 38.5%;
-    left: 3%;
-    z-index: 9999;
-    color: #ffcc00;
-    font-size: 18px;
-    font-family: monospace;
-    animation: moveAndGrow 2s ease-in-out forwards;
-}
-@keyframes moveAndGrow {
-    0% {
-        top: 21%; left: 3%;
-        transform: scale(1);
-    }
-    100% {
-        top: 5%; left: 40%;
-        transform: scale(2.5);
-    }
+/* 2. Gesamt-Styling (Hintergrund, Textfarbe) */
+body {
+  background-color: #14272A;
+  color: #ffffff;
+  font-family: Arial, sans-serif;
 }
 
-/* --- TwoBoxSetup & Fade-Out des Editors --- */
-.TwoBoxSetup {
-    display: none;
-    opacity: 0;
-    transition: opacity 1s ease-in-out;
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 100%; /* nimmt vollen Viewport */
-}
-.TwoBoxSetup.show {
-    display: block;
-    opacity: 1;
-}
-.vsc_fade-out {
-    opacity: 0 !important;
-    transition: opacity 1s ease-in-out !important;
+.start {
+  border-style: solid;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  min-height: calc(100vh - 100px); /* restliche Höhe der Seite */
+  box-sizing: border-box;
+  padding: 1rem;
 }
 
-/* --- Skip-Button --- */
-#skipAnimation {
-    position: fixed; bottom: 20px; right: 20px;
-    padding: 8px 12px;
-    font-family: monospace;
-    background: #ffcc00;
-    border: none; border-radius: 4px;
+.start h1 {
+  font-family: monospace;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #50e9ba; /* Heller Grünton */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.hauptMenu {
+  position: relative;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  background-color: #14272A;
+  z-index: 0;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+}
+
+#particleCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.backToMainLogo img {
+  border-color: gray;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border-style: solid;
+  opacity: 1;
+}
+
+/* Gradient unter dem Menü */
+.gradient-transition {
+  height: 200px;
+  width: 100%;
+  background: linear-gradient(#14272A, white);
+}
+
+.loginDiv {
+  position: fixed;
+  top: 20px !important;
+  right: 30px;
+  background-color: transparent;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 6px;
+  font-family: sans-serif;
+  z-index: 100000;
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+  width: 300px;
+  height: 50px;
+
+  /* NEU */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;}
+.loginButton,
+.registerButton {
+    background-color: #444;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-family: sans-serif;
     cursor: pointer;
-    opacity: 0; transition: opacity 0.5s ease-in-out;
-    z-index: 10000;
-}
-#skipAnimation.show {
-    opacity: 1;
-}
-#skipAnimation.vsc_fade-out {
-    opacity: 0;
-}
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.25s ease-in-out;
 
-/* --- WhoAreWe / TwoBoxSetup Inhalt: Slide-Up Animation --- */
-@keyframes slideUp {
-  from { transform: translateY(50px); opacity: 0; }
-  to   { transform: translateY(0);     opacity: 1; }
-}
-.newestGithubCommits,
-.whyUs {
+    /* Optional: Gleiche Höhe wie loginDiv */
+    height: 60%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1; /* Beide gleich breit */
+    margin: 0 5px; /* Abstand innen */}
+/* Hover-Effekt */
+.loginButton:hover{
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    background-color: green;}
+.registerButton:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    background-color: white;
+    color:black}
+.loginFormularDiv {
+    position: fixed;
+    top: 85px !important;
+    right: 50px;
+    background-color: transparent;
+    color: black;
+    padding: 10px 15px;
+    border-radius: 20px;
+    font-family: sans-serif;
+    z-index: 100000;
+    cursor: pointer;
+    transition: all 0.25s ease-in-out;
+    width: 260px;
+    height: 220px;
+    opacity: 0; /* Unsichtbar */
+    visibility: hidden; /* Formular unsichtbar und nicht interaktiv */
+    transform: translateY(-20px); /* Anfangszustand für die Animation */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color:white;
+    flex-direction: column;
+    padding-top:5px; }
+.loginFormularDiv.open {
+    opacity: 1; /* Sichtbar */
+    visibility: visible; /* Interaktionen möglich */
+    transform: translateY(0); /* Normaler Zustand */
+    background-color: #444; /* Hintergrundfarbe sichtbar */
+    color:white;}
+.loginForm {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;}
+label {
+    font-size: 14px;
+    color:white;
+    font-weight: bolder;
+    text-align: center;}
+input {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #333;
+    font-size: 14px;}
+.submitButton {
+    background-color: #444;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.25s ease-in-out;}
+.submitButton:hover {
+    background-color: green;
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);}
+.registerFormularDiv {
+    position: fixed;
+    top: 85px !important;
+    right: 50px;
+    background-color: transparent;
+    color: black;
+    padding: 10px 15px;
+    border-radius: 20px;
+    font-family: sans-serif;
+    z-index: 100000;
+    cursor: pointer;
+    transition: all 0.25s ease-in-out;
+    width: 260px;
+    height: 300px;  /* Höhe des Formulars */
+    opacity: 0; /* Unsichtbar */
+    visibility: hidden; /* Formular unsichtbar und nicht interaktiv */
+    transform: translateY(-20px); /* Anfangszustand für die Animation */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    flex-direction: column;
+    padding-top: 5px;}
+.registerFormularDiv.open {
+    opacity: 1; /* Sichtbar */
+    visibility: visible; /* Interaktionen möglich */
+    transform: translateY(0); /* Normaler Zustand */
+    background-color: #444; /* Hintergrundfarbe sichtbar */
+    color: white;}
+.registerForm {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;}
+label {
+    font-size: 14px;
+    color: white;
+    font-weight: bolder;
+    text-align: center;}
+input {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #333;
+    font-size: 14px;}
+.submitButton {
+    background-color: #444;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.25s ease-in-out;}
+.submitButton:hover {
+    background-color: green;
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);}
+.userinfo {
+  position: fixed;
+  top: 20px !important;
+  right: 30px;
+  background-color: #333;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 6px;
+  font-family: sans-serif;
+  z-index: 100000;
+  cursor: pointer;
+  width: 300px;
+  height: 50px;
+  display: none;
+
+  display: flex;                /* Flexbox aktivieren */
+  align-items: center;         /* Vertikal zentrieren */
+  justify-content: space-between; /* optional – verteilt Inhalte */}
+/* Button innerhalb .userinfo */
+.userinfo .logout {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;}
+/* Optional – Logout-Button-Stil */
+.logoutButton {
+  position: fixed;
+  right:40px;
+  top:30px !important;
+  width: 70px;
+  height:40px;
+  padding: 6px 10px;
+  background-color: #e74c3c;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 9999;
+  font-weight: bold;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: background-color 0.3s ease;
+  font-size: smaller;
+  display: flex;
+  align-items: center; /* Vertikale Zentrierung */}
+.logoutButton:hover {
+  background-color: #c0392b;}
+.character{
+  position: fixed;
+  width:50px;
+  height:50px !important;
+  display: flex;
+  justify-content: center;
+  background-color: gray;
+  border-radius: 50%;
+  font-size: 8px;}
+.welcomeNote{
+  right:185px !important;
+  position: fixed;
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  top: 30px !important;} 
+.CharacterName {
+  padding-top: 20px;
+  color: white;
+  font-weight: bolder;
+  font-size: 20px;
+  z-index: 1000000;
+  margin-left: 60px !important;
+  margin-right: 85px;
+  text-align: center;
+  font-family: monospace;
+  letter-spacing: 3px;
+  animation: colorRotate 2s linear 0s infinite;
+  
+  overflow: hidden;        /* Verhindert das Überlaufen */
+  white-space: nowrap;     /* Verhindert den Zeilenumbruch */
+  text-overflow: ellipsis; /* Zeigt '...' am Ende an, wenn der Text nicht passt */}
+
+
+
+.start {
+  /* Start bei 1 % */
+  transform: scale(0.01);
   opacity: 0;
-  transform: translateY(50px);
-}
-.TwoBoxSetup.show .newestGithubCommits {
-  animation: slideUp 0.6s ease-out forwards;
-}
-.TwoBoxSetup.show .whyUs {
-  animation: slideUp 0.6s ease-out 0.2s forwards;
+  transform-origin: center center;
+  /* Übergang über 10 Sekunden mit ease-out */
+  transition: transform 2s ease-out, opacity 2s ease-out;
 }
 
-/* --- Newest GitHub Commits Box --- */
-.newestGithubCommits {
-    position: sticky;
-    top: 170px;
-    width: 25%;
-    margin-right: 1%;
-    float: right;
-    border: 1px solid #ccc;
-    background: #222;
-    padding: 1rem;
-    color: white;
-    font-family: monospace;
-}
-.newestGithubCommits h1 {
-    margin-top: 0; font-size: 1.5em;
-}
-.newestGithubCommits ul {
-    list-style: none; padding: 0; margin: 0;
-}
-.newestGithubCommits li {
-    margin: .5em 0;
-    font-size: 0.9em;
-    cursor: default;
-}
 
-/* --- WhoAreWe Text-Sektion --- */
-.whyUs {
-    margin-top: 10%;
-    width: 70%;
-    color: white;
-    font-family: monospace;
-}
-.whyUs .text-column {
-    margin-bottom: 2rem;
-}
-.whyUs h1 {
-    font-size: 2.5em;
-    font-weight: bold;
-}
-.whyUs .gradient-text {
-    background-image: linear-gradient(to right, #50e9ba, #148fac, #e6f0f4);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-.whyUs h2, .whyUs p {
-    font-size: 1.1em;
-    line-height: 1.5;
-}
 
-/* --- Compare-Container (falls du einen Bildvergleich hast) --- */
-.compare-container {
-  display: flex; align-items: center; justify-content: space-between; gap: 30px;
+.gradient-text {
+  position: absolute;
+  top:100px;
+  background-image: linear-gradient(to right, #50e9ba, #148fac, #e6f0f4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: bold;
 }
-.image-compare {
-  position: relative; overflow: hidden;
-  width: 38%; border: 1px solid #ccc;
-  box-shadow: 10px 10px 20px rgba(128,128,128,0.5);
-}
-/* optional: dein Slider-Plugin-Styles hier */
-
-/* --- Footer und Rest (falls nötig) --- */
-/* ... */
