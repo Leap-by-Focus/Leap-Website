@@ -5,6 +5,11 @@ body {
   padding: 0;
   width: 100%;
   height: 100%;
+  
+}
+
+html {
+  scroll-behavior: smooth; /* Sanftes Scrollen */
 }
 
 .welcome
@@ -21,7 +26,6 @@ body {
 }
 
 .start {
-  border-style: solid;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -29,7 +33,6 @@ body {
   text-align: center;
   width: 100%;
   min-height: calc(100vh - 100px); /* restliche Höhe der Seite */
-  box-sizing: border-box;
   padding: 1rem;
 }
 
@@ -317,16 +320,6 @@ input {
 
 
 
-.start {
-  /* Start bei 1 % */
-  transform: scale(0.01);
-  opacity: 0;
-  transform-origin: center center;
-  /* Übergang über 10 Sekunden mit ease-out */
-  transition: transform 2s ease-out, opacity 2s ease-out;
-}
-
-
 
 .gradient-text {
   position: absolute;
@@ -335,4 +328,505 @@ input {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: bold;
+}
+
+
+
+
+.start {
+  transform: scale(0.01);
+  opacity: 0;
+  transform-origin: center center;
+  transition: transform 1.5s ease-out, opacity 3s ease-out;
+}
+
+.start.darkened,
+#start.darkened {
+  background-color: rgba(0, 0, 0, 0.6);
+  transition: background-color 0.5s ease;
+  position: relative;
+}
+
+/* Ursprünglicher Button */
+.next {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px;
+  height: 90px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: linear-gradient(to right, #50e9ba, #148fac, #e6f0f4);
+  border: none;
+  border-radius: 40px;
+  color: black;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 10;
+  overflow: hidden;
+
+  transition:
+  width 0.8s ease-in-out,
+  height 0.8s ease-in-out,
+  top 0.8s ease-in-out,
+  left 0.8s ease-in-out,
+  transform 0.8s ease-in-out,
+  border-radius 0.8s ease-in-out,
+  background-color 0.8s ease-in-out;
+}
+
+
+/* Zielzustand nach Klick */
+.next.expand {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 100vw;
+  height: 100vh;
+  transform: translate(-50%, -50%);
+  border-radius: 0px;
+  background-color: #14272A;
+  z-index: 999;
+}
+
+/* Hover-Effekt */
+.next:hover {
+  transform: translateX(-50%) scale(1.05);
+}
+
+/* Animation beim "Expandieren" */
+.next.expand {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90vw;
+  height: 80vh;
+  border-radius: 20px;
+  z-index: 999;
+  background-color: #14272A;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Der erscheinende Text */
+.fullscreen-text {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: black;
+  font-size: 40px;
+  opacity: 0;
+  z-index: 1000;
+  pointer-events: none;
+  transition: opacity 1s ease-in-out;
+}
+
+.fullscreen-text.show {
+  opacity: 1;
+}
+
+/* Stil des neuen grünen Divs (ersetzt Button) */
+.expandDiv {
+  border: 2px solid black;
+  background-color: green;
+  color: white;
+  padding: 10px;
+  cursor: default;
+}
+
+#expandButton {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px;
+  height: 90px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: linear-gradient(to right, #50e9ba, #148fac, #e6f0f4);
+  border: 2px solid black;
+  border-radius: 40px;
+  color: black;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 10;
+  overflow: hidden;
+
+  transition: 
+    width 0.5s ease-in-out,
+    height 0.5s ease-in-out 0.5s,
+    bottom 0.5s ease-in-out 0.5s,
+    border-radius 0.5s ease-in-out,
+    background-color 0.5s ease-in-out,
+    background-image 0.5s ease-in-out,
+    color 0.5s ease-in-out,
+    border 0.5s ease-in-out;
+}
+
+#expandButton.expanded {
+  width: 90vw;
+  height: 80vh;
+  bottom: 10%;
+  border-radius: 100px;
+
+  background-color: #222;       /* Schwarz als Hintergrund */
+  background-image: none;         /* Gradient Hintergrund weg */
+  border: 100px solid;
+  border-radius: 40px;
+  border-width: 10px;
+  border-image-slice: 1;
+  border-image-source: linear-gradient(to right, #50e9ba, #148fac, #e6f0f4); /* Gradient als Rahmen */
+  
+  color: white;                   /* Textfarbe weiß für besseren Kontrast */
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden; /* verhindert horizontales Scrollen */
+}
+
+
+
+
+
+
+.gallery-container {
+  width: 100%;
+  overflow: hidden;
+  border: 2px solid #50e9ba;
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
+.gallery-track {
+  display: flex;
+  width: max-content;
+  animation: scroll-left 25s linear infinite;
+}
+
+.gallery-item {
+  flex: 0 0 auto;
+  margin-right: 20px;
+}
+
+.gallery-item img {
+  display: block;
+  width: 500px;
+  height: 281px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 3px solid #148fac;
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+
+.gallery img {
+  height: 100%;
+  width: auto; /* proportional */
+  object-fit: contain; /* oder cover */
+}
+
+
+
+#expandedContent {
+  width: 90vw;
+  height: 80vh;
+  display: none;
+  gap: 10px;
+  padding: 10px;
+  box-sizing: border-box;
+  background-color: #14272A;
+  border-radius: 20px;
+  justify-content: center;
+  align-items: center;
+}
+
+.drittel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #222;
+  padding: 10px;
+  border-radius: 10px;
+  overflow: hidden;
+  gap: 10px;
+}
+
+.drittel.reverse {
+  flex-direction: row-reverse;
+}
+
+.text {
+  flex: 1;
+  color: white;
+  font-size: 1.2rem;
+  padding: 10px;
+}
+
+.video {
+  flex: 1;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+
+/* Label sichtbar nur im nicht-expanded Zustand */
+#expandButton .buttonLabel {
+  display: block;
+}
+
+#expandButton.expanded .buttonLabel {
+  display: none;
+}
+
+/* Section (Content) zunächst unsichtbar */
+#expandedContent {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+/* Wenn expanded – zeig die Section */
+#expandButton.expanded #expandedContent {
+  display: flex;
+}
+
+
+#expandedContent {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+/* Nur anzeigen, wenn der Button erweitert ist */
+#expandButton.expanded #expandedContent {
+  display: flex;
+}
+
+/* Verstecke den Text „Weiter“ wenn expanded */
+#expandButton .buttonLabel {
+  display: block;
+}
+
+#expandButton.expanded .buttonLabel {
+  display: none;
+}
+
+#expandedContent {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+/* Wenn Button geöffnet ist */
+#expandButton.expanded #expandedContent {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#expandButton .buttonLabel {
+  display: block;
+}
+
+#expandButton.expanded .buttonLabel {
+  display: none;
+}
+
+#expandButton {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px;
+  height: 90px;
+  background-image: linear-gradient(to right, #50e9ba, #148fac, #e6f0f4);
+  border: 2px solid black;
+  border-radius: 40px;
+  color: black;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 10;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  transition:
+    width 0.5s ease-in-out,
+    height 0.5s ease-in-out,
+    border-radius 0.5s ease-in-out,
+    background-color 0.5s ease-in-out,
+    background-image 0.5s ease-in-out,
+    color 0.5s ease-in-out,
+    border 0.5s ease-in-out;
+}
+
+.buttonLabel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 90px;
+  line-height: 90px;
+  pointer-events: none;
+}
+
+#expandButton.expanded .buttonLabel {
+  display: none;
+}
+
+.expandedContent {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+}
+
+#expandButton.expanded .expandedContent {
+  display: flex;
+}
+
+.drittel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #222;
+  padding: 10px;
+  border-radius: 10px;
+  gap: 10px;
+  width: 100%;
+}
+
+.drittel.reverse {
+  flex-direction: row-reverse;
+}
+
+.text {
+  flex: 1;
+  color: white;
+  font-size: 1.2rem;
+  padding: 10px;
+}
+
+.video {
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  max-width: 300px; /* oder eine andere feste/maximale Breite */
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.texth1 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: white;
+}
+
+.text {
+  font-size: 1.1rem;
+  color: #ddd;
+  margin-top: 0;
+}
+
+
+.drittel {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: #222;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.text-container {
+  display: flex;
+  flex-direction: column; 
+  flex: 1;                 
+  color: white;
+}
+
+
+
+.drittel {
+  position: relative;         /* Wichtig für absolute Positionierung der Überschrift */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #222;
+  padding: 40px 10px 10px;    /* oben mehr Platz, damit Überschrift nicht Text überlappt */
+  border-radius: 10px;
+  gap: 20px;
+  min-height: 200px;          /* Mindesthöhe, damit Platz für Überschrift da ist */
+}
+
+.text-container {
+  flex: 1;
+  padding-top: 30px;          /* Platz unten für Überschrift, damit Text nicht überlappt */
+  color: white;
+  position: relative;         /* für den Text selbst */
+}
+
+.texth1 {
+  position: absolute;         /* Absolut im .drittel positionieren */
+  top: 20px;                  /* oben 10px Abstand */
+  left: 50%;                  /* horizontal in der Mitte */
+  left : 40%;
+  transform: translateX(-50%);
+  font-size: 1.5rem;
+  font-weight: bold;
+  white-space: nowrap;        /* Verhindert Zeilenumbruch */
+  color: white;
+  pointer-events: none;       /* Überschrift klickt sich nicht */
+}
+
+.text {
+  font-size: 1rem;
+  margin-top: 1.5rem;         /* Abstand unter Überschrift */
+  text-align: center;         /* Text zentrieren */
+  max-width: 600px;           /* Optional, damit Text nicht zu breit wird */
+  margin-left: auto;
+  margin-right: auto;
 }
