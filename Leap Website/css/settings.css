@@ -1,0 +1,95 @@
+#topPage {
+  width: 100%;
+  height: 200px;
+  background-color: gray;
+  margin-top: 200px;
+  position: absolute;
+  z-index: 1;
+
+  display: flex;
+  align-items: center;        /* vertikal mittig */
+  justify-content: flex-start;/* nach links */
+  gap: 20px;                  /* Abstand zwischen Bild und Text */
+  padding-left: 20px;
+  color: white;               /* Standardfarbe für Text innen */
+}
+
+#picture {
+  width: 190px;
+  height: 190px;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+  flex: 0 0 auto;
+
+  /* Styles fürs Bild */
+  background: url("/assets/images/newAccount.jpeg") center/cover no-repeat;
+  transition: background-image 0.3s ease;
+
+  /* optional: Rahmen */
+  border: 2px solid black;
+}
+
+/* Hover-Effekt */
+#picture:hover {
+  background-image: url("/assets/images/newAccount-hover.jpeg");
+}
+
+#NicknameShower {
+  display: inline-block;
+  color: white;
+  text-align: left;
+}
+
+#NicknameShower .nickname {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 800;
+}
+
+#NicknameShower .underline {
+  width: 100%;
+  height: 2px;
+  background-color: white;
+  margin: 4px 0; /* Abstand zwischen Name und Strich */
+}
+
+#NicknameShower .memberSince {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 400;
+  color: #ccc;
+}
+
+
+
+
+/* Fallback-Initialen im Kreis (falls kein Bild) */
+.avatar-initials {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: 900; font-size: 44px; letter-spacing: .5px;
+  pointer-events: none;
+}
+
+
+
+.character {
+  position: fixed;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  background-color: #777;       /* Fallback-Farbe */
+  background-size: cover;       /* WICHTIG */
+  background-position: center; 
+  font-size: 8px;
+  cursor: pointer;              /* Hand-Cursor zeigt Klickbarkeit */
+  transition: transform 0.2s ease;
+}
+.character:hover {
+  transform: scale(1.1);
+  background-color: #555;       /* leicht dunkler beim Hover */
+}
