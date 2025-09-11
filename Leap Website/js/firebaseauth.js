@@ -17,12 +17,6 @@ import {
   getDocs,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
-import {
-  getStorage,
-  ref as sRef,
-  uploadBytes,
-  getDownloadURL
-} from "https://www.gstatic.com/firebasejs/11.6.0/firebase-storage.js";
 
 /* =========================================
    Firebase Init
@@ -38,9 +32,8 @@ const firebaseConfig = {
 
 let app;
 try { app = getApp(); } catch { app = initializeApp(firebaseConfig); }
-const auth    = getAuth(app);
-const db      = getFirestore(app);
-const storage = getStorage(app);
+const auth = getAuth(app);
+const db   = getFirestore(app);
 
 /* =========================================
    Helpers
@@ -72,7 +65,6 @@ function setAvatar(el, url, usernameForInitials = "") {
   el.style.backgroundSize = "cover";
   el.style.backgroundPosition = "center";
   el.style.backgroundRepeat = "no-repeat";
-
   const src = url || "/assets/images/newAccount.jpeg";
   el.style.backgroundImage = `url("${src}")`;
 
@@ -93,17 +85,8 @@ function setPicture(el, url) {
   el.style.backgroundRepeat = "no-repeat";
 }
 
-async function updateUserAvatar(uid, file) {
-  const path = `users/${uid}/profile.jpg`; // überschreibt stets dieselbe Datei
-  const ref  = sRef(storage, path);
-  await uploadBytes(ref, file, { contentType: file.type });
-  const url = await getDownloadURL(ref);
-  await setDoc(doc(db, "users", uid), { photoURL: url }, { merge: true });
-  return url;
-}
-
 /* =========================================
-   Registrierung (setzt photoURL auf Default)
+   Registrierung (setzt Default-Avatar)
 ========================================= */
 document.getElementById("submitbuttonregister")?.addEventListener("click", async (e) => {
   e.preventDefault();
@@ -126,7 +109,7 @@ document.getElementById("submitbuttonregister")?.addEventListener("click", async
       email,
       username,
       createdAt: serverTimestamp(),
-      photoURL: "/assets/images/newAccount.jpeg" // Standardbild (root-relativ)
+      photoURL: "/assets/images/newAccount.jpeg" // Standardbild
     });
 
     showMessage("Account erstellt!", "signInMessage", "success");
@@ -170,7 +153,7 @@ document.getElementById("submitbuttonlogin")?.addEventListener("click", async (e
 });
 
 /* =========================================
-   UI / Session Handling (+ Avatar Upload via #picture)
+   UI / Session Handling (ohne Datei-Upload)
 ========================================= */
 window.addEventListener("DOMContentLoaded", async () => {
   const uid      = localStorage.getItem("loggedInUserId");
@@ -179,15 +162,8 @@ window.addEventListener("DOMContentLoaded", async () => {
   const btnOut   = document.getElementById("submitlogout");
   const infoBox  = document.querySelector(".userinfo");
   const charBox  = document.querySelector(".CharacterName");
-  const avatar   = document.getElementById("avatarLink"); // kleines rundes Bild (div.character#avatarLink)
+  const avatar   = document.getElementById("avatarLink"); // kleines rundes Bild
   const picture  = document.getElementById("picture");    // großes Profilbild
-
-  // unsichtbares File-Input für Bild-Upload (einmalig)
-  const fileInput = document.createElement("input");
-  fileInput.type = "file";
-  fileInput.accept = "image/*";
-  fileInput.style.display = "none";
-  document.body.appendChild(fileInput);
 
   if (uid) {
     btnLogin && (btnLogin.style.display = "none");
@@ -200,73 +176,38 @@ window.addEventListener("DOMContentLoaded", async () => {
       if (snap.exists()) {
         const data = snap.data();
         const username = data.username || "Unbekannter Nutzer";
+        // Quelle für Bild: photoURL oder (falls du Keys nutzt) separat in deinem Picker setzen
         const photoURL = data.photoURL || "/assets/images/newAccount.jpeg";
 
         // Username anzeigen
         if (charBox) charBox.textContent = username;
-        document.querySelectorAll(".usernameDisplay").forEach(el => el.textContent = username);
+        document.querySelectorAll(".usernameDisplay").forEach(el => { el.textContent = username; });
 
-        // kleines Avatar (oben)
+        // kleines Avatar (Header)
         if (avatar) {
           setAvatar(avatar, photoURL, username);
           avatar.style.cursor = "pointer";
           avatar.onclick = () => (window.location.href = "../html/settings.html");
         }
 
-        // großes Bild (einmalig, inkl. Hover + Upload)
+        // großes Bild (nur anzeigen + optional Hover, KEIN Upload mehr)
         if (picture) {
-          // Start-URLs
-          let pictureNormal = photoURL;                         // wird nach Upload aktualisiert
-          const pictureHover = "/assets/images/newAccount-hover.jpeg";
+          const normal = photoURL;
+          const hover  = "/assets/images/newAccount-hover.jpeg"; // optional
 
-          // normales Bild setzen
-          setPicture(picture, pictureNormal);
-
-          // Hover-Events (verwenden die VARIABLE pictureNormal)
+          setPicture(picture, normal);
           picture.addEventListener("mouseenter", () => {
-            picture.style.backgroundImage = `url("${pictureHover}")`;
+            picture.style.backgroundImage = `url("${hover}")`;
           });
           picture.addEventListener("mouseleave", () => {
-            picture.style.backgroundImage = `url("${pictureNormal}")`;
+            picture.style.backgroundImage = `url("${normal}")`;
           });
 
-          // Klick → Datei wählen
-          picture.addEventListener("click", () => fileInput.click());
-
-          // Upload-Flow (nur EIN Handler)
-          fileInput.onchange = async () => {
-            const file = fileInput.files?.[0];
-            if (!file) return;
-
-            // simple Checks
-            if (!file.type.startsWith("image/")) {
-              showMessage("Bitte ein Bild auswählen.", "signInMessage");
-              fileInput.value = "";
-              return;
-            }
-            const MAX_MB = 8;
-            if (file.size > MAX_MB * 1024 * 1024) {
-              showMessage(`Bild zu groß (max. ${MAX_MB} MB).`, "signInMessage");
-              fileInput.value = "";
-              return;
-            }
-
-            try {
-              // 1) Upload + URL speichern
-              const newUrl = await updateUserAvatar(uid, file);
-
-              // 2) UI updaten
-              pictureNormal = newUrl;             // <<< WICHTIG: Hover nutzt jetzt neue URL
-              setPicture(picture, pictureNormal); // setzt background + cache-busting
-              if (avatar) setAvatar(avatar, newUrl, username);
-
-              showMessage("Profilbild aktualisiert!", "signInMessage", "success");
-            } catch (e) {
-              console.error(e);
-              showMessage("Upload fehlgeschlagen.", "signInMessage");
-            } finally {
-              fileInput.value = ""; // reset
-            }
+          // KEIN fileInput, KEIN Upload – Klick kann z. B. Avatar-Picker öffnen:
+          picture.onclick = () => {
+            // Öffne hier dein Auswahl-Modal aus settingsAvatarPicker.js
+            // (oder einfach zur Settings-Seite springen)
+            // window.location.href = "../html/settings.html";
           };
         }
 
@@ -278,7 +219,7 @@ window.addEventListener("DOMContentLoaded", async () => {
           if (memberSinceEl) memberSinceEl.textContent = formatted;
         }
       }
-    } catch (e) {
+    } catch {
       if (charBox) charBox.textContent = "Fehler beim Laden";
       if (avatar) setAvatar(avatar, "/assets/images/newAccount.jpeg", "");
       if (picture) setPicture(picture, "/assets/images/newAccount.jpeg");
@@ -304,17 +245,3 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
   });
 });
-
-/* =========================================
-   HINWEIS Storage-Rules (in Firebase Console):
--------------------------------------------
-rules_version = '2';
-service firebase.storage {
-  match /b/{bucket}/o {
-    match /users/{userId}/profile.jpg {
-      allow read: if true; // oder nur für eingeloggte Nutzer
-      allow write: if request.auth != null && request.auth.uid == userId;
-    }
-  }
-}
-========================================= */
