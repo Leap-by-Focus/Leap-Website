@@ -1,41 +1,37 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leap - AI</title>
-    <link rel="stylesheet" href="../css/ai.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Leap - AI</title>
+  <link rel="stylesheet" href="../css/ai.css" />
+  <script src="../js/ai.js" defer></script>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="logo">
-            <a href="index.html">
-                <img href="index.html" src="../assets/images/Leap.png" alt="">
-            </a>
-            <h1>Leap AI</h1>
-        </div>
-    </header>
-
-    <!-- Chatbereich -->
-    <div class="chat-container">
-        <div class="message-box" id="messageBox">
-            <!-- AI Antworten und Benutzer Nachrichten kommen hierhin -->
-        </div>
-
-        <div class="input-container">
-            <textarea id="userInput" placeholder="Stelle deine Frage oder schreibe eine Nachricht..." rows="3"></textarea>
-            
-            <!-- Datei-Upload und Nachricht -->
-            <div class="buttons">
-                <input type="file" id="imageUpload" accept="image/*" />
-                <button id="sendMessage">Senden</button>
-            </div>
-        </div>
+  <header>
+    <div class="logo">
+      <a href="index.html" aria-label="Zur Startseite">
+        <img src="../assets/images/Leap.png" alt="Leap Logo" />
+      </a>
+      <h1>Leap AI</h1>
     </div>
+  </header>
 
-    
+  <main class="chat-container" aria-live="polite">
+    <div class="message-box" id="messageBox" role="log" aria-live="polite" aria-relevant="additions"></div>
+
+    <div class="input-container">
+      <label class="visually-hidden" for="userInput">Nachricht</label>
+      <textarea id="userInput" placeholder="Stelle deine Frage oder schreibe eine Nachricht..." rows="3"></textarea>
+
+      <div class="buttons">
+        <label class="file-label">
+          <input type="file" id="imageUpload" accept="image/*" />
+          Bild auswählen
+        </label>
+        <button id="sendMessage" type="button">Senden</button>
+      </div>
+    </div>
+  </main>
 </body>
-    <script src="../js/ai.js" defer></script> <!-- Dein Partikel Skript -->
-
 </html>
