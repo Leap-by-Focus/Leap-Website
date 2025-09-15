@@ -13,7 +13,28 @@
   <script src="../js/particlesMenu.js" defer></script>
   <script src="../js/settingsNicknameShower.js" defer></script>
   <script type="module" src="../js/settingsAvatarPicker.js" defer></script>
+<script type="module" src="../js/settingsAchievementsPicker.js" defer></script>
+<script type="module" src="../js/badges.js" defer></script>
+<script type="module" src="../js/settingsEditUsername.js" defer></script>
   </head>
+
+
+
+
+<!-- LAUNCHDATE in badges.js auf echten LaunchTag setzen -->
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   <body>
       <div class="hauptMenu">
@@ -62,17 +83,62 @@
 
 <div id="topPage">
   <div id="picture"></div>
-<div id="NicknameShower">
-  <p class="nickname">
-    Willkommen, <span class="usernameDisplay"></span>!
-  </p>
-  <div class="underline"></div>
-  <p class="memberSince">
-    Member seit: <span id="memberSince"></span>
-  </p>
+
+  <div id="NicknameShower">
+    <p class="nickname">
+      Willkommen, <span class="usernameDisplay"></span>!
+    </p>
+    <div class="underline"></div>
+    <p class="memberSince">
+      Member seit: <span id="memberSince"></span>
+    </p>
+
+    <!-- ✅ HIERHIN verschoben: Achievements direkt unter 'Member seit' -->
+    <div class="achievements-wrapper">
+      <p class="achievements-title">Achievements</p>
+      <div class="achievements-section">
+        <div class="achievements">
+          <img src="../assets/images/achivments_placeholder.png" alt="Achievement 1" class="badge">
+          <img src="../assets/images/achivments_placeholder.png" alt="Achievement 2" class="badge">
+          <img src="../assets/images/achivments_placeholder.png" alt="Achievement 3" class="badge">
+        </div>
+        <button id="manageAchievements">⚙️</button>
+      </div>
+    </div>
+  </div>
 </div>
 
+<div class="main">
+  <div class="nicknameshower">
+  <span class="usernameDisplay">DeinName</span>
+  <button class="edit-username-btn">✏️ Bearbeiten</button>
+</div> 
+<div id="edit-username-modal" class="modal-overlay" style="display:none;">
+  <div class="modal-content">
+    <h2>Benutzernamen bearbeiten</h2>
+    <input type="text" id="new-username" placeholder="Neuer Benutzername" />
+    <div class="modal-actions">
+      <button id="save-username">Speichern</button>
+      <button id="cancel-username">Abbrechen</button>
+    </div>
+  </div>
 </div>
+
+<div id="cooldown-username-modal" class="modal-overlay" style="display:none;">
+  <div class="modal-content">
+    <h2>Änderung noch nicht möglich</h2>
+    <p id="cooldown-username-text">
+      Du kannst deinen Namen erst wieder in X Tagen ändern.
+    </p>
+    <div class="modal-actions">
+      <button id="cooldown-username-ok">Ok</button>
+    </div>
+  </div>
+</div>
+
+
+</div>
+
 
 
   </body>
