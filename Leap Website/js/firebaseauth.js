@@ -1,10 +1,11 @@
-// firebaseauth.js
+// js/firebaseauth.js
 import { initializeApp, getApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
 import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  signOut
+  signOut,
+  fetchSignInMethodsForEmail
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
 import {
   getFirestore,
@@ -18,26 +19,24 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
-/* =========================================
-   Firebase Init
-========================================= */
+// ⚠️ üblich: "<projectId>.appspot.com"
 const firebaseConfig = {
   apiKey: "AIzaSyBGs1Xx3VH2XZHT-k12Xsf_1Nz0gJBNB-Y",
   authDomain: "leap-001.firebaseapp.com",
   projectId: "leap-001",
-  storageBucket: "leap-001.firebasestorage.app",
+  storageBucket: "leap-001.appspot.com",
   messagingSenderId: "177255891538",
   appId: "1:177255891538:web:9a7cc6d28f874aadc7d58b"
 };
 
 let app;
 try { app = getApp(); } catch { app = initializeApp(firebaseConfig); }
-const auth = getAuth(app);
-const db   = getFirestore(app);
 
-/* =========================================
-   Helpers
-========================================= */
+export const auth = getAuth(app);
+export const db   = getFirestore(app);
+auth.languageCode = "de";
+
+/* Helpers */
 function showMessage(msg, divId, type = "error") {
   const el = document.getElementById(divId);
   if (!el) return;
@@ -67,7 +66,6 @@ function setAvatar(el, url, usernameForInitials = "") {
   el.style.backgroundRepeat = "no-repeat";
   const src = url || "/assets/images/newAccount.jpeg";
   el.style.backgroundImage = `url("${src}")`;
-
   if (!url) {
     const span = document.createElement("span");
     span.className = "avatar-initials";
@@ -85,9 +83,7 @@ function setPicture(el, url) {
   el.style.backgroundRepeat = "no-repeat";
 }
 
-/* =========================================
-   Registrierung (setzt Default-Avatar)
-========================================= */
+/* Registrierung */
 document.getElementById("submitbuttonregister")?.addEventListener("click", async (e) => {
   e.preventDefault();
   const email    = document.getElementById("regEmail").value.trim();
@@ -109,7 +105,7 @@ document.getElementById("submitbuttonregister")?.addEventListener("click", async
       email,
       username,
       createdAt: serverTimestamp(),
-      photoURL: "/assets/images/newAccount.jpeg" // Standardbild
+      photoURL: "/assets/images/newAccount.jpeg"
     });
 
     showMessage("Account erstellt!", "signInMessage", "success");
@@ -120,41 +116,61 @@ document.getElementById("submitbuttonregister")?.addEventListener("click", async
   }
 });
 
-/* =========================================
-   Login per Username
-========================================= */
-document.getElementById("submitbuttonlogin")?.addEventListener("click", async (e) => {
+/* Login per Benutzername ODER E-Mail (Form-Submit) */
+document.querySelector(".loginForm")?.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const username = document.getElementById("logUsername").value.trim();
-  const pw       = document.getElementById("logPassword").value;
+  const usernameOrEmail = document.getElementById("logUsername").value.trim();
+  const pw              = document.getElementById("logPassword").value;
 
-  if (!username || !pw) {
-    showMessage("Bitte Benutzername & Passwort eingeben.", "signInMessage");
+  if (!usernameOrEmail || !pw) {
+    showMessage("Bitte Benutzername/E-Mail & Passwort eingeben.", "signInMessage");
     return;
   }
 
   try {
-    const usersRef = collection(db, "users");
-    const q = query(usersRef, where("username", "==", username));
-    const snap = await getDocs(q);
-    if (snap.empty) {
-      showMessage("Benutzername existiert nicht.", "signInMessage");
-      return;
-    }
-    const { email } = snap.docs[0].data();
+    let emailToUse = usernameOrEmail;
 
-    const cred = await signInWithEmailAndPassword(auth, email, pw);
+    // Kein @ → als Benutzername behandeln
+    if (!usernameOrEmail.includes("@")) {
+      const usersRef = collection(db, "users");
+      const q = query(usersRef, where("username", "==", usernameOrEmail));
+      const snap = await getDocs(q);
+      if (snap.empty) {
+        showMessage("Benutzername existiert nicht.", "signInMessage");
+        return;
+      }
+      emailToUse = snap.docs[0].data()?.email;
+      if (!emailToUse) {
+        showMessage("Zu diesem Benutzer ist keine E-Mail gespeichert.", "signInMessage");
+        return;
+      }
+    }
+
+    // Optionaler Check – zur Klarheit kann man ihn auch entfernen:
+    // const methods = await fetchSignInMethodsForEmail(auth, emailToUse);
+    // if (!methods.includes("password")) {
+    //   showMessage("Für diese E-Mail ist keine Passwort-Anmeldung aktiv.", "signInMessage");
+    //   return;
+    // }
+
+    const cred = await signInWithEmailAndPassword(auth, emailToUse, pw);
     showMessage("Login erfolgreich!", "signInMessage", "success");
     localStorage.setItem("loggedInUserId", cred.user.uid);
     window.location.href = "index.html";
   } catch (err) {
-    showMessage("Fehler beim Login: " + err.message, "signInMessage");
+    const map = {
+      "auth/invalid-credential": "E-Mail oder Passwort ist falsch.",
+      "auth/wrong-password":     "Passwort ist falsch.",
+      "auth/user-not-found":     "Kein Konto mit dieser E-Mail.",
+      "auth/too-many-requests":  "Zu viele Versuche. Bitte später erneut.",
+      "auth/network-request-failed": "Netzwerkfehler. Prüfe deine Verbindung."
+    };
+    showMessage(map[err?.code] || ("Fehler beim Login: " + (err?.message || String(err))), "signInMessage");
+    console.error("[login]", err);
   }
 });
 
-/* =========================================
-   UI / Session Handling (ohne Datei-Upload)
-========================================= */
+/* UI / Session */
 window.addEventListener("DOMContentLoaded", async () => {
   const uid      = localStorage.getItem("loggedInUserId");
   const btnLogin = document.getElementById("loginButton");
@@ -162,8 +178,8 @@ window.addEventListener("DOMContentLoaded", async () => {
   const btnOut   = document.getElementById("submitlogout");
   const infoBox  = document.querySelector(".userinfo");
   const charBox  = document.querySelector(".CharacterName");
-  const avatar   = document.getElementById("avatarLink"); // kleines rundes Bild
-  const picture  = document.getElementById("picture");    // großes Profilbild
+  const avatar   = document.getElementById("avatarLink");
+  const picture  = document.getElementById("picture");
 
   if (uid) {
     btnLogin && (btnLogin.style.display = "none");
@@ -176,42 +192,25 @@ window.addEventListener("DOMContentLoaded", async () => {
       if (snap.exists()) {
         const data = snap.data();
         const username = data.username || "Unbekannter Nutzer";
-        // Quelle für Bild: photoURL oder (falls du Keys nutzt) separat in deinem Picker setzen
         const photoURL = data.photoURL || "/assets/images/newAccount.jpeg";
 
-        // Username anzeigen
         if (charBox) charBox.textContent = username;
         document.querySelectorAll(".usernameDisplay").forEach(el => { el.textContent = username; });
 
-        // kleines Avatar (Header)
         if (avatar) {
           setAvatar(avatar, photoURL, username);
           avatar.style.cursor = "pointer";
           avatar.onclick = () => (window.location.href = "../html/settings.html");
         }
 
-        // großes Bild (nur anzeigen + optional Hover, KEIN Upload mehr)
         if (picture) {
           const normal = photoURL;
-          const hover  = "/assets/images/newAccount-hover.jpeg"; // optional
-
+          const hover  = "/assets/images/newAccount-hover.jpeg";
           setPicture(picture, normal);
-          picture.addEventListener("mouseenter", () => {
-            picture.style.backgroundImage = `url("${hover}")`;
-          });
-          picture.addEventListener("mouseleave", () => {
-            picture.style.backgroundImage = `url("${normal}")`;
-          });
-
-          // KEIN fileInput, KEIN Upload – Klick kann z. B. Avatar-Picker öffnen:
-          picture.onclick = () => {
-            // Öffne hier dein Auswahl-Modal aus settingsAvatarPicker.js
-            // (oder einfach zur Settings-Seite springen)
-            // window.location.href = "../html/settings.html";
-          };
+          picture.addEventListener("mouseenter", () => { picture.style.backgroundImage = `url("${hover}")`; });
+          picture.addEventListener("mouseleave", () => { picture.style.backgroundImage = `url("${normal}")`; });
         }
 
-        // Member seit
         if (data.createdAt) {
           const d = data.createdAt.toDate ? data.createdAt.toDate() : new Date(data.createdAt);
           const formatted = d.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" });
@@ -234,7 +233,6 @@ window.addEventListener("DOMContentLoaded", async () => {
     if (picture) { picture.onclick = null; }
   }
 
-  // Logout
   btnOut?.addEventListener("click", async () => {
     try {
       await signOut(auth);

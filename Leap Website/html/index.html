@@ -18,7 +18,7 @@
     <script src="https://unpkg.com/image-compare-viewer/dist/image-compare-viewer.min.js" defer ></script>
     <script src="../js/animationMain.js" defer></script>
     <script src="../js/newestGithubCommits.js" defer></script>
-
+    <script type="module" src="../js/resetPassword.js"></script>
 
 
 </head>
@@ -32,16 +32,49 @@
             <div class="loginButton" id="loginButton">Login</div>
             <div class="registerButton" id="registerButton">Register</div>
 
-            <div class="loginFormularDiv">
-                <form class="loginForm" id="loginForm">
-                    <label for="logUsername">Benutzername:</label>
-                    <input type="text" id="logUsername" name="username" placeholder="Benutzername" required>
-                    <label for="logPassword">Passwort:</label>
-                    <input type="password" id="logPassword" placeholder="Passwort" required />
-                    <button type="submit" class="submitButton" id="submitbuttonlogin">Anmelden</button>
-                    <div id="signInMessage" class="alert"></div>
-                </form>
-            </div>
+ <div class="loginFormularDiv" id="loginFormular">
+  <form class="loginForm">
+    <label for="logUsername">Benutzername:</label>
+    <input type="text" id="logUsername" required>
+    <label for="logPassword">Passwort:</label>
+    <input type="password" id="logPassword" required>
+   <button type="submit" class="submitButton" id="submitbuttonlogin">Anmelden</button>
+    <div id="signInMessage" class="alert"></div>
+  </form>
+  <div class="reset-password-link">
+    <a href="#" id="forgotLink">Passwort vergessen?</a>
+  </div>
+</div>
+
+<div class="resetFormularDiv" id="resetFormular">
+  <form class="loginForm" id="resetForm">
+    <!-- Phase A -->
+    <div id="phase-request">
+      <label for="resetEmail">E-Mail-Adresse:</label>
+        <input type="email" id="resetEmail" name="resetEmail" placeholder="dein@mail.tld" required />
+      <button type="submit" class="submitButton" id="btnSendReset">Link zum Zurücksetzen senden</button>
+    </div>
+
+    <!-- Phase B (über E-Mail-Link sichtbar) -->
+    <div id="phase-set" style="display:none">
+      <p id="emailLine" class="muted"></p>
+
+      <label for="pw1">Neues Passwort:</label>
+     <input type="password" id="pw1" name="newPassword" minlength="6" autocomplete="new-password" required />
+
+      <label for="pw2">Neues Passwort wiederholen:</label>
+      <input type="password" id="pw2" name="newPasswordRepeat" minlength="6" autocomplete="new-password" required />
+
+      <button type="submit" class="submitButton" id="btnConfirmReset">Passwort speichern</button>
+    </div>
+
+    <div id="resetMessage" class="alert"></div>
+
+    <div class="reset-actions">
+      <button type="button" class="textButton" id="backToLogin">← Zurück zum Login</button>
+    </div>
+  </form>
+</div>
 
             <div class="registerFormularDiv">
                 <form class="registerForm" id="registerForm">

@@ -1,53 +1,72 @@
-document.querySelector('.loginButton').addEventListener('click', function() {
-    const loginFormularDiv = document.querySelector('.loginFormularDiv');
-    const registerFormularDiv = document.querySelector('.registerFormularDiv');
+(function() {
+  const body = document.body;
+  const loginBtn = document.querySelector('.loginButton');
+  const registerBtn = document.querySelector('.registerButton');
+  const forgotLink = document.getElementById('forgotLink');
+  const backToLogin = document.getElementById('backToLogin');
 
-    // Wenn das Login-Formular sichtbar ist, schließen
-    if (loginFormularDiv.style.opacity === '1') {
-        loginFormularDiv.style.opacity = '0';
-        loginFormularDiv.style.visibility = 'hidden';
-        loginFormularDiv.style.transform = 'translateY(-20px)';
-        loginFormularDiv.style.backgroundColor = 'transparent';
+  // Panels
+  const loginPanel = document.getElementById('loginFormular');
+  const registerPanel = document.querySelector('.registerFormularDiv');
+  const resetPanel = document.getElementById('resetFormular');
+
+  // Hilfsfunktionen
+  function hideAll() {
+    loginPanel.classList.remove('open');
+    registerPanel.classList.remove('open');
+    resetPanel.classList.remove('open');
+  }
+
+  function show(panel) {
+    hideAll();
+    panel.classList.add('open');
+  }
+
+  // Events
+  loginBtn.addEventListener('click', () => {
+    if (loginPanel.classList.contains('open')) {
+      hideAll();
     } else {
-        // Wenn das Login-Formular unsichtbar ist, anzeigen
-        loginFormularDiv.style.opacity = '1';
-        loginFormularDiv.style.visibility = 'visible';
-        loginFormularDiv.style.transform = 'translateY(0)';
-        loginFormularDiv.style.backgroundColor = '#444'; // Hintergrundfarbe
+      show(loginPanel);
     }
+  });
 
-    // Wenn das Register-Formular sichtbar ist, schließen
-    if (registerFormularDiv.style.opacity === '1') {
-        registerFormularDiv.style.opacity = '0';
-        registerFormularDiv.style.visibility = 'hidden';
-        registerFormularDiv.style.transform = 'translateY(-20px)';
-        registerFormularDiv.style.backgroundColor = 'transparent';
-    }
-});
-
-document.querySelector('.registerButton').addEventListener('click', function() {
-    const loginFormularDiv = document.querySelector('.loginFormularDiv');
-    const registerFormularDiv = document.querySelector('.registerFormularDiv');
-
-    // Wenn das Register-Formular sichtbar ist, schließen
-    if (registerFormularDiv.style.opacity === '1') {
-        registerFormularDiv.style.opacity = '0';
-        registerFormularDiv.style.visibility = 'hidden';
-        registerFormularDiv.style.transform = 'translateY(-20px)';
-        registerFormularDiv.style.backgroundColor = 'transparent';
+  registerBtn.addEventListener('click', () => {
+    if (registerPanel.classList.contains('open')) {
+      hideAll();
     } else {
-        // Wenn das Register-Formular unsichtbar ist, anzeigen
-        registerFormularDiv.style.opacity = '1';
-        registerFormularDiv.style.visibility = 'visible';
-        registerFormularDiv.style.transform = 'translateY(0)';
-        registerFormularDiv.style.backgroundColor = '#444'; // Hintergrundfarbe
+      show(registerPanel);
     }
+  });
 
-    // Wenn das Login-Formular sichtbar ist, schließen
-    if (loginFormularDiv.style.opacity === '1') {
-        loginFormularDiv.style.opacity = '0';
-        loginFormularDiv.style.visibility = 'hidden';
-        loginFormularDiv.style.transform = 'translateY(-20px)';
-        loginFormularDiv.style.backgroundColor = 'transparent';
+  forgotLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    show(resetPanel);
+  });
+
+  backToLogin.addEventListener('click', () => {
+    show(loginPanel);
+  });
+
+  // ESC-Taste schließt alle Panels
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      hideAll();
     }
-});
+  });
+
+  // Klick außerhalb schließt alle Panels
+  document.addEventListener('click', (e) => {
+    const target = e.target;
+    if (
+      !loginPanel.contains(target) &&
+      !registerPanel.contains(target) &&
+      !resetPanel.contains(target) &&
+      !loginBtn.contains(target) &&
+      !registerBtn.contains(target) &&
+      !forgotLink.contains(target)
+    ) {
+      hideAll();
+    }
+  });
+})();

@@ -498,7 +498,7 @@ footer {
     cursor: pointer;
     transition: all 0.25s ease-in-out;
     width: 260px;
-    height: 220px;
+    height: 250px;
     opacity: 0; /* Unsichtbar */
     visibility: hidden; /* Formular unsichtbar und nicht interaktiv */
     transform: translateY(-20px); /* Anfangszustand für die Animation */
@@ -516,6 +516,11 @@ footer {
     transform: translateY(0); /* Normaler Zustand */
     background-color: #444; /* Hintergrundfarbe sichtbar */
     color:white;
+}
+.loginFormularDiv.hidden {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-20px);
 }
 
 .loginForm {
@@ -627,12 +632,105 @@ input {
     transition: all 0.25s ease-in-out;
 }
 
+#resetEmail
+{
+  width:90%;
+  margin-bottom:20px;
+}
+
 .submitButton:hover {
     background-color: green;
     transform: scale(1.05);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
 }
 
+/* Link unter Login */
+.reset-password-link {
+  width: 100%;
+  margin-top: 8px;
+  text-align: center;
+}
+.reset-password-link a {
+  color: #9dd7ff;
+  text-decoration: none;
+  font-size: 14px;
+}
+.reset-password-link a:hover { text-decoration: underline; }
+
+.resetFormularDiv {
+    position: fixed;
+    top: 155px;           /* identisch zu .loginFormularDiv */
+    right: 50px;          /* identisch */
+    width: 260px;
+    height: 190px;
+    background-color: #444;
+    color: white;
+    border-radius: 20px;
+    padding: 10px 15px;
+    font-family: sans-serif;
+    z-index: 100000;
+    transition: all 0.25s ease-in-out;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-20px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 5px;
+}
+
+.resetFormularDiv.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  background-color: #444;
+}
+.muted{color:#bbb;font-size:.9rem}
+
+/* Standard: beide Panels unsichtbar */
+.loginFormularDiv,
+.resetFormularDiv {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-20px);
+  transition: all 0.25s ease-in-out;
+}
+
+/* Login sichtbar */
+.show-login .loginFormularDiv {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  background-color: #444;
+}
+
+/* Reset sichtbar */
+.show-reset .resetFormularDiv {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  background-color: #444;
+}
+
+.textButton {
+  background: transparent;
+  color: #9dd7ff;          /* helles Blau für Kontrast */
+  border: 1px solid #9dd7ff;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+  width:100%;
+}
+
+.textButton:hover {
+  background-color: #9dd7ff;
+  color: #222;             /* dunkler Text bei Hover */
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
 
 
 .socialButtons {
