@@ -1,80 +1,323 @@
 <!DOCTYPE html>
 <html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leap Forum</title>
-    <link rel="stylesheet" href="../css/forum.css">
-    <script src="../js/lightMode.js" defer></script>
-</head>
-<body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Leap – Forum</title>
 
-    <!-- Header -->
-    <header>
-        <div class="logo">
-        </div>
-    
-        <div class="logo">
-            <a href="index.html">
-                <img src="../assets/images/Leap.png" alt="Leap Logo">
-            </a>
-        </div>
-    
-        <nav>
-            <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Forum</a></li>
-                <li><a href="#">Support</a></li>
-                <li><a href="#">Login</a></li>
-            </ul>
-            
-        </nav>
-    
-        <!-- Hier kommt dein Button für Light/Dark Mode -->
-         <div class="lightMode">
-            <button id="modeToggle" style="margin-top:10px;">🌙 Dark/Light Mode</button>
-         </div>
-        
-    </header>
+    <link rel="stylesheet" href="../css/whoarewe.css" />
+    <link rel="stylesheet" href="../css/index.css" />
+    <link rel="stylesheet" href="../css/forum.css" />
 
-    <h1>Leap - Community Forum</h1>
+    <script src="../js/particlesMenu.js" defer></script>
+    <script type="module" src="../js/firebaseauth.js" defer></script>
+    <script src="../js/loginFormularDiv.js" defer></script>
+    <script src="../js/openLogin.js" defer></script>
+    <script src="../js/whoareweAnimation.js" defer></script>
+    <script src="../js/expandButton.js" defer></script>
+  </head>
 
-    <!-- Main Content -->
-    <div class="container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <h2>Categories</h2>
-            <ul>
-                <li><a href="#">General Discussion</a></li>
-                <li><a href="#">Help & Support</a></li>
-                <li><a href="#">Programming</a></li>
-                <li><a href="#">Feedback</a></li>
-            </ul>
-        </aside>
-
-        <!-- Forum Posts -->
-        <main class="forum-posts">
-            <h2>Recent Forum Posts</h2>
-            <div class="post">
-                <h3><a href="#">How to get started with Leap?</a></h3>
-                <p>Posted by User1 - 10 minutes ago</p>
-            </div>
-            <div class="post">
-                <h3><a href="#">Leap Syntax Guide</a></h3>
-                <p>Posted by User2 - 1 hour ago</p>
-            </div>
-            <div class="post">
-                <h3><a href="#">Error handling in Leap</a></h3>
-                <p>Posted by User3 - 2 hours ago</p>
-            </div>
-            <button class="new-post-btn">Create New Post</button>
-        </main>
+  <body>
+    <div class="hauptMenu">
+      <canvas id="particleCanvas"></canvas>
+      <div class="backToMainLogo">
+        <a href="index.html">
+          <img src="../assets/images/Leap.png" alt="" />
+        </a>
+      </div>
     </div>
 
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2025 Leap by Focus. All rights reserved.</p>
-    </footer>
+    <div class="loginDiv">
+      <div class="loginButton" id="loginButton">Login</div>
+      <div class="registerButton" id="registerButton">Register</div>
 
-</body>
+      <div class="loginFormularDiv" id="loginFormular">
+        <form class="loginForm">
+          <label for="logUsername">Benutzername:</label>
+          <input type="text" id="logUsername" required />
+          <label for="logPassword">Passwort:</label>
+          <input type="password" id="logPassword" required />
+          <button type="submit" class="submitButton" id="submitbuttonlogin">
+            Anmelden
+          </button>
+          <div id="signInMessage" class="alert"></div>
+        </form>
+        <div class="reset-password-link">
+          <a href="#" id="forgotLink">Passwort vergessen?</a>
+        </div>
+      </div>
+
+      <div class="resetFormularDiv" id="resetFormular">
+        <form class="loginForm" id="resetForm">
+          <!-- Phase A -->
+          <div id="phase-request">
+            <label for="resetEmail">E-Mail-Adresse:</label>
+            <input
+              type="email"
+              id="resetEmail"
+              name="resetEmail"
+              placeholder="dein@mail.tld"
+              required
+            />
+            <button type="submit" class="submitButton" id="btnSendReset">
+              Link zum Zurücksetzen senden
+            </button>
+          </div>
+
+          <!-- Phase B (über E-Mail-Link sichtbar) -->
+          <div id="phase-set" style="display: none">
+            <p id="emailLine" class="muted"></p>
+
+            <label for="pw1">Neues Passwort:</label>
+            <input
+              type="password"
+              id="pw1"
+              name="newPassword"
+              minlength="6"
+              autocomplete="new-password"
+              required
+            />
+
+            <label for="pw2">Neues Passwort wiederholen:</label>
+            <input
+              type="password"
+              id="pw2"
+              name="newPasswordRepeat"
+              minlength="6"
+              autocomplete="new-password"
+              required
+            />
+
+            <button type="submit" class="submitButton" id="btnConfirmReset">
+              Passwort speichern
+            </button>
+          </div>
+
+          <div id="resetMessage" class="alert"></div>
+
+          <div class="reset-actions">
+            <button type="button" class="textButton" id="backToLogin">
+              ← Zurück zum Login
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="registerFormularDiv">
+        <form class="registerForm" id="registerForm">
+          <label for="regUsername">Benutzername:</label>
+          <input
+            type="text"
+            id="regUsername"
+            name="username"
+            placeholder="Benutzername"
+            required
+          />
+          <label for="regEmail">Email:</label>
+          <input
+            type="email"
+            id="regEmail"
+            name="email"
+            placeholder="Email"
+            required
+          />
+          <label for="regPassword">Passwort:</label>
+          <input
+            type="password"
+            id="regPassword"
+            placeholder="Passwort"
+            required
+          />
+          <button type="submit" class="submitButton" id="submitbuttonregister">
+            Registrieren
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="userinfo">
+      <div class="character" id="avatarLink"></div>
+      <div class="welcomeNote">Willkommen</div>
+      <div class="CharacterName"></div>
+      <div id="submitlogout" class="logoutButton" style="display: none">
+        ⎋ Logout
+      </div>
+    </div>
+
+    <!-- Willkommen-Text, wird nur angezeigt, wenn der Benutzer eingeloggt ist -->
+    <div id="welcomeMessage" class="welcomeMessage" style="display: none">
+      <p>Willkommen, <span id="usernameDisplay"></span>!</p>
+    </div>
+
+    <div class="gradient-transition"></div>
+
+    <div class="sideMenu">
+      <div class="sideMenu">
+        <button class="buttonBeliebt">
+          <img
+            src="../assets/images/beliebt.png"
+            alt="Beliebt Icon"
+            class="button-icon"
+          />
+          <span>Beliebt</span>
+        </button>
+
+        <div class="divider"></div>
+
+        <div class="untertitel">Leap</div>
+
+        <button>
+          <img
+            src="../assets/images/fragen.png"
+            alt="Fragen Icon"
+            class="button-icon"
+          />
+          <span>Fragen & Hilfe</span>
+        </button>
+
+        <button>
+          <img
+            src="../assets/images/leap-projekte.png"
+            alt="Projekte Icon"
+            class="button-icon"
+          />
+          <span>Leap-Projekte</span>
+        </button>
+
+        <div class="divider"></div>
+
+        <div class="untertitel">Community</div>
+
+        <button>
+          <img
+            src="../assets/images/diskussion.png"
+            alt="Diskussion Icon"
+            class="button-icon"
+          />
+          <span>Diskussion</span>
+        </button>
+
+        <button>
+          <img
+            src="../assets/images/bugs.png"
+            alt="Bugs Icon"
+            class="button-icon"
+          />
+          <span>Fehler & Bugs</span>
+        </button>
+
+        <button>
+          <img
+            src="../assets/images/feedback.png"
+            alt="Feedback Icon"
+            class="button-icon"
+          />
+          <span>Feedback</span>
+        </button>
+
+        <button>
+          <img
+            src="../assets/images/memes.png"
+            alt="Memes Icon"
+            class="button-icon"
+          />
+          <span>Memes & Spaß</span>
+        </button>
+
+        <div class="divider"></div>
+
+        <div class="untertitel">Programmieren</div>
+
+        <button>
+          <img
+            src="../assets/images/java.png"
+            alt="Java Icon"
+            class="button-icon"
+          />
+          <span>Java</span>
+        </button>
+
+        <button>
+          <img
+            src="../assets/images/csharp.png"
+            alt="C# Icon"
+            class="button-icon"
+          />
+          <span>C#</span>
+        </button>
+
+        <button>
+          <img
+            src="../assets/images/python.png"
+            alt="Python Icon"
+            class="button-icon"
+          />
+          <span>Python</span>
+        </button>
+
+        <button>
+          <img
+            src="../assets/images/html.png"
+            alt="Web Icon"
+            class="button-icon"
+          />
+          <span>Web</span>
+        </button>
+
+        <button>
+          <img
+            src="../assets/images/sql.png"
+            alt="SQL Icon"
+            class="button-icon"
+          />
+          <span>SQL</span>
+        </button>
+
+        <button>
+          <img
+            src="../assets/images/c.png"
+            alt="C/C++ Icon"
+            class="button-icon"
+          />
+          <span>C / C++</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="search-container">
+        <input type="text" placeholder="Suchen..." class="search-input" />
+        <button class="search-btn">🔍</button>
+      </div>
+    <div class="livechat">
+  <div class="livechat-header">Livechat</div>
+
+  <div id="chat-messages" class="chat-messages"></div>
+
+  <form id="chat-form" class="chat-form">
+    <input id="chat-input" type="text" placeholder="Nachricht…" />
+    <button id="chat-send" type="submit">➤</button>
+  </form>
+
+  <div id="chat-hint" class="chat-hint" style="display:none;">
+    Bitte einloggen, um zu schreiben.
+  </div>
+
+  
+</div>
+    </div>
+
+      <div class="footer">
+        <div class="create-container">
+          <button class="create-btn">Neuer Beitrag</button>
+        </div>
+      </div>
+      <div class="footer-right">
+    <button class="footer-btn filter-btn">⚙️</button>
+    <button class="footer-btn regeln-btn">📜</button>
+  </div>
+
+
+  </div>
+  </body>
 </html>

@@ -108,9 +108,11 @@ document.getElementById("submitbuttonregister")?.addEventListener("click", async
       photoURL: "/assets/images/newAccount.jpeg"
     });
 
-    showMessage("Account erstellt!", "signInMessage", "success");
-    localStorage.setItem("loggedInUserId", cred.user.uid);
-    window.location.href = "index.html";
+// NACH erfolgreichem Login:
+showMessage("Login erfolgreich!", "signInMessage", "success");
+localStorage.setItem("loggedInUserId", cred.user.uid);
+document.querySelector('.loginDiv')?.classList.add('hidden'); // UI weg
+location.reload(); // <— statt window.location.href = "index.html";
   } catch (err) {
     showMessage(err.message, "signInMessage");
   }
@@ -154,9 +156,11 @@ document.querySelector(".loginForm")?.addEventListener("submit", async (e) => {
     // }
 
     const cred = await signInWithEmailAndPassword(auth, emailToUse, pw);
-    showMessage("Login erfolgreich!", "signInMessage", "success");
-    localStorage.setItem("loggedInUserId", cred.user.uid);
-    window.location.href = "index.html";
+// NACH erfolgreichem Login:
+showMessage("Login erfolgreich!", "signInMessage", "success");
+localStorage.setItem("loggedInUserId", cred.user.uid);
+document.querySelector('.loginDiv')?.classList.add('hidden'); // UI weg
+location.reload(); // <— statt window.location.href = "index.html";
   } catch (err) {
     const map = {
       "auth/invalid-credential": "E-Mail oder Passwort ist falsch.",
@@ -235,9 +239,10 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   btnOut?.addEventListener("click", async () => {
     try {
-      await signOut(auth);
-      localStorage.removeItem("loggedInUserId");
-      window.location.href = "index.html";
+await signOut(auth);
+localStorage.removeItem("loggedInUserId");
+document.querySelector('.loginDiv')?.classList.remove('hidden');
+location.reload(); // <— statt window.location.href = "index.html";
     } catch (err) {
       alert("Logout-Fehler: " + err.message);
     }
