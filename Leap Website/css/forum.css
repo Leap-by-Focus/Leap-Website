@@ -405,26 +405,503 @@ html { scroll-behavior: smooth; }
   background: #1a1a1a;
 }
 
-.chat-msg {
-  margin: 6px 0;
-  padding: 8px 10px;
-  border-radius: 10px;
-  background: #222;
-  color: #eee;
-  font: 13px monospace;
+/* =========================================
+   Global / Grund-Design
+========================================= */
+
+html { scroll-behavior: smooth; }
+
+.welcome {
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
 }
 
-.chat-msg.me {
-  background: #203033;
-  align-self: flex-end;          /* eigene Nachrichten rechts */
+/* Gradient unter dem Header */
+.gradient-transition {
+  height: 150px;
+  width: 100%;
+  background: linear-gradient(#444, #111);
+  z-index: -4;
+}
+
+/* Seitenleiste */
+.sideMenu {
+  position: fixed;
+  top: 100px;
+  left: 0;
+  height: calc(100vh - 100px);
+  width: 200px;
+  background: linear-gradient(to bottom, #151515, #111);
+  z-index: 100;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding-top: 20px;
+  box-sizing: border-box;
+}
+
+
+/* Icon links im Button */
+.sideMenu button .button-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.sideMenu button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+
+  width: 90%;              /* 👉 Button ist IMMER 90% */
+  height: 40px;
+  padding: 0 20px;
+  box-sizing: border-box;
+
+  color: #fff;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  text-align: left;
+  font: 14px monospace;
+  cursor: pointer;
+
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease,
+    font-size 0.2s ease;
+}
+
+.sideMenu button {
+  overflow: hidden;
+  transform-origin: center;
+  will-change: transform, background-color;
+}
+
+/* Hover nur Effekte, keine Width mehr */
+.sideMenu button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: scale(1.03);
+}
+
+/* Rand nimmt die volle Buttonbreite */
+.sideMenu button::before {
+  content: "";
+  position: absolute;
+  inset: 0;               /* deckt den Button exakt ab */
+  border-radius: 8px;
+  padding: 2px;
+  background: linear-gradient(270deg, #50e9ba, #148fac, #e6f0f4, #50e9ba);
+  background-size: 600% 600%;
+  animation: rotateBorder 4s linear infinite;
+  pointer-events: none;
+
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.sideMenu button:hover::before,
+.sideMenu button.active::before {
+  opacity: 1;
+}
+
+/* Gradient-Rand Animation */
+@keyframes rotateBorder {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.sideMenu .divider {
+  width: 85%;
+  height: 1px;
+  background: #333;
+  margin: 6px 0 0;
+  border: none;
+}
+
+
+.main
+{
+    position: relative;
+    left:0%;
+    width:100%;
+    height: 100%;
+}
+
+.search-container {
+  margin: 40px auto;
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.search-input {
+  flex: 1;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 25px 0 0 25px;
+  outline: none;
+  background-color: #151515;
+  font-size: 16px;
+  font-family: monospace;
+}
+
+.search-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 0 25px 25px 0;
+  color: #111;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.search-btn:hover {
+  background-color: #3bd0a0;
+}
+
+
+.search-container {
+  margin: 40px auto;
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;  /* <<< sorgt für gleiche Höhe */
+  position: relative;
+  border-radius: 25px;
+  padding: 2px;
+  background: linear-gradient(
+    270deg,
+    #50e9ba,
+    #148fac,
+    #e6f0f4,
+    #50e9ba
+  );
+  background-size: 600% 600%;
+  animation: rotateBorder 6s linear infinite;
+  box-sizing: border-box;
+}
+
+.search-input {
+  flex: 1;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 25px 0 0 25px;
+  outline: none;
+  background-color: #151515;
+  font-size: 16px;
+  font-family: monospace;
+  color: white;
+  height: 40px;                /* gleiche Höhe */
+  box-sizing: border-box;
+}
+
+.search-btn {
+  padding: 0 20px;             /* nur horizontal, Höhe übernimmt Flex */
+  border: none;
+  border-radius: 0 25px 25px 0;
+  background-color: #151515;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  height: 40px;                /* gleiche Höhe */
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-btn:hover {
+  background-color: #222;
+}
+
+@keyframes rotateBorder {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Untertitel im SideMenu */
+.sideMenu .untertitel {
+  width: 100%;
+  text-align: left;
+  padding: 0px 20px;
+  font-size: 12px;
+  font-family: monospace;
+  font-weight: bold;
+  color: #aaa;              /* hellgrau */
+  text-transform: uppercase;
+  letter-spacing: 1px;      /* bisschen auseinanderziehen */
+  margin-top: 10px;         /* Abstand nach oben */
+  opacity: 0.8;
+  text-align: center;
+}
+
+
+/* ================================
+   Footer + Create Button
+================================ */
+
+.footer {
+  width: 100%;
+  height: 100px;
+  position: fixed;
+  bottom: 0;
+  border-top: 1px solid #333;
+  background: #111;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 10;             /* hinter Sidenav/Main */
+  pointer-events: none;     /* blockiert keine Klicks */
+}
+
+.create-container {
+  width: 25%;
+  display: flex;
+  justify-content: center;
+  pointer-events: auto;     /* Button bleibt klickbar */
+}
+
+.create-btn {
+  position: relative;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 25px;
+  background-color: #151515;
+  color: #fff;
+  font: 16px monospace;
+  cursor: pointer;
+  overflow: hidden;
+  z-index: 10;
+  transition: transform 0.2s ease, background-color 0.2s ease; /* Animation */
+}
+
+.create-btn:hover {
+  background-color: #333;   /* heller beim Hover */
+  transform: scale(1.08);   /* Button wird größer */
+}
+
+/* Animierter Gradient-Rand */
+.create-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 25px;
+  padding: 2px;
+
+  background: linear-gradient(270deg, #50e9ba, #148fac, #e6f0f4, #50e9ba);
+  background-size: 600% 600%;
+  animation: rotateBorder 4s linear infinite;
+
+  -webkit-mask: 
+    linear-gradient(#000 0 0) content-box, 
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+
+  pointer-events: none;
+  opacity: 1; /* immer sichtbar */
+}
+
+/* Gradient-Rand Animation */
+@keyframes rotateBorder {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+
+
+/* Rechtsgruppe (Filter + Regeln) */
+.footer-right {
+  margin-left: auto;       /* alles nach rechts schieben */
+  display: flex;
+  gap: 15px;               /* Abstand zwischen Buttons */
+  padding-right: 30px;     /* etwas Abstand zum Rand */
+  pointer-events: auto;
+  padding-bottom: 25px;
+}
+
+/* Gemeinsames Button-Design für rechts */
+.footer-btn {
+  position: relative;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;   /* rund */
+  border: none;
+  background-color: #151515;
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  z-index: 10;
+}
+
+/* Hover-Effekt */
+.footer-btn:hover {
+  background-color: #333;
+  transform: scale(1.1);
+}
+
+/* Animierter Gradient-Rand */
+.footer-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  padding: 2px;
+
+  background: linear-gradient(270deg,#50e9ba,#148fac,#e6f0f4,#50e9ba);
+  background-size: 600% 600%;
+  animation: rotateBorder 4s linear infinite;
+
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+
+  pointer-events: none;
+  opacity: 1;
+}
+
+
+.livechat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;  /* title left, timer right */
+  font: 12px monospace;
+  color: #fff;
+  padding: 6px 8px;
+  border-bottom: 1px solid #333;
+  background: #111;
+  display:flex;justify-content:space-between;align-items:center;
+}
+
+
+#chat-timer {
+  font-weight: bold;
+  color: #50e9ba;
+}
+
+
+/* ================================
+   Livechat Container
+================================ */
+.livechat { 
+  margin-top: 100px;
+  width: 20%;                  /* Sidebar-Breite */
+  height: 79%;                 /* volle Höhe */
+  background-color: #151515;
+  position: fixed;
+  right: 0;
+  top: 0;
+  border-left: 1px solid #333;
+  display: flex;
+  flex-direction: column;
+  z-index: 50;                  /* über Content */
+}
+
+
+
+/* Nachrichtenbereich */
+.chat-messages {
+  flex: 1;                      
+  overflow-y: auto;
+  padding: 6px 8px;
+  background: #1a1a1a;
+}
+
+/* ================================
+   Chat Bubbles
+================================ */
+
+/* Standard: Bubbles gehen bis fast ganz rechts */
+.chat-msg {
+  margin: 10px 0;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: #222;
+  color: #ddd;
+  font: 11px monospace;
+  line-height: 1.2;
+  word-wrap: break-word;
+  position: relative;
+  max-width: 95%;     /* statt 65% → fast volle Breite */
+  align-self: flex-start; /* Default: links */
 }
 
 .chat-msg .meta {
-  font-size: 11px;
-  color: #aaa;
-  margin-bottom: 2px;
+  display: block;               /* Name + Zeit in eigener Zeile */
+  font-size: 12px;              /* größerer Font */
+  font-weight: bold;            /* fett für bessere Lesbarkeit */
+  color: #aaa;                  /* etwas heller als vorher */
+  margin-bottom: 0px;           /* Abstand zur Nachricht */
 }
 
+.chat-msg .text {
+  display: inline;  
+  font-size: 12px;          
+}
+
+/* Fremde Nachrichten = helleres Grau */
+.chat-msg:not(.me) {
+  background: #2a2a2a;
+}
+
+/* Eigene Nachricht → gleicher grauer Hintergrund, aber animierter Rand */
+.chat-msg.me {
+  background: #222;
+  color: #fff;
+  align-self: flex-end;
+}
+
+.chat-msg.me::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  padding: 1px;   /* ⚡ ganz dünner Rand */
+  background: linear-gradient(270deg, #50e9ba, #148fac, #e6f0f4, #50e9ba);
+  background-size: 600% 600%;
+  animation: chatBorderAnim 4s linear infinite;
+
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+
+  pointer-events: none;
+}
+
+/* Animation Keyframes */
+@keyframes chatBorderAnim {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ================================
+   Eingabefeld + Buttons
+================================ */
 .chat-form {
   display: flex;
   padding: 8px;
@@ -434,23 +911,23 @@ html { scroll-behavior: smooth; }
 
 #chat-input {
   flex: 1;
-  padding: 10px 12px;
+  padding: 8px 10px;
   border-radius: 20px 0 0 20px;
   border: none;
   outline: none;
   background: #151515;
   color: #fff;
-  font: 14px monospace;
+  font: 12px monospace;
 }
 
 #chat-send {
-  padding: 0 18px;
+  padding: 0 14px;
   border: none;
   border-radius: 0 20px 20px 0;
   background: #148fac;
   color: #111;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 14px;
   transition: background 0.2s ease;
 }
 
@@ -458,10 +935,17 @@ html { scroll-behavior: smooth; }
   background: #3bd0a0;
 }
 
+/* Hinweis für nicht eingeloggte User */
 .chat-hint {
-  font: 12px monospace;
+  font: 11px monospace;
   color: #bbb;
   text-align: center;
-  padding: 6px;
+  padding: 4px;
   border-top: 1px solid #333;
+}
+
+/* Schreibbox im Cooldown */
+#chat-input.cooldown {
+  background: #1b1b1b;
+  color: #aaa;
 }
