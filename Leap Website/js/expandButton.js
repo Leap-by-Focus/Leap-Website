@@ -1,35 +1,57 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const button = document.getElementById("expandButton");
-  const expandedContent = document.getElementById("expandedContent");
-  const label = button.querySelector(".buttonLabel");
+  const btn   = document.getElementById("createBtn");
+  if (!btn) return;
 
-  button.addEventListener("click", (e) => {
-    // Verhindere das Klick-Event auf Video den Button "close/open" triggert
-    if (e.target.tagName.toLowerCase() === "video") return;
+  // Panel einmal erzeugen, falls nicht im HTML vorhanden:
+  let panel = document.querySelector(".create-panel");
+  if (!panel) {
+    panel = document.createElement("div");
+    panel.className = "create-panel";
+    // optionaler Inhalt:
+    panel.innerHTML = "";
+    btn.parentElement.appendChild(panel);
+  }
 
-    const isExpanded = button.classList.toggle("expanded");
+  let isOpen = false;
+  let waiting = false; // blockt Doppelclick während Transition
 
-    if (isExpanded) {
-      // Inhalt anzeigen & Button-Text ausblenden passiert durch CSS
-    } else {
-      // Inhalt verstecken & Button-Text zeigen passiert durch CSS
-    }
-  });
+  const open = () => {
+    if (isOpen || waiting) return;
+    waiting = true;
+    btn.classList.add("expand");
 
-  // Video click & dblclick handlers
-  document.querySelectorAll('.video').forEach(video => {
-    video.addEventListener('click', (event) => {
-      event.stopPropagation();
-      if (video.paused) video.play();
-      else video.pause();
-    });
+    // Nach Ende der WIDTH-Transition Panel öffnen
+    const onEnd = (e) => {
+      if (e.propertyName !== "width") return;
+      btn.removeEventListener("transitionend", onEnd);
+      panel.classList.add("open");   // sofort, ohne Delay
+      isOpen = true;
+      // kleines Timeout, damit panel-Transition starten kann, bevor neue Aktionen erlaubt sind
+      setTimeout(() => (waiting = false), 120);
+    };
+    btn.addEventListener("transitionend", onEnd);
+  };
 
-    video.addEventListener('dblclick', (event) => {
-      event.stopPropagation();
-      if (video.requestFullscreen) video.requestFullscreen();
-      else if (video.webkitRequestFullscreen) video.webkitRequestFullscreen();
-      else if (video.mozRequestFullScreen) video.mozRequestFullScreen();
-      else if (video.msRequestFullscreen) video.msRequestFullscreen();
-    });
-  });
+  const close = () => {
+    if (!isOpen || waiting) return;
+    waiting = true;
+    // erst Panel schließen, dann nach Ende die Breite zurückfahren
+    const onPanelEnd = (e) => {
+      if (e.propertyName !== "transform") return;
+      panel.removeEventListener("transitionend", onPanelEnd);
+      btn.classList.remove("expand");
+      // nach Button-Transition wieder frei
+      const onBtnEnd = (ev) => {
+        if (ev.propertyName !== "width") return;
+        btn.removeEventListener("transitionend", onBtnEnd);
+        isOpen = false;
+        setTimeout(() => (waiting = false), 80);
+      };
+      btn.addEventListener("transitionend", onBtnEnd);
+    };
+    panel.classList.remove("open");
+    panel.addEventListener("transitionend", onPanelEnd);
+  };
+
+  btn.addEventListener("click", () => (isOpen ? close() : open()));
 });

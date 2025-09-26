@@ -13,8 +13,10 @@
     <script type="module" src="../js/firebaseauth.js" defer></script>
     <script src="../js/loginFormularDiv.js" defer></script>
     <script src="../js/openLogin.js" defer></script>
+    <script src="../js/forumtoolbar.js" defer></script>
     <script src="../js/whoareweAnimation.js" defer></script>
     <script src="../js/expandButton.js" defer></script>
+    <script src="../js/forumuploadimage.js" defer></script>
     <script type="module" src="../js/livechat.js" defer></script>
   </head>
 
@@ -310,10 +312,48 @@
 </div>
     </div>
 
-      <div class="footer">
-        <div class="create-container">
-          <button class="create-btn">Neuer Beitrag</button>
-        </div>
+<div class="footer">
+  <div class="create-container">
+    <button class="create-btn" id="createBtn">Neuer Beitrag</button>
+
+    <!-- Panel, das über dem Button aufklappt -->
+    <div class="create-panel" id="createPanel">
+  <form class="create-form">
+    <!-- Titel -->
+    <input type="text" class="post-title" placeholder="Titel eingeben…" />
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <button type="button" data-cmd="bold"><b>B</b></button>
+      <button type="button" data-cmd="italic"><i>I</i></button>
+      <button type="button" data-cmd="underline"><u>U</u></button>
+      <button type="button" data-cmd="insertUnorderedList">• Liste</button>
+      <button type="button" data-cmd="formatBlock" data-value="pre">{ }</button>
+    </div>
+
+    <!-- Beitragstext -->
+    <div class="post-body" contenteditable="true">
+      Schreibe hier deinen Beitrag…
+    </div>
+
+    <div class="upload-block">
+  <div id="imageDropZone" class="dropzone">
+    <input id="imageInput" type="file" accept="image/*" multiple />
+    <div class="dz-inner">
+      <strong>Bilder hierher ziehen</strong> oder klicken, um auszuwählen
+    </div>
+  </div>
+
+  <!-- Vorschau direkt darunter -->
+  <div id="imagePreviewGrid" class="preview-grid"></div>
+</div>
+
+    <!-- Submit -->
+    <button type="submit" class="submit-post">Beitrag erstellen</button>
+  </form>
+</div>
+  </div>
+</div>
       </div>
       <div class="footer-right">
     <button class="footer-btn filter-btn">⚙️</button>

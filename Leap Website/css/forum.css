@@ -244,81 +244,99 @@ html { scroll-behavior: smooth; }
 }
 
 
-/* ================================
-   Footer + Create Button
-================================ */
-
-.footer {
-  width: 100%;
-  height: 100px;
-  position: fixed;
-  bottom: 0;
-  border-top: 1px solid #333;
-  background: #111;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  z-index: 10;             /* hinter Sidenav/Main */
-  pointer-events: none;     /* blockiert keine Klicks */
+/* Footer: NICHT blockieren! */
+.footer{
+  width:100%;
+  height:100px;
+  position:fixed;
+  bottom:0;
+  border-top:1px solid #333;
+  background:#111;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:10;
+  pointer-events:auto; /* <— wichtig: NICHT none */
 }
 
-.create-container {
-  width: 25%;
-  display: flex;
-  justify-content: center;
-  pointer-events: auto;     /* Button bleibt klickbar */
+/* Button zentriert – wächst symmetrisch */
+.create-container{
+  display:flex;
+  justify-content:center;
+  align-items:center;
 }
 
-.create-btn {
-  position: relative;
-  padding: 12px 30px;
-  border: none;
-  border-radius: 25px;
-  background-color: #151515;
-  color: #fff;
-  font: 16px monospace;
-  cursor: pointer;
-  overflow: hidden;
-  z-index: 10;
-  transition: transform 0.2s ease, background-color 0.2s ease; /* Animation */
+/* Button: wächst in der Breite + sanfter Glow-Fade */
+.create-btn{
+  display:inline-block;                /* wichtig für width-Transition */
+  box-sizing:border-box;
+  width:200px;                         /* Start */
+  padding:12px 30px;
+  border:none;
+  border-radius:25px;
+  background:#151515;
+  color:#fff;
+  font:16px monospace;
+  cursor:pointer;
+  position:relative;
+  overflow:hidden;
+
+  transition:
+    width .6s cubic-bezier(.2,.8,.2,1),
+    background-color .2s ease,
+    transform .2s ease;
+
+  will-change: width;
 }
 
-.create-btn:hover {
-  background-color: #333;   /* heller beim Hover */
-  transform: scale(1.08);   /* Button wird größer */
+.create-btn:hover{
+  background:#2a2a2a;
+  transform:scale(1.03);
 }
 
-/* Animierter Gradient-Rand */
-.create-btn::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 25px;
-  padding: 2px;
-
-  background: linear-gradient(270deg, #50e9ba, #148fac, #e6f0f4, #50e9ba);
-  background-size: 600% 600%;
-  animation: rotateBorder 4s linear infinite;
-
-  -webkit-mask: 
-    linear-gradient(#000 0 0) content-box, 
+/* Deko-Rand (bleibt) */
+.create-btn::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:25px;
+  padding:2px;
+  background:linear-gradient(270deg,#50e9ba,#148fac,#e6f0f4,#50e9ba);
+  background-size:600% 600%;
+  animation:rotateBorder 4s linear infinite;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-          mask-composite: exclude;
-
-  pointer-events: none;
-  opacity: 1; /* immer sichtbar */
+  -webkit-mask-composite:xor;
+          mask-composite:exclude;
+  pointer-events:none;
 }
 
-/* Gradient-Rand Animation */
-@keyframes rotateBorder {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+@keyframes rotateBorder{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
 }
 
+/* Glow-/Fade-Schleier, der beim Expand sanft einblendet */
+.create-btn::after{
+  content:"";
+  position:absolute;
+  inset:-40% -10%;                    /* etwas größer als der Button */
+  background:radial-gradient(60% 80% at 50% 50%, rgba(255,255,255,.12), rgba(255,255,255,0));
+  opacity:0;                          /* Start: unsichtbar */
+  transition:opacity .6s cubic-bezier(.2,.8,.2,1);
+  pointer-events:none;
+}
+
+/* Zielzustand: wächst von 200 ➜ 600 px, Glow fadet rein */
+.create-btn.expand{
+  width:600px;
+}
+
+.create-btn.expand::after{
+  opacity:1;                          /* Fade-in */
+}
 
 
 /* Rechtsgruppe (Filter + Regeln) */
@@ -651,80 +669,115 @@ html { scroll-behavior: smooth; }
 }
 
 
-/* ================================
-   Footer + Create Button
-================================ */
-
-.footer {
-  width: 100%;
-  height: 100px;
-  position: fixed;
-  bottom: 0;
-  border-top: 1px solid #333;
-  background: #111;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  z-index: 10;             /* hinter Sidenav/Main */
-  pointer-events: none;     /* blockiert keine Klicks */
+/* Footer bleibt klickbar */
+.footer{
+  width:100%;
+  height:100px;
+  position:fixed;
+  bottom:0;
+  border-top:1px solid #333;
+  background:#111;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:10;
+  pointer-events:auto;
 }
 
-.create-container {
-  width: 25%;
-  display: flex;
-  justify-content: center;
-  pointer-events: auto;     /* Button bleibt klickbar */
-}
-
-.create-btn {
+.create-container{
   position: relative;
-  padding: 12px 30px;
-  border: none;
-  border-radius: 25px;
-  background-color: #151515;
-  color: #fff;
-  font: 16px monospace;
-  cursor: pointer;
-  overflow: hidden;
-  z-index: 10;
-  transition: transform 0.2s ease, background-color 0.2s ease; /* Animation */
+  display:flex;
+  justify-content:center;
+  align-items:center;
 }
 
-.create-btn:hover {
-  background-color: #333;   /* heller beim Hover */
-  transform: scale(1.08);   /* Button wird größer */
+/* Button – kurze, flotte Breiten-Animation */
+.create-btn{
+  width:200px;                /* Startbreite */
+  padding:12px 30px;
+  border:none;
+  border-radius:25px;
+  background:#151515;
+  color:#fff;
+  font:16px monospace;
+  cursor:pointer;
+  position:relative;
+  overflow:hidden;
+  z-index:2;
+  transition: width .32s ease-out, background-color .2s ease, transform .2s ease;
 }
 
-/* Animierter Gradient-Rand */
-.create-btn::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 25px;
-  padding: 2px;
-
-  background: linear-gradient(270deg, #50e9ba, #148fac, #e6f0f4, #50e9ba);
-  background-size: 600% 600%;
-  animation: rotateBorder 4s linear infinite;
-
-  -webkit-mask: 
-    linear-gradient(#000 0 0) content-box, 
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-          mask-composite: exclude;
-
-  pointer-events: none;
-  opacity: 1; /* immer sichtbar */
+.create-btn:hover{
+  background:#333;
+  transform:scale(1.05);
 }
 
-/* Gradient-Rand Animation */
-@keyframes rotateBorder {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+.create-btn::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:25px;
+  padding:2px;
+  background:linear-gradient(270deg,#50e9ba,#148fac,#e6f0f4,#50e9ba);
+  background-size:600% 600%;
+  animation:rotateBorder 4s linear infinite;
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor; 
+          mask-composite:exclude;
+  pointer-events:none;
 }
+
+@keyframes rotateBorder{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+
+/* Zielbreite beim Expand */
+.create-btn.expand{
+  width:1000px;               /* gewünschte Zielbreite */
+}
+
+/* ---------- Panel über dem Button (ohne Delay) ---------- */
+.create-panel{
+  position:absolute;
+  bottom:100%;
+  left:50%;
+  transform:translateX(-50%) scaleY(0);
+  transform-origin: bottom center;
+  width:1000px;
+  height:690px;   /* 👈 viel höher als vorher (z. B. 800px) */
+  background:#151515;
+  border-radius:20px;
+  overflow:hidden;
+  opacity:0;
+  pointer-events:none;
+  z-index:3;
+
+  transition: transform .28s ease-out, opacity .28s ease-out;
+}
+
+.create-panel.open{
+  transform:translateX(-50%) scaleY(1);
+  opacity:1;
+  pointer-events:auto;
+}
+
+.create-panel::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:20px;
+  padding:2px;
+  background:linear-gradient(270deg,#50e9ba,#148fac,#e6f0f4,#50e9ba);
+  background-size:600% 600%;
+  animation:rotateBorder 4s linear infinite;
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor; 
+          mask-composite:exclude;
+  pointer-events:none;
+}
+
 
 
 
@@ -948,4 +1001,157 @@ html { scroll-behavior: smooth; }
 #chat-input.cooldown {
   background: #1b1b1b;
   color: #aaa;
+}
+
+
+
+
+
+
+
+
+.create-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.post-title {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #1a1a1a;
+  color: #fff;
+  font: 16px monospace;
+  outline: none;
+}
+
+.toolbar {
+  display: flex;
+  gap: 8px;
+}
+
+.toolbar button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  background: #222;
+  color: #fff;
+  cursor: pointer;
+  font: 14px monospace;
+}
+
+.toolbar button:hover {
+  background: #333;
+}
+
+.post-body {
+  flex: 1;
+  min-height: 150px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #1a1a1a;
+  color: #ddd;
+  font: 14px monospace;
+  overflow-y: auto;
+}
+
+.submit-post {
+  align-self: flex-end;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #148fac;
+  color: #fff;
+  font: 14px monospace;
+  cursor: pointer;
+}
+
+.submit-post:hover {
+  background: #3bd0a0;
+}
+
+
+.upload-block {
+  margin-top: 12px;
+}
+
+/* Dropzone */
+.dropzone {
+  position: relative;
+  border: 2px dashed #3a3a3a;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  color: #ddd;
+  background: #1b1b1b;
+}
+
+.dropzone.dz-over {
+  border-color: #50e9ba;
+  background: #1f2927;
+}
+
+/* Unsichtbares Input, aber klick-/fokussierbar */
+.dropzone input[type="file"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.dz-inner { pointer-events: none; }
+
+/* Vorschau-Bereich */
+.preview-grid {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+
+  /* Sichtbarkeitsgarantien */
+  min-height: 20px;
+  background: transparent; /* falls Panel dunkler ist, nicht verschlucken */
+}
+
+.preview-item {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #111;
+  text-align: center;
+  border: 1px solid #2a2a2a;
+}
+
+.preview-item img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  display: block;
+}
+
+.preview-meta {
+  font: 12px monospace;
+  color: #bbb;
+  padding: 4px;
+}
+
+.remove-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  border: none;
+  background: #000a;
+  color: #fff;
+  width: 22px;
+  height: 22px;
+  line-height: 22px;
+  border-radius: 50%;
+  cursor: pointer;
 }
