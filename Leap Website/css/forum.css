@@ -3,6 +3,7 @@
 ========================================= */
 
 html { scroll-behavior: smooth; }
+body { overflow: hidden; }
 
 .welcome {
   font-family: 'Courier New', Courier, monospace;
@@ -125,12 +126,17 @@ html { scroll-behavior: smooth; }
 }
 
 
-.main
-{
-    position: relative;
-    left:0%;
-    width:100%;
-    height: 100%;
+.main{
+  position: fixed;
+  top: 100px;        /* unter dem Header */
+  bottom: 100px;     /* über dem Footer */
+  left: 200px;       /* neben der Sidebar */
+  right: 22%;        /* Platz für Livechat rechts */
+  padding: 0 16px;
+  box-sizing: border-box;
+  display: flex;             /* wichtig */
+  flex-direction: column;    /* Suchleiste oben, Feed darunter */
+  overflow: hidden;          /* nur der Feed scrollt */
 }
 
 .search-container {
@@ -289,6 +295,34 @@ html { scroll-behavior: smooth; }
   will-change: width;
 }
 
+.submit-post {
+  display: block;
+  margin: 0 auto 12px;         /* zentriert + Abstand nach unten */
+  width: 180px;                /* kleiner als createBtn */
+  padding: 8px 20px;
+  border: none;
+  border-radius: 20px;
+  background: #148fac;
+  color: #fff;
+  font: 14px monospace;
+  font-weight: bold;
+  cursor: pointer;
+  text-align: center;
+
+  transition:
+    background-color .2s ease,
+    transform .2s ease;
+}
+
+.submit-post:hover {
+  background: #3bd0a0;
+  transform: translateY(-2px);
+}
+
+
+
+
+
 .create-btn:hover{
   background:#2a2a2a;
   transform:scale(1.03);
@@ -406,6 +440,10 @@ html { scroll-behavior: smooth; }
   display: flex;
   flex-direction: column;
   z-index: 50;                  /* über Content */
+}
+
+.livechat{
+  height: calc(100vh - 100px); /* von Header bis Footer */
 }
 
 .livechat-header {
@@ -559,11 +597,9 @@ html { scroll-behavior: smooth; }
 }
 
 .search-container {
-  margin: 40px auto;
-  width: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  position: fixed;   /* bleibt beim Scrollen oben */
+  top: -40px;             /* direkt an oberer Kante */
+  margin: 0 auto;     /* keine extra Abstände */
 }
 
 .search-input {
@@ -1019,15 +1055,50 @@ html { scroll-behavior: smooth; }
   box-sizing: border-box;
 }
 
-.post-title {
+/* Titel im Create-Form (Input-Feld) */
+.create-form .post-title {
+  color: black;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
   padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid #333;
-  background: #1a1a1a;
-  color: #fff;
-  font: 16px monospace;
-  outline: none;
+  font-family: monospace;
+  font-size: 16px;
+  font-weight: bold;   /* <<<<<< fett */
+  width: 100%;
+  box-sizing: border-box;
 }
+
+/* Titel im Feed (h3) */
+.post-title {
+  margin: 2px 0 4px;
+  font-family: monospace;
+  font-size: 17px;
+  font-weight: bold;   /* <<<<<< fett */
+  color: #f1f1f1;
+}
+
+/* Placeholder für contenteditable */
+.post-body[contenteditable="true"][data-placeholder]:empty::before {
+  content: attr(data-placeholder);
+  color: #888;
+  pointer-events: none;
+}
+
+/* Dein normales Styling (kann so bleiben) */
+.post-body {
+  flex: 1;
+  min-height: 150px;
+  color: #ddd;
+  font: 14px monospace;
+  overflow-y: auto;
+  padding: 8px 12px;
+  background: #1a1a1a;      /* optional, damit Placeholder gut lesbar ist */
+  border: 1px solid #333;   /* optional, wie vorher */
+  border-radius: 8px;       /* optional */
+}
+
+
 
 .toolbar {
   display: flex;
@@ -1051,25 +1122,13 @@ html { scroll-behavior: smooth; }
 .post-body {
   flex: 1;
   min-height: 150px;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #333;
-  background: #1a1a1a;
   color: #ddd;
   font: 14px monospace;
   overflow-y: auto;
+  padding: 8px 12px
 }
 
-.submit-post {
-  align-self: flex-end;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 8px;
-  background: #148fac;
-  color: #fff;
-  font: 14px monospace;
-  cursor: pointer;
-}
+
 
 .submit-post:hover {
   background: #3bd0a0;
@@ -1155,3 +1214,229 @@ html { scroll-behavior: smooth; }
   border-radius: 50%;
   cursor: pointer;
 }
+
+
+
+/* Tag-Picker */
+.tag-picker{
+  position:relative;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 8px;
+  border-radius:8px;
+  background:#1a1a1a;
+  border:1px solid #333;
+  margin-left:auto; /* schiebt Tag-Picker ans rechte Ende der Toolbar; optional */
+  max-width: 480px;
+  flex: 1 1 auto;
+}
+
+.tag-list{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+
+.tag-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:4px 8px;
+  border-radius:999px;
+  background:#2a2a2a;
+  color:#eee;
+  font:12px monospace;
+  border:1px solid #3a3a3a;
+}
+
+.tag-chip button{
+  border:none; background:transparent; color:#bbb; cursor:pointer; font-size:14px; line-height:1;
+}
+.tag-chip button:hover{ color:#fff; }
+
+.tag-input{
+  min-width:140px;
+  flex:1 1 auto;
+  border:none;
+  outline:none;
+  background:transparent;
+  color:#fff;
+  font:14px monospace;
+}
+
+.tag-suggest{
+  position:absolute;
+  left:8px;
+  right:8px;
+  top:calc(100% + 6px);
+  background:#161616;
+  border:1px solid #333;
+  border-radius:8px;
+  box-shadow:0 8px 20px rgba(0,0,0,.35);
+  display:none;
+  overflow:hidden;
+  z-index:5;
+}
+.tag-suggest.open{ display:block; }
+
+.tag-suggest-item{
+  padding:8px 10px;
+  font:13px monospace;
+  color:#ddd;
+  cursor:pointer;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.tag-suggest-item:hover{ background:#222; }
+.tag-suggest-item .count{ color:#999; font-size:12px; }
+.tag-suggest-item.new{ color:#50e9ba; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.post-feed{
+  flex: 1;              /* füllt den Rest von .main */
+  overflow-y: auto;     /* nur hier wird gescrollt */
+  padding-right: 5px;   /* kleiner Platz für Scrollbar */
+  padding-bottom: 0px;  /* Abstand vor Footer */
+  padding-left:5px;
+  margin-left:200px;
+  margin-right: 20%;
+}
+
+/* Karte = Grid: Content links, optionales Bild rechts */
+.post-item{
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 140px; /* Text | Bild */
+  gap: 14px;
+
+  background: #141414;
+  border: 1px solid #262626;
+  border-radius: 16px;
+  padding: 14px;
+  margin: 14px 0;
+  overflow: hidden;
+
+  transition:
+    transform .22s cubic-bezier(.2,.8,.2,1),
+    box-shadow .22s ease,
+    background .22s ease,
+    border-color .22s ease;
+}
+
+/* Hover: leicht größer + animierter Rand */
+.post-item:hover{
+  transform: translateY(-3px) scale(1.01);
+  background:#181818;
+  border-color:#333;
+  box-shadow:0 12px 36px rgba(0,0,0,.35);
+}
+.post-item::before{
+  content:"";
+  position:absolute; inset:0;
+  border-radius:16px; padding:1px;
+  background:linear-gradient(270deg,#50e9ba,#148fac,#e6f0f4,#50e9ba);
+  background-size:600% 600%;
+  animation:rotateBorder 6s linear infinite;
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor; mask-composite:exclude;
+  opacity:0; pointer-events:none;
+  transition:opacity .22s ease;
+}
+.post-item:hover::before{ opacity:1; }
+
+/* linke Spalte (Text) */
+.post-content{
+  min-width: 0; /* für ellipsis/umbruch in Grid */
+}
+
+/* Header */
+.post-head{
+  display:flex; align-items:center; gap:10px; margin-bottom:6px;
+}
+.post-author{
+  font: 12px monospace; color:#aab3b7;
+}
+.post-dot{ opacity:.6; margin:0 4px; }
+.post-time{ opacity:.85; }
+
+/* Titel */
+.post-title{
+  margin:2px 0 4px;
+  font:700 17px/1.25 monospace;
+  color:#f1f1f1;
+}
+.post-title a{ color:inherit; text-decoration:none; }
+.post-title a:hover{ text-decoration:underline; }
+
+/* Textvorschau */
+.post-body-preview{
+  margin:0px 12px;
+  color:#d1d1d1;
+  font: 13px/1.45 monospace;
+  white-space: pre-wrap;
+}
+
+/* Tags */
+.post-tags{ display:flex; flex-wrap:wrap; gap:6px; }
+.post-tags .tag{
+  display:inline-flex; align-items:center;
+  padding:3px 8px; border-radius:999px;
+  background:#1f1f1f; border:1px solid #2e2e2e;
+  color:#dfe9e6; font: 11px monospace;
+  transition: background .15s ease, border-color .15s ease, transform .15s ease;
+}
+.post-tags .tag:hover{ background:#242424; border-color:#3a3a3a; transform:translateY(-1px); }
+
+.post-media-multi{
+  display:flex;
+  gap:6px;
+  justify-content:flex-end;
+  align-items:center;
+}
+
+.post-media{
+  width:100px;
+  height:70px;
+  border-radius:8px;
+  overflow:hidden;
+  border:1px solid #2a2a2a;
+  background:#0f0f0f;
+  position:relative;
+}
+.post-media img{
+  width:100%; height:100%; object-fit:cover; display:block;
+}
+
+/* "+X" Overlay bei mehr Bildern */
+.post-media.more::after{
+  content: attr(data-more);
+  position:absolute; inset:0;
+  display:grid; place-items:center;
+  background:rgba(0,0,0,.45);
+  color:#e7f7f2;
+  font:12px monospace;
+  border-radius:8px;
+}
+
+/* Wenn kein Bild vorhanden → 1spaltig */
+.post-item.no-media{
+  grid-template-columns: 1fr;
+  background-color: #333;
+}
+
+/* Kompakt-Option (optional) */
+.feed.compact .post-item{ padding:10px 12px; border-radius:12px; }
+.feed.compact .post-title{ font-size:16px; }
+.feed.compact .post-body-preview{ display:none; }

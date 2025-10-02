@@ -1,3 +1,6 @@
+// /js/forumuploadimage.js
+console.log("[images] forumuploadimage.js geladen");        //DEV
+
 
 document.addEventListener("DOMContentLoaded", () => {
   const dz    = document.getElementById("imageDropZone");
@@ -9,9 +12,21 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
+  console.log("[images] Dropzone bereit");
+
+  // Fehlerbox erstellen (falls nicht da)
+  let errorBox = dz.nextElementSibling;
+  if (!errorBox || !errorBox.classList?.contains("image-error")) {
+    errorBox = document.createElement("div");
+    errorBox.className = "image-error";
+    errorBox.style.cssText = "color:#f66; font:12px monospace; margin-top:6px;";
+    dz.insertAdjacentElement("afterend", errorBox);
+  }
+  const showError = (msg) => (errorBox.textContent = msg || "");
+
   let files = [];
   const MAX_FILES = 10;
-  const MAX_SIZE  = 8 * 1024 * 1024; // 8MB
+  const MAX_SIZE  = 25 * 1024 * 1024; // 25 MB
 
   function renderPreviews(){
     grid.innerHTML = "";
@@ -44,15 +59,14 @@ document.addEventListener("DOMContentLoaded", () => {
       item.appendChild(meta);
       grid.appendChild(item);
     });
-    // Debug: siehst du diese Log-Zeile?
     console.debug("[images] previews:", files.map(f => f.name));
   }
 
   function trimName(name){
-    if (name.length <= 20) return name;
-    const parts = name.split(/\.(?=[^\.]+$)/);
-    const base = parts[0], ext = parts[1] ? "."+parts[1] : "";
-    return base.slice(0,12) + "…" + ext;
+    if (!name) return "";
+    if (name.length <= 24) return name;
+    const [base, ext = ""] = name.split(/\.(?=[^\.]+$)/);
+    return base.slice(0,16) + "…" + (ext ? "."+ext : "");
   }
 
   function prettySize(bytes){
@@ -63,23 +77,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function addFiles(list){
     const arr = Array.from(list || []);
+    console.log("[images] addFiles() — erhalten:", arr.map(f => f.name));
+    if (!arr.length) return;
+
+    const rejected = [];
     for (const f of arr){
-      if (!f.type?.startsWith("image/")) continue;
-      if (f.size > MAX_SIZE) continue;
-      if (files.length >= MAX_FILES) break;
+      if (!f.type?.startsWith("image/")) { rejected.push(`${f.name} (kein Bild)`); continue; }
+      if (f.size > MAX_SIZE)              { rejected.push(`${f.name} (> 25MB)`); continue; }
+      if (files.length >= MAX_FILES)      { rejected.push(`${f.name} (max. ${MAX_FILES})`); continue; }
       files.push(f);
     }
+    showError(rejected.length ? `Nicht hinzugefügt: ${rejected.join(", ")}` : "");
     renderPreviews();
   }
 
-  // 1) Klick auf Zone oder Input
-  dz.addEventListener("click", () => input.click());
-  input.addEventListener("change", (e) => {
-    addFiles(e.target.files);
-    input.value = ""; // reset, damit gleiche Datei erneut geht
+  // Klick → Dateidialog
+  dz.addEventListener("click", () => {
+    console.log("[images] Zone klick → input.click()");
+    input.click();
   });
 
-  // 2) Drag & Drop (nur auf der Zone)
+  // Dateidialog Auswahl
+  input.addEventListener("change", (e) => {
+    const list = e.target.files;
+    console.log("[images] input.change — Files:", list ? list.length : 0);
+    addFiles(list);
+    input.value = ""; // damit gleiche Datei erneut gewählt werden kann
+  });
+
+  // Drag & Drop
   ["dragenter","dragover"].forEach(ev =>
     dz.addEventListener(ev, (e) => {
       e.preventDefault(); e.stopPropagation();
@@ -93,14 +119,16 @@ document.addEventListener("DOMContentLoaded", () => {
     })
   );
   dz.addEventListener("drop", (e) => {
+    console.log("[images] drop event — Files:", e.dataTransfer?.files?.length || 0);
     if (e.dataTransfer?.files?.length) addFiles(e.dataTransfer.files);
   });
 
-  // 3) Global: verhinder file://-Öffnen beim Drag aufs Fenster
+  // Fensterweit: file:// verhindern
   ["dragover","drop"].forEach(ev =>
     window.addEventListener(ev, (e) => e.preventDefault(), false)
   );
 
-  // Optional: extern abrufbar
+  // API für createPost.js
   window.getSelectedImages = () => files.slice();
+  window.clearSelectedImages = () => { files = []; renderPreviews(); showError(""); };
 });

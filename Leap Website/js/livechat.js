@@ -40,24 +40,59 @@ function formatTime(ts) {
   } catch { return ""; }
 }
 
-function renderMessage(docSnap, currentUid) {
+/* ---------- Username-Handling ---------- */
+let currentUid   = null;
+let currentName  = null;
+const usernameCache = new Map();
+
+async function fetchUsername(uid) {
+  if (!uid) return null;
+  if (usernameCache.has(uid)) return usernameCache.get(uid);
+
+  try {
+    const snap = await getDoc(doc(db, "users", uid));
+    const name = snap.exists() ? (snap.data().username || null) : null;
+    if (name) usernameCache.set(uid, name);
+    return name;
+  } catch {
+    return null;
+  }
+}
+
+/* ---------- Render Messages ---------- */
+function renderMessage(docSnap, myUid) {
   const data = docSnap.data();
-  const me   = data.uid === currentUid;
+  const me   = data.uid === myUid;
 
   const wrap = document.createElement("div");
   wrap.className = "chat-msg" + (me ? " me" : "");
 
-  const meta = document.createElement("span");
+  const meta = document.createElement("div");
   meta.className = "meta";
-  const name = data.username || data.displayName || data.email || "User";
-  meta.textContent = `${name} • ${formatTime(data.createdAt)}`;
 
-  const text = document.createElement("span");
+  const fallbackName = data.username
+    || data.displayName
+    || (data.email ? data.email.split("@")[0] : "User");
+
+  const time = formatTime(data.createdAt);
+  meta.textContent = `${fallbackName} • ${time}`;
+
+  const text = document.createElement("div");
   text.className = "text";
   text.textContent = data.text || "";
 
   wrap.appendChild(meta);
   wrap.appendChild(text);
+
+  // asynchron Firestore-Username nachladen (falls fehlt)
+  if (data.uid && !data.username) {
+    fetchUsername(data.uid).then(realName => {
+      if (realName && realName !== fallbackName) {
+        meta.textContent = `${realName} • ${time}`;
+      }
+    });
+  }
+
   return wrap;
 }
 
@@ -83,12 +118,11 @@ const configRef     = doc(db, "chatConfig", "reset");
 /* ---------- Global Reset-Window ---------- */
 const RESET_INTERVAL = 5 * 60; // Sekunden
 
-let currentUid   = null;
 let unsubMsgs    = null;
 let timerHandle  = null;
 
-let nextResetMs  = 0; // globaler Zielzeitpunkt (ms)
-let windowStartMs = 0; // sichtbares Fenster = [windowStartMs, ∞)
+let nextResetMs  = 0;
+let windowStartMs = 0;
 
 function updateTimerUI() {
   if (!elTimer) return;
@@ -103,7 +137,6 @@ async function ensureResetTimestamp() {
     const now = Date.now();
 
     if (!snap.exists()) {
-      // Falls möglich global initialisieren (nur wenn eingeloggt; Rules!)
       nextResetMs = now + RESET_INTERVAL * 1000;
       await trySetGlobal({ nextReset: nextResetMs });
     } else {
@@ -112,7 +145,6 @@ async function ensureResetTimestamp() {
       const ms   = toMillis(raw);
 
       if (!ms || ms <= now) {
-        // abgelaufen → neues Fenster starten (global, falls erlaubt)
         nextResetMs = now + RESET_INTERVAL * 1000;
         await trySetGlobal({ nextReset: nextResetMs });
       } else {
@@ -121,9 +153,7 @@ async function ensureResetTimestamp() {
     }
     windowStartMs = nextResetMs - RESET_INTERVAL * 1000;
     updateTimerUI();
-  } catch (err) {
-    console.warn("[livechat] ensureResetTimestamp() warn:", err?.message || err);
-    // Fallback: lokaler Takt (nur UI), bis ein eingeloggter Client global schreibt
+  } catch {
     if (!nextResetMs) {
       nextResetMs  = Date.now() + RESET_INTERVAL * 1000;
       windowStartMs = nextResetMs - RESET_INTERVAL * 1000;
@@ -131,14 +161,10 @@ async function ensureResetTimestamp() {
   }
 }
 
-// versucht global zu schreiben; scheitert still, wenn nicht erlaubt (z.B. nicht eingeloggt)
 async function trySetGlobal(payload) {
   try {
     await setDoc(configRef, payload, { merge: true });
-  } catch (e) {
-    // Kein Spam im Log – es reicht, lokal mitzulaufen
-    // console.debug("[livechat] trySetGlobal skipped:", e?.code || e);
-  }
+  } catch {}
 }
 
 function startTimerLoop() {
@@ -146,19 +172,17 @@ function startTimerLoop() {
   timerHandle = setInterval(async () => {
     const now = Date.now();
     if (now >= nextResetMs) {
-      // neues Fenster starten
       nextResetMs  = now + RESET_INTERVAL * 1000;
       windowStartMs = nextResetMs - RESET_INTERVAL * 1000;
-      await trySetGlobal({ nextReset: nextResetMs }); // global synchron halten
-      // neu rendern (Filter hat sich geändert)
+      await trySetGlobal({ nextReset: nextResetMs });
       renderFromCache();
     }
     updateTimerUI();
   }, 250);
 }
 
-/* ---------- Messages Stream (immer live) ---------- */
-let lastSnapshotDocs = []; // Cache der letzten Docs zum schnellen Re-Render bei Fensterwechsel
+/* ---------- Messages Stream ---------- */
+let lastSnapshotDocs = [];
 
 function attachMessagesStream() {
   if (unsubMsgs) { try { unsubMsgs(); } catch {} unsubMsgs = null; }
@@ -166,7 +190,6 @@ function attachMessagesStream() {
   unsubMsgs = onSnapshot(
     messagesQuery,
     (snap) => {
-      // cache aktualisieren
       lastSnapshotDocs = [];
       snap.forEach((d) => lastSnapshotDocs.push(d));
       renderFromCache();
@@ -183,14 +206,14 @@ function renderFromCache() {
   for (const docSnap of lastSnapshotDocs) {
     const data = docSnap.data();
     const createdMs = toMillis(data.createdAt);
-    if (!createdMs || createdMs < windowStartMs) continue; // Filter: nur aktuelles Fenster
+    if (!createdMs || createdMs < windowStartMs) continue;
     elMessages.appendChild(renderMessage(docSnap, currentUid));
   }
 
   if (atBottom) scrollToBottom(elMessages);
 }
 
-/* ---------- Beobachte globale Reset-Änderungen ---------- */
+/* ---------- Beobachte Reset ---------- */
 onSnapshot(configRef, (snap) => {
   if (!snap.exists()) return;
   const ms = toMillis(snap.data()?.nextReset);
@@ -199,14 +222,23 @@ onSnapshot(configRef, (snap) => {
     nextResetMs = ms;
     windowStartMs = nextResetMs - RESET_INTERVAL * 1000;
     updateTimerUI();
-    renderFromCache(); // Filter ändern → neu zeichnen
+    renderFromCache();
   }
 });
 
 /* ---------- Auth ---------- */
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
   currentUid = user?.uid || null;
   setInputEnabled(!!user);
+
+  if (user?.uid) {
+    const fsName = await fetchUsername(user.uid);
+    currentName = fsName
+      || user.displayName
+      || (user.email ? user.email.split("@")[0] : "User");
+  } else {
+    currentName = null;
+  }
 });
 
 /* ---------- Init ---------- */
@@ -216,7 +248,7 @@ onAuthStateChanged(auth, (user) => {
   attachMessagesStream();
 })();
 
-/* ---------- Senden + 3s Cooldown ---------- */
+/* ---------- Senden + Cooldown ---------- */
 const COOLDOWN_MS = 3000;
 let lastSentMs = 0;
 let cooldownTimer = null;
@@ -264,10 +296,7 @@ elForm?.addEventListener("submit", async (e) => {
   if (!text) return;
 
   const user = auth.currentUser;
-  if (!user) {
-    setInputEnabled(false);
-    return;
-  }
+  if (!user) { setInputEnabled(false); return; }
 
   if (!canSendNow()) {
     elInput.classList.add("deny");
@@ -275,14 +304,15 @@ elForm?.addEventListener("submit", async (e) => {
     return;
   }
 
-  const username =
-    user.displayName || (user.email ? user.email.split("@")[0] : "User");
+  const safeName = currentName || (await fetchUsername(user.uid))
+                 || user.displayName
+                 || (user.email ? user.email.split("@")[0] : "User");
 
   try {
     await addDoc(messagesRef, {
       text,
       uid: user.uid,
-      username,
+      username: safeName,
       createdAt: serverTimestamp(),
     });
     elInput.value = "";
