@@ -13,6 +13,7 @@ import {
   doc,
   getDoc,
   setDoc,
+  writeBatch,
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
 
@@ -23,6 +24,21 @@ const elInput    = document.getElementById("chat-input");
 const elSend     = document.getElementById("chat-send");
 const elHint     = document.getElementById("chat-hint");
 const elTimer    = document.getElementById("chat-timer");
+
+// Wer darf /clearall ausführen?
+const ADMIN_UIDS = new Set([
+  "P8XmWl4hptNZN8yMKJS5JCJ3MF92",
+]);
+
+async function clearAllMessages() {
+  const snap = await getDocs(messagesRef);
+  if (snap.empty) return;
+
+  const batch = writeBatch(db);
+  snap.forEach(d => batch.delete(d.ref));
+  await batch.commit();
+  console.log("✅ Chat geleert");
+}
 
 if (!elMessages || !elForm || !elInput) {
   console.warn("[livechat] Chat-Elemente nicht gefunden – Script beendet.");
@@ -297,6 +313,8 @@ elForm?.addEventListener("submit", async (e) => {
 
   const user = auth.currentUser;
   if (!user) { setInputEnabled(false); return; }
+
+  
 
   if (!canSendNow()) {
     elInput.classList.add("deny");

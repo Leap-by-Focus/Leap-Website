@@ -29,6 +29,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+
+
+
+
+
+
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Leap – Forum</title>
@@ -55,10 +61,10 @@ document.addEventListener("DOMContentLoaded", () => {
     <div class="hauptMenu">
       <canvas id="particleCanvas"></canvas>
       <div class="backToMainLogo">
-        <a href="index.html">
-          <img src="../assets/images/Leap.png" alt="" />
-        </a>
-      </div>
+  <a href="index.html" onclick="window.location.href='index.html'; return true;">
+    <img src="../assets/images/Leap.png" alt="Leap Logo" />
+  </a>
+</div>
     </div>
 
     <div class="loginDiv">
@@ -197,6 +203,15 @@ document.addEventListener("DOMContentLoaded", () => {
           <span>Beliebt</span>
         </button>
 
+        <button data-tag="gemerkte">
+          <img
+            src="../assets/images/merken.png"
+            alt="SQL Icon"
+            class="button-icon"
+          />
+          <span>Gemerkte</span>
+        </button>
+
         <div class="divider"></div>
 
         <div class="untertitel">Leap</div>
@@ -308,15 +323,6 @@ document.addEventListener("DOMContentLoaded", () => {
           />
           <span>SQL</span>
         </button>
-
-        <button data-tag="c-cpp">
-          <img
-            src="../assets/images/c.png"
-            alt="C/C++ Icon"
-            class="button-icon"
-          />
-          <span>C / C++</span>
-        </button>
       </div>
     </div>
 
@@ -327,10 +333,132 @@ document.addEventListener("DOMContentLoaded", () => {
         <input type="text" placeholder="Suchen..." class="search-input" />
         <button class="search-btn">🔍</button>
       </div>
+      
+    <!-- Filter & Sort -->
+<div class="controls-bar" id="controlsBar">
+  <div class="controls-row">
+    <label>
+      Sortieren:
+      <select id="sortBy">
+        <option value="newest">Neueste zuerst</option>
+        <option value="oldest">Älteste zuerst</option>
+        <option value="likes">Meiste Likes</option>
+        <option value="comments">Meiste Kommentare</option>
+      </select>
+    </label>
+
+    <label>
+      Zeitraum:
+      <select id="timeRange">
+        <option value="all">Alle</option>
+        <option value="24h">Letzte 24h</option>
+        <option value="7d">Letzte 7 Tage</option>
+        <option value="30d">Letzte 30 Tage</option>
+      </select>
+    </label>
+
+<label class="checkbox-inline">
+  <input type="checkbox" id="withCode" />
+  Nur mit Code-Snippet
+</label>
+  </div>
+</div>
 
       <!-- Nur dieser Bereich scrollt -->
       <div class="post-feed" id="postFeed"></div>
     </div>
+   <!-- Modal für Post-Detail -->
+    <div id="postModal" class="post-modal" aria-hidden="true">
+      <div class="post-modal__backdrop" data-close></div>
+      <article class="post-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="postModalTitle">
+        <button class="post-modal__close" type="button" data-close>×</button>
+        <header class="post-modal__head">
+          <h2 id="postModalTitle" class="post-modal__title"></h2>
+          <div class="post-modal__meta"></div>
+          <div class="post-modal__tags"></div>
+        </header>
+        <section class="post-modal__body"></section>
+        <!-- Actions / Toolbar unter dem Inhalt -->
+<footer class="post-modal__actions" role="group" aria-label="Thread Aktionen">
+  <button class="pm-btn pm-like" data-action="like" aria-pressed="false">
+    <span class="pm-ico">♥</span><span class="pm-label">Like</span>
+    <span class="pm-count" id="pm-like-count">0</span>
+  </button>
+
+  <button class="pm-btn pm-fav" data-action="favorite" aria-pressed="false" title="Zu Favoriten">
+    <span class="pm-ico">★</span><span class="pm-label">Merken</span>
+  </button>
+
+  <button class="pm-btn pm-reply-jump" data-action="jump-replies">
+    <span class="pm-ico">💬</span><span class="pm-label">Antworten</span>
+    <span class="pm-count" id="pm-reply-count">0</span>
+  </button>
+
+  <div class="pm-split"></div>
+
+  <button class="pm-btn pm-share" data-action="share">
+    <span class="pm-ico">⤴</span><span class="pm-label">Teilen</span>
+  </button>
+
+  <div class="pm-menu">
+    <button class="pm-btn pm-more" data-action="more" aria-expanded="false" aria-haspopup="true">
+      ⋯
+    </button>
+    <div class="pm-menu__list" role="menu">
+      <button class="pm-menu__item" role="menuitem" data-action="copy-link">Link kopieren</button>
+      <button class="pm-menu__item" role="menuitem" data-action="report">Melden</button>
+    </div>
+  </div>
+</footer>
+
+<!-- Antworten-Composer -->
+<section class="pm-reply-composer" id="pm-reply-composer">
+  <div class="pm-reply-avatar" id="pm-reply-avatar">👤</div>
+  <div class="pm-reply-box">
+    <div class="pm-reply-editor" id="pm-reply-editor"
+         contenteditable="true"
+         data-placeholder="Schreibe eine Antwort…"></div>
+    <div class="pm-reply-tools">
+      <div>
+        <button class="pm-mini" type="button">B</button>
+        <button class="pm-mini" type="button">{ }</button>
+      </div>
+      <div>
+        <button class="pm-mini pm-cancel" type="button" id="pm-reply-cancel">Abbrechen</button>
+        <button class="pm-submit" type="button" id="pm-reply-submit">Antwort posten</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Antworten-Liste -->
+<section class="pm-replies" id="pm-replies"></section>
+
+<!-- Antwortenliste -->
+<section class="pm-replies" id="pm-replies" aria-label="Antworten">
+  <!-- Beispiel-Item (wird später dynamisch erzeugt) -->
+  <!--
+  <article class="pm-reply">
+    <div class="pm-reply-avatar">🧑‍💻</div>
+    <div class="pm-reply-body">
+      <div class="pm-reply-head">
+        <span class="pm-reply-author">User123</span>
+        <span class="pm-reply-dot">•</span>
+        <time class="pm-reply-time">12.03., 14:21</time>
+      </div>
+      <div class="pm-reply-text">So würde ich das lösen…</div>
+      <div class="pm-reply-actions">
+        <button class="pm-mini" data-action="reply-like">♥ 3</button>
+        <button class="pm-mini" data-action="reply-report">Melden</button>
+      </div>
+    </div>
+  </article>
+  -->
+</section>
+      </article>
+    </div>
+
+    
 
     <!-- Livechat ist fix rechts; unabhängig vom Feed-Scroll -->
     <div class="livechat">

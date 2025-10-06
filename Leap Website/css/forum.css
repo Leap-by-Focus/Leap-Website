@@ -128,11 +128,12 @@ body { overflow: hidden; }
 
 .main{
   position: fixed;
-  top: 100px;        /* unter dem Header */
-  bottom: 100px;     /* über dem Footer */
+  bottom: 0px;     /* über dem Footer */
   left: 200px;       /* neben der Sidebar */
   right: 22%;        /* Platz für Livechat rechts */
+  top:100px;
   padding: 0 16px;
+  padding-bottom: 20px;
   box-sizing: border-box;
   display: flex;             /* wichtig */
   flex-direction: column;    /* Suchleiste oben, Feed darunter */
@@ -140,6 +141,7 @@ body { overflow: hidden; }
 }
 
 .search-container {
+  position: fixed;
   margin: 40px auto;
   width: 50%;
   display: flex;
@@ -593,12 +595,12 @@ html { scroll-behavior: smooth; }
     position: relative;
     left:0%;
     width:100%;
-    height: 100%;
+    height: auto;
 }
 
 .search-container {
   position: fixed;   /* bleibt beim Scrollen oben */
-  top: -40px;             /* direkt an oberer Kante */
+  top: 40px;             /* direkt an oberer Kante */
   margin: 0 auto;     /* keine extra Abstände */
 }
 
@@ -782,7 +784,7 @@ html { scroll-behavior: smooth; }
   transform:translateX(-50%) scaleY(0);
   transform-origin: bottom center;
   width:1000px;
-  height:690px;   /* 👈 viel höher als vorher (z. B. 800px) */
+  height:660px;   /* 👈 viel höher als vorher (z. B. 800px) */
   background:#151515;
   border-radius:20px;
   overflow:hidden;
@@ -1304,15 +1306,23 @@ html { scroll-behavior: smooth; }
 
 
 
-.post-feed{
-  flex: 1;              /* füllt den Rest von .main */
-  overflow-y: auto;     /* nur hier wird gescrollt */
-  padding-right: 5px;   /* kleiner Platz für Scrollbar */
-  padding-bottom: 0px;  /* Abstand vor Footer */
-  padding-left:5px;
-  margin-left:200px;
-  margin-right: 20%;
+/* Feed soll direkt unter Controls starten */
+.post-feed {
+  margin-left: 200px;       /* Sidebar */
+  margin-right: 22%;        /* Livechat */
+  margin-top: 100px;        /* Platz für Searchbar (120px) + Controls (70px) + etwas Abstand */
+  margin-bottom: 0px;     /* Platz für Footer */
+  
+  padding: 0 5px;           /* nur Innenabstand */
+  overflow-y: auto;
+  max-height: calc(100%); /* viewport minus header+controls und footer */
+  
+  scrollbar-width: thin;
+  scrollbar-color: #000 #111;
 }
+
+
+
 
 /* Karte = Grid: Content links, optionales Bild rechts */
 .post-item{
@@ -1412,7 +1422,6 @@ html { scroll-behavior: smooth; }
   border-radius:8px;
   overflow:hidden;
   border:1px solid #2a2a2a;
-  background:#0f0f0f;
   position:relative;
 }
 .post-media img{
@@ -1433,10 +1442,439 @@ html { scroll-behavior: smooth; }
 /* Wenn kein Bild vorhanden → 1spaltig */
 .post-item.no-media{
   grid-template-columns: 1fr;
-  background-color: #333;
+  background-color: #161616
 }
 
 /* Kompakt-Option (optional) */
 .feed.compact .post-item{ padding:10px 12px; border-radius:12px; }
 .feed.compact .post-title{ font-size:16px; }
 .feed.compact .post-body-preview{ display:none; }
+
+
+
+
+/* Controls-Bar direkt unter der Suche */
+.controls-bar {
+  margin: 20px auto 10px;   /* auto = zentriert wie Searchbar */
+  width: 50%;              /* gleiche Breite wie Searchbar */
+  padding: 8px 12px;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  background: #141414;
+  font: 13px monospace;
+  color: #ddd;
+  box-sizing: border-box;
+  
+}
+
+.controls-row {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.controls-bar label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.controls-bar select {
+  background: #151515;
+  border: 1px solid #333;
+  color: #ddd;
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.controls-bar .checkbox-inline input[type="checkbox"] {
+  transform: scale(1.15);
+  cursor: pointer;
+}
+
+
+
+
+
+.post-feed::-webkit-scrollbar {
+  width: 10px;
+}
+
+.post-feed::-webkit-scrollbar-track {
+  background: #111;
+}
+
+.post-feed::-webkit-scrollbar-thumb {
+  background-color: #000;
+  border-radius: 8px;
+  border: 2px solid #111;
+}
+
+.post-feed::-webkit-scrollbar-thumb:hover {
+  background-color: #222;
+}
+
+
+
+
+/* ======= Notfall-Overrides (fixe Leisten + schwarzer Scrollbar) ======= */
+.search-container {
+  position: fixed !important;
+  top: 120px !important;
+  left: 320px !important;                           /* Sidebar = 200px */
+  width: calc(100% - 300px - 30%) !important;       /* rechts Livechat ~22% */
+  z-index: 100 !important;
+  margin: 0 !important;
+}
+
+.controls-bar {
+  position: fixed !important;
+  top: 190px !important;                             /* direkt unter Suche */
+  left: 320px !important;
+  width: calc(100% - 300px - 30%) !important;
+  z-index: 90 !important;
+  margin: 0 !important;
+}
+
+/* verhindert seltsames "Re-Ankern" beim Laden */
+#postFeed { overflow-anchor: none; }
+
+
+
+
+
+
+/* ─────────────────────────────────────────────────────────────
+   Feed: verhindert seltsames Re-Ankern beim Laden
+────────────────────────────────────────────────────────────── */
+#postFeed { overflow-anchor: none; }
+
+/* ─────────────────────────────────────────────────────────────
+   Modal (Container + Dialog)
+────────────────────────────────────────────────────────────── */
+.post-modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  z-index: 400;
+}
+.post-modal.open { display: block; }
+
+.post-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: #000a;
+  backdrop-filter: blur(2px);
+}
+
+/* Dialog: exakt zentriert, kein horizontales Scrollen, responsiv */
+.post-modal__dialog {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);          /* exaktes Zentrieren */
+  box-sizing: border-box;
+  width: min(920px, 100vw - 40px);           /* schmaler Rand an den Seiten */
+  max-height: 85vh;
+  overflow-y: auto;
+  overflow-x: hidden;                         /* ⬅️ verhindert seitliches Scrollen */
+  background: #151515;
+  border: 1px solid #2a2a2a;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 30px 80px rgba(0,0,0,.55);
+}
+
+/* iOS/Chrome-Mobile: sichere Viewport-Einheit (falls verfügbar) */
+@supports (width: 100svw) {
+  .post-modal__dialog { width: min(920px, 100svw - 40px); }
+}
+
+/* Close-Button & Headerinfos */
+.post-modal__close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: #222;
+  border: 1px solid #333;
+  color: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+.post-modal__title {
+  font: 700 20px/1.3 monospace;
+  color: #f1f1f1;
+  margin: 0 28px 8px 0;
+}
+.post-modal__meta {
+  font: 12px monospace;
+  color: #aab3b7;
+  margin-bottom: 8px;
+  opacity: .9;
+}
+.post-modal__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.post-modal__tags .tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #1f1f1f;
+  border: 1px solid #2e2e2e;
+  color: #dfe9e6;
+  font: 11px monospace;
+}
+
+/* Body + Codeblöcke */
+.post-modal__body {
+  color: #ddd;
+  font: 14px/1.55 monospace;
+  white-space: normal;
+}
+.post-modal__body pre {
+  background: #0f0f0f;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  padding: 12px;
+  overflow: auto;
+}
+.post-modal__body pre,
+.post-modal__body code {
+  max-width: 100%;
+  overflow: auto;       /* horizontales Scrollen nur im Codeblock */
+  white-space: pre;     /* keine weichen Umbrüche in Code, aber max-width greift */
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Actions-Bar (Likes, Favorit, Antworten, Share, Menü)
+────────────────────────────────────────────────────────────── */
+.post-modal__actions {
+  position: sticky;
+  bottom: -20px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 0;
+  padding: 10px;
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+}
+
+.pm-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 12px;
+  background: #1b1b1b;
+  color: #eaeaea;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  cursor: pointer;
+  font: 13px monospace;
+  transition: background .2s ease, transform .15s ease, border-color .2s ease;
+}
+.pm-btn:hover { background: #222; transform: translateY(-1px); border-color: #333; }
+.pm-btn .pm-ico { font-size: 14px; line-height: 1; }
+.pm-btn .pm-count {
+  background: #111;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  padding: 2px 6px;
+  font-size: 12px;
+  color: #cfe9e2;
+}
+
+/* Aktive Zustände */
+.pm-btn[aria-pressed="true"] { background: #1f2726; border-color: #3a8f7f; }
+.pm-btn.pm-like[aria-pressed="true"] .pm-ico { color: #50e9ba; }
+.pm-btn.pm-fav[aria-pressed="true"] .pm-ico { color: #ffd76b; }
+
+/* Splitter */
+.pm-split { width: 1px; height: 24px; background: #2a2a2a; margin: 0 2px; }
+
+/* Kebab-Menü */
+.pm-menu { position: relative; }
+.pm-more { width: 36px; justify-content: center; padding: 0; }
+.pm-menu__list {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  background: #161616;
+  border: 1px solid #333;
+  border-radius: 10px;
+  min-width: 180px;
+  box-shadow: 0 12px 30px rgba(0,0,0,.45);
+  display: none;
+  overflow: hidden;
+  z-index: 5;
+}
+.pm-menu__item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 10px 12px;
+  background: transparent;
+  color: #ddd;
+  border: none;
+  cursor: pointer;
+  font: 13px monospace;
+}
+.pm-menu__item:hover { background: #222; }
+
+/* ─────────────────────────────────────────────────────────────
+   Reply Composer (Editor + Tools)
+────────────────────────────────────────────────────────────── */
+.pm-reply-composer {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 10px;
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+}
+
+.pm-reply-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #1f1f1f;
+  border: 1px solid #2a2a2a;
+  overflow: hidden;
+}
+.pm-reply-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.pm-reply-box { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+
+.pm-reply-editor {
+  min-height: 80px;
+  padding: 10px;
+  border-radius: 10px;
+  background: #0f0f0f;
+  border: 1px solid #2a2a2a;
+  color: #eaeaea;
+  font: 13px/1.5 monospace;
+
+  /* Umbrüche beim Tippen */
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+.pm-reply-editor[contenteditable="true"][data-placeholder]:empty::before {
+  content: attr(data-placeholder);
+  color: #777;
+  pointer-events: none;
+}
+
+/* Tools */
+.pm-reply-tools { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.pm-mini {
+  height: 30px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid #2a2a2a;
+  background: #1b1b1b;
+  color: #ddd;
+  cursor: pointer;
+  font: 12px monospace;
+}
+.pm-mini:hover { background: #232323; }
+
+/* Submit mit animiertem Rand */
+.pm-submit {
+  position: relative;
+  height: 32px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font: 12px monospace;
+  font-weight: bold;
+  color: #fff;
+  background: #151515;
+  z-index: 0;
+  overflow: hidden;
+  transition: transform .15s ease, background .2s ease;
+}
+.pm-submit::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  padding: 2px;
+  background: linear-gradient(270deg, #50e9ba, #148fac, #e6f0f4, #50e9ba);
+  background-size: 600% 600%;
+  animation: rotateBorder 4s linear infinite;
+
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+
+  pointer-events: none;
+  z-index: -1;
+}
+.pm-submit:hover { transform: scale(1.05); background: #222; }
+@keyframes rotateBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Replies-Liste + Items (Anzeige)
+────────────────────────────────────────────────────────────── */
+.pm-replies {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+.pm-reply {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+}
+.pm-reply-body { flex: 1; }
+.pm-reply-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+  color: #aab3b7;
+  font: 12px monospace;
+}
+.pm-reply-author { color: #dfe9e6; font-weight: bold; }
+.pm-reply-dot { opacity: .6; }
+.pm-reply-time { opacity: .9; }
+
+/* Anzeige-Text: harte Umbrüche verhindern horizontales Scrollen */
+.pm-reply-text {
+  color: #ddd;
+  font: 13px/1.55 monospace;
+  white-space: pre-wrap;        /* Zeilenumbrüche respektieren */
+  word-wrap: break-word;        /* lange Wörter umbrechen */
+  overflow-wrap: anywhere;      /* auch URLs/Code ohne Leerzeichen */
+}
+
+.pm-reply-actions { margin-top: 6px; display: flex; gap: 6px; }
