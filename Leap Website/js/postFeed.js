@@ -14,6 +14,7 @@ import {
 ──────────────────────────────────────────────────────────────────────── */
 const USER_COLLECTION = "users"; // ggf. anpassen
 const profileCache = new Map();  // uid -> { name, avatar }
+let currentOpenPostId = null;
 
 function deriveNameFromEmail(email) {
   return (typeof email === "string" && email.includes("@"))
@@ -75,6 +76,7 @@ const elReplySubmit  = document.getElementById("pm-reply-submit");
 const elReplyCancel  = document.getElementById("pm-reply-cancel");
 const elReplyAvatar  = document.getElementById("pm-reply-avatar"); // <div class="pm-reply-avatar" id="pm-reply-avatar"></div>
 
+syncFavButtonState();
 function openModal(){
   if (!modalEl) return;
   modalEl.classList.add("open");
@@ -102,6 +104,7 @@ const auth = getAuth();
 let favoritePosts = [];        // IDs der gemerkten Posts
 let favoriteListener = null;   // unsubscribe
 
+
 function listenToFavorites() {
   if (favoriteListener) { try { favoriteListener(); } catch {} favoriteListener = null; }
 
@@ -118,20 +121,109 @@ function listenToFavorites() {
   });
 }
 
+// Likes-State
+let likedPosts = [];       // IDs der gelikten Posts
+let likeListener = null;   // unsubscribe
+
+function listenToLikes() {
+  if (likeListener) { try { likeListener(); } catch {} likeListener = null; }
+
+  const u = auth.currentUser;
+  if (!u) {
+    likedPosts = [];
+    syncLikeButtonState();   // Modal-Button neutralisieren
+    renderPosts(latestPosts);
+    return;
+  }
+  const likeCol = collection(db, "users", u.uid, "likes");
+  likeListener = onSnapshot(likeCol, (snap) => {
+    likedPosts = snap.docs.map(d => d.id);
+    syncLikeButtonState();   // Modal-Button passend setzen
+    renderPosts(latestPosts); // falls du im Feed Likes zeigen willst
+  });
+}
+
+
+
+
+
 // global für Buttons nutzbar
+
 async function toggleFavorite(postId) {
   const u = auth.currentUser;
   if (!u) { alert("Bitte einloggen, um Beiträge zu merken."); return; }
-  const favRef = doc(db, "users", u.uid, "favorites", postId);
-  const isFav = favoritePosts.includes(postId);
+
+  const favRef  = doc(db, "users", u.uid, "favorites", postId);
+  const postRef = doc(db, "posts", postId);
+
+  const isFav = Array.isArray(favoritePosts) && favoritePosts.includes(postId);
   if (isFav) {
     await deleteDoc(favRef);
+    try { await updateDoc(postRef, { favoriteCount: increment(-1) }); } catch {}
   } else {
     await setDoc(favRef, { createdAt: serverTimestamp() });
+    try { await updateDoc(postRef, { favoriteCount: increment(1) }); } catch {}
   }
 }
 
-onAuthStateChanged(auth, () => listenToFavorites());
+
+
+// Likes toggeln (pro User in users/{uid}/likes/{postId}) + Aggregat am Post
+async function toggleLike(postId) {
+  const u = auth.currentUser;
+  if (!u) { alert("Bitte einloggen, um zu liken."); return; }
+
+  const likeRef = doc(db, "users", u.uid, "likes", postId);
+  const postRef = doc(db, "posts", postId);
+
+  const isLiked = Array.isArray(likedPosts) && likedPosts.includes(postId);
+
+  if (isLiked) {
+    // Like entfernen
+    await deleteDoc(likeRef);
+    try { await updateDoc(postRef, { likeCount: increment(-1) }); } catch {}
+  } else {
+    // Like setzen
+    await setDoc(likeRef, { createdAt: serverTimestamp() });
+    try { await updateDoc(postRef, { likeCount: increment(1) }); } catch {}
+  }
+}
+
+// Report speichern (ein Report pro User & Post)
+async function sendReport(postId, { reason, details }) {
+  const u = auth.currentUser;
+  if (!u) { alert("Bitte einloggen, um zu melden."); return; }
+
+  // Ein Report pro User: users/{uid}/reports/{postId} + posts/{postId}/reports/{uid}
+  const userReportRef = doc(db, "users", u.uid, "reports", postId);
+  const postReportRef = doc(db, "posts", postId, "reports", u.uid);
+
+  // Falls schon gemeldet → Hinweis
+  const existsSnap = await getDoc(userReportRef);
+  if (existsSnap.exists()) {
+    alert("Du hast diesen Beitrag bereits gemeldet. Danke!");
+    return;
+  }
+
+  const payload = {
+    reason: reason || "Unspecified",
+    details: details || "",
+    createdAt: serverTimestamp(),
+    reporterUid: u.uid
+  };
+
+  // beidseitig speichern (optional, aber praktisch fürs Moderations-UI)
+  await setDoc(userReportRef, payload);
+  await setDoc(postReportRef, payload);
+
+  // (Optional) Zähler am Post
+  try { await updateDoc(doc(db, "posts", postId), { reportCount: increment(1) }); } catch {}
+}
+
+onAuthStateChanged(auth, () => {
+  listenToFavorites();
+  listenToLikes();   // << Likes einschalten
+});
 
 function getViewerKey() {
   const u = auth.currentUser;
@@ -176,13 +268,20 @@ const buildMeta = p => {
 const renderTags = tags =>
   (tags || []).map(t => `<span class="tag">#${escapeHtml(t)}</span>`).join("");
 
-async function showPostInModal(id, preloadData = null, push = true){
-  try{
+async function showPostInModal(id, preloadData = null, push = true) {
+  try {
     const data = preloadData || await fetchPostById(id);
 
     if (!data.authorName) {
       data.authorName = await fetchUsername(data.authorUid, data.authorEmail);
     }
+    syncLikeButtonState();
+setLikeCount(Number(data.likeCount || 0));
+
+syncFavButtonState();
+// Falls du auch einen Fav-Zähler im Modal anzeigen willst:
+const favCntEl = modalEl?.querySelector('.pm-btn.pm-fav .pm-count');
+if (favCntEl) favCntEl.textContent = String(Number(data.favoriteCount || 0));
 
     await incrementViewOnce(id);
 
@@ -192,19 +291,29 @@ async function showPostInModal(id, preloadData = null, push = true){
 
     const html = String(data.bodyHtml || data.html || "");
     const text = String(data.bodyText || "");
-    modalBodyEl.innerHTML = html ? html : `<p>${escapeHtml(text).replace(/\n/g,"<br>")}</p>`;
+    modalBodyEl.innerHTML = html
+      ? html
+      : `<p>${escapeHtml(text).replace(/\n/g, "<br>")}</p>`;
+
+    // ✅ Post-ID merken & Favoritenstatus synchronisieren
+currentOpenPostId = id;
+syncFavButtonState();
+// ✅ Like-Status + Zähler setzen
+syncLikeButtonState();
+setLikeCount(Number(data.likeCount || 0));
 
     // Replies/Composer aktivieren
     attachRepliesStream(id);
     setupReplyComposer(id);
 
-    if (push){
+    if (push) {
       const url = new URL(location.href);
       url.search = HYBRID.modalParam(id);
-      history.pushState({view:"modal", id}, "", url);
+      history.pushState({ view: "modal", id }, "", url);
     }
+
     openModal();
-  }catch(err){
+  } catch (err) {
     console.error(err);
     location.href = HYBRID.pageURL(id);
   }
@@ -227,7 +336,7 @@ function deSlug(s) {
 
 const ALIASES = new Map([
   ["beliebt", null],
-  ["fragen", "fragen"], ["frage", "fragen"], ["hilfe", "fragen"], ["qna", "fragen"], ["support", "fragen"],
+  ["fragen", "fragen"], ["gemerkte", "gemerkte"], ["frage", "fragen"], ["hilfe", "fragen"], ["qna", "fragen"], ["support", "fragen"],
   ["diskussion", "diskussion"], ["discuss", "diskussion"], ["talk", "diskussion"],
   ["feedback", "feedback"],
   ["bugs", "bugs"], ["bug", "bugs"], ["fehler", "bugs"], ["issue", "bugs"],
@@ -287,6 +396,22 @@ const controls   = document.getElementById("controlsBar");
 const selSort    = document.getElementById("sortBy");
 const selRange   = document.getElementById("timeRange");
 const chkWithCode= document.getElementById("withCode");
+document.querySelectorAll(".sideMenu button[data-tag]").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const raw = (btn.dataset.tag || "").trim().toLowerCase();
+
+    // Spezialfall Gemerkte ohne Heuristiken:
+    if (raw === "gemerkte") {
+      activeTag = "gemerkte";
+    } else {
+      activeTag = normalizeTag(raw);
+    }
+
+    document.querySelectorAll(".sideMenu button").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    renderPosts(latestPosts);
+  });
+});
 
 let latestPosts   = [];
 let activeTag     = null;    // null = alle
@@ -498,8 +623,32 @@ function renderPosts(posts) {
       ${codePreview}
     `;
 
-    item.appendChild(content);
-    feedEl.appendChild(item);
+    const liked = Array.isArray(likedPosts) && likedPosts.includes(p.id);
+const faved = Array.isArray(favoritePosts) && favoritePosts.includes(p.id);
+const likeCnt = Number(p.likeCount || 0);
+
+const actions = document.createElement("div");
+actions.className = "post-actions-right";
+actions.innerHTML = `
+  <button class="feed-like-btn"
+          data-id="${p.id}"
+          aria-pressed="${liked ? "true" : "false"}"
+          title="${liked ? "Like entfernen" : "Gefällt mir"}">
+    <span class="ico">❤</span>
+    <span class="cnt">${likeCnt}</span>
+  </button>
+
+  <button class="feed-fav-btn"
+          data-id="${p.id}"
+          aria-pressed="${faved ? "true" : "false"}"
+          title="${faved ? "Aus Favoriten entfernen" : "Zu Favoriten"}">
+    <span class="ico">★</span>
+  </button>
+`;
+
+item.appendChild(content);
+item.appendChild(actions);
+feedEl.appendChild(item);
   }
 
   try { feedEl.scrollTop = 0; } catch {}
@@ -541,14 +690,134 @@ feedEl?.addEventListener("keydown", async (e)=>{
 /* ──────────────────────────────────────────────────────────────────────
    Modal schließen
 ──────────────────────────────────────────────────────────────────────── */
-modalEl?.addEventListener("click", (e)=>{
-  if (e.target.matches("[data-close]") || e.target === modalEl.querySelector(".post-modal__backdrop")){
+// Close per Klick: Button mit [data-close] ODER die Backdrop-Fläche
+modalEl?.addEventListener("click", (e) => {
+  if (e.target.classList.contains("post-modal__backdrop")) {
+    closeModal();
+    return;
+  }
+  if (e.target.closest("[data-close]")) {
     closeModal();
   }
 });
-document.addEventListener("keydown", (e)=>{
-  if (e.key === "Escape" && modalEl?.classList.contains("open")){
+
+// Close per ESC
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && modalEl?.classList.contains("open")) {
     closeModal();
+  }
+});
+
+// Fallback, falls irgendwo noch die alte (falsche) Klasse verwendet wird:
+document.addEventListener("click", (e) => {
+  if (e.target.closest(".post-modal__close, .post_modall__close")) {
+    closeModal();
+  }
+});
+
+// 🔸 Favoriten-Button: Bild wechseln beim Klicken
+const FAV_IMG_SRC = "../assets/images/markieren.png";
+
+// Helper: Visuals des Buttons setzen (Icon + Label + Title + aria-pressed)
+function setFavVisual(btn, pressed) {
+  if (!btn) return;
+  const ico   = btn.querySelector(".pm-ico");
+  const label = btn.querySelector(".pm-label");
+
+  // steuert CSS-Farbe
+  btn.setAttribute("aria-pressed", pressed ? "true" : "false");
+
+  // Stern bleibt gleich – Farbe kommt aus CSS
+  if (ico) ico.textContent = "★";
+
+  if (label) label.textContent = pressed ? "Gemerkt" : "Merken";
+  btn.title = pressed ? "Aus Favoriten entfernen" : "Zu Favoriten";
+}
+// Falls du schon syncFavButtonState() hast, ersetze dessen Inhalt so:
+function syncFavButtonState(){
+  const btn = modalEl?.querySelector('.pm-btn.pm-fav[data-action="favorite"]');
+  if (!btn || !currentOpenPostId) return;
+  const pressed = Array.isArray(favoritePosts) && favoritePosts.includes(currentOpenPostId);
+  setFavVisual(btn, pressed);
+}
+
+function setLikeVisual(btn, pressed) {
+  if (!btn) return;
+  const ico   = btn.querySelector(".pm-ico");
+  const label = btn.querySelector(".pm-label");
+  btn.setAttribute("aria-pressed", pressed ? "true" : "false");
+  if (ico) ico.textContent = "❤";
+  if (label) label.textContent = pressed ? "Geliked" : "Like";
+  btn.title = pressed ? "Like entfernen" : "Gefällt mir";
+}
+
+function setLikeCount(n) {
+  const countEl = modalEl?.querySelector('.pm-btn.pm-like .pm-count');
+  if (countEl) countEl.textContent = String(n ?? 0);
+}
+
+function syncLikeButtonState() {
+  const btn = modalEl?.querySelector('.pm-btn.pm-like[data-action="like"]');
+  if (!btn || !currentOpenPostId) return;
+  const pressed = Array.isArray(likedPosts) && likedPosts.includes(currentOpenPostId);
+  setLikeVisual(btn, pressed);
+}
+
+// Klick-Handler (optimistisches Toggle)
+modalEl?.addEventListener("click", async (e)=>{
+  const btn = e.target.closest('.pm-btn.pm-fav[data-action="favorite"]');
+  if (!btn || !currentOpenPostId) return;
+
+  const willBeFav = btn.getAttribute("aria-pressed") !== "true";
+  setFavVisual(btn, willBeFav); // erst UI
+
+  try {
+    await toggleFavorite(currentOpenPostId); // dann Firestore
+  } catch (err) {
+    console.error("Favorit umschalten fehlgeschlagen:", err);
+    setFavVisual(btn, !willBeFav); // rollback
+  }
+});
+
+// Melden-Button (delegiert)
+modalEl?.addEventListener("click", async (e) => {
+  const btn = e.target.closest('.pm-btn.pm-report[data-action="report"]');
+  if (!btn || !currentOpenPostId) return;
+
+  const reason  = (prompt("Grund der Meldung (z.B. Spam, Beleidigung, NSFW, Sonstiges):") || "").trim();
+  if (!reason) return;
+  const details = (prompt("Optionale Details (Beweise, Kontext):") || "").trim();
+
+  try {
+    await sendReport(currentOpenPostId, { reason, details });
+    btn.setAttribute("aria-pressed", "true");
+    btn.title = "Bereits gemeldet";
+    alert("Danke! Deine Meldung wurde übermittelt.");
+  } catch (err) {
+    console.error("Report fehlgeschlagen:", err);
+    alert("Meldung konnte nicht gesendet werden.");
+  }
+});
+
+modalEl?.addEventListener("click", async (e) => {
+  const btn = e.target.closest('.pm-btn.pm-like[data-action="like"]');
+  if (!btn || !currentOpenPostId) return;
+
+  const willBeLiked = btn.getAttribute("aria-pressed") !== "true";
+  setLikeVisual(btn, willBeLiked); // UI sofort
+
+  // Zähler optimistisch anpassen
+  const countEl = modalEl?.querySelector('.pm-btn.pm-like .pm-count');
+  const cur = parseInt(countEl?.textContent || "0", 10) || 0;
+  if (countEl) countEl.textContent = String(cur + (willBeLiked ? 1 : -1));
+
+  try {
+    await toggleLike(currentOpenPostId);
+  } catch (err) {
+    console.error("Like umschalten fehlgeschlagen:", err);
+    // rollback
+    setLikeVisual(btn, !willBeLiked);
+    if (countEl) countEl.textContent = String(cur);
   }
 });
 
@@ -574,6 +843,7 @@ window.addEventListener("popstate", async (ev)=>{
       return;
     }
     await showPostInModal(state.id, null, false);
+    currentOpenPostId = id;
   } else {
     if (modalEl?.classList.contains("open")) closeModal(false);
   }
@@ -638,6 +908,12 @@ function setupReplyComposer(postId) {
 
 let detachReplies = null;
 
+// === Hilfsfunktion: Zahl am Antworten-Button setzen ===
+function setReplyCount(n) {
+  const countEl = modalEl?.querySelector('.pm-btn.pm-reply .pm-count');
+  if (countEl) countEl.textContent = String(n);
+}
+
 function renderReplyItem(r) {
   const d  = r.createdAt?.toDate ? r.createdAt.toDate() : (r.createdAt ? new Date(r.createdAt) : new Date());
   const ts = d.toLocaleString("de-DE", { day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit" });
@@ -676,17 +952,26 @@ function renderReplyItem(r) {
 
 function attachRepliesStream(postId) {
   if (!elReplies) return;
-  if (detachReplies) { try { detachReplies(); } catch {}; detachReplies = null; }
+  if (detachReplies) { try { detachReplies(); } catch {} ; detachReplies = null; }
 
   const q = query(collection(db, "posts", postId, "replies"), orderBy("createdAt", "asc"));
-  detachReplies = onSnapshot(q, (snap) => {
+  detachReplies = onSnapshot(q, async (snap) => {
+    // Liste neu aufbauen
     elReplies.innerHTML = "";
     snap.forEach(docSnap => {
       elReplies.appendChild(renderReplyItem({ id: docSnap.id, ...docSnap.data() }));
     });
+
+    // >>> live Zähler setzen
+    const count = snap.size;
+    setReplyCount(count);
+
+    // (optional) Aggregat im Post-Dokument synchron halten:
+    try {
+      await updateDoc(doc(db, "posts", postId), { commentCount: count });
+    } catch {}
   }, (err) => console.error("Replies stream error:", err));
 }
-
 /* ──────────────────────────────────────────────────────────────────────
    Code-Erkennung + Preview
 ──────────────────────────────────────────────────────────────────────── */
@@ -803,5 +1088,8 @@ function forceTopOnceAfterRender() {
   requestAnimationFrame(() => { setTimeout(scrollFeedToTop, 0); });
 }
 
-// 👉 Optional: mach toggleFavorite global erreichbar (für Inline-HTML-Buttons)
+// 👉 Optional: mach toggleFavorite globlistenToLikes();al erreichbar (für Inline-HTML-Buttons)
+// richtig:
 window.toggleFavorite = toggleFavorite;
+
+

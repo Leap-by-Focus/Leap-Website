@@ -385,20 +385,28 @@ document.addEventListener("DOMContentLoaded", () => {
     <span class="pm-count" id="pm-like-count">0</span>
   </button>
 
-  <button class="pm-btn pm-fav" data-action="favorite" aria-pressed="false" title="Zu Favoriten">
-    <span class="pm-ico">★</span><span class="pm-label">Merken</span>
-  </button>
+<button type="button" class="pm-btn pm-fav" data-action="favorite" aria-pressed="false">
+  <span class="pm-ico" aria-hidden="true">★</span>
+  <span class="pm-label">Merken</span>
+</button>
 
-  <button class="pm-btn pm-reply-jump" data-action="jump-replies">
-    <span class="pm-ico">💬</span><span class="pm-label">Antworten</span>
-    <span class="pm-count" id="pm-reply-count">0</span>
-  </button>
+
+<button class="pm-btn pm-reply" type="button">
+  <span class="pm-ico">💬</span>
+  <span class="pm-label">Antworten</span>
+  <span class="pm-count">0</span> <!-- ← WICHTIG: dieser Counter wird aktualisiert -->
+</button>
 
   <div class="pm-split"></div>
 
   <button class="pm-btn pm-share" data-action="share">
     <span class="pm-ico">⤴</span><span class="pm-label">Teilen</span>
   </button>
+
+  <button class="pm-btn pm-report" data-action="report" title="Beitrag melden">
+  <span class="pm-ico">⚑</span>
+  <span class="pm-label">Melden</span>
+</button>
 
   <div class="pm-menu">
     <button class="pm-btn pm-more" data-action="more" aria-expanded="false" aria-haspopup="true">
@@ -407,6 +415,7 @@ document.addEventListener("DOMContentLoaded", () => {
     <div class="pm-menu__list" role="menu">
       <button class="pm-menu__item" role="menuitem" data-action="copy-link">Link kopieren</button>
       <button class="pm-menu__item" role="menuitem" data-action="report">Melden</button>
+      
     </div>
   </div>
 </footer>

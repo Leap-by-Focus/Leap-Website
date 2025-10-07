@@ -125,12 +125,12 @@ body { overflow: hidden; }
   border: none;
 }
 
-
 .main{
   position: fixed;
   bottom: 0px;     /* über dem Footer */
   left: 200px;       /* neben der Sidebar */
   right: 22%;        /* Platz für Livechat rechts */
+  width: 100%;
   top:100px;
   padding: 0 16px;
   padding-bottom: 20px;
@@ -139,6 +139,7 @@ body { overflow: hidden; }
   flex-direction: column;    /* Suchleiste oben, Feed darunter */
   overflow: hidden;          /* nur der Feed scrollt */
 }
+
 
 .search-container {
   position: fixed;
@@ -1294,31 +1295,36 @@ html { scroll-behavior: smooth; }
 .tag-suggest-item.new{ color:#50e9ba; }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-/* Feed soll direkt unter Controls starten */
+/* Einheitliche, feste Fläche für den Feed */
 .post-feed {
-  margin-left: 200px;       /* Sidebar */
-  margin-right: 22%;        /* Livechat */
-  margin-top: 100px;        /* Platz für Searchbar (120px) + Controls (70px) + etwas Abstand */
-  margin-bottom: 0px;     /* Platz für Footer */
+  position: fixed;
+  /* links neben der Sidebar weg: */
+  left: 200px;             /* Sidebar-Breite */
+  /* rechts Platz für Livechat: */
+  right: 22%;
+  /* oben unter Search + Controls: */
+  top: 230px;              /* 120px Search + ~70px Controls + Puffer */
+  /* unten über dem Footer: */
+  bottom: 100px;           /* Footer-Höhe */
   
-  padding: 0 5px;           /* nur Innenabstand */
+  margin: 0;               /* WICHTIG: keine Margins mehr! */
+  padding: 0 5px;
   overflow-y: auto;
-  max-height: calc(100%); /* viewport minus header+controls und footer */
+  background: transparent; /* wie gehabt */
   
   scrollbar-width: thin;
   scrollbar-color: #000 #111;
+}
+
+.post-item:first-child { margin-top: 14px; } /* oder 0 – je nach Geschmack */
+
+
+
+.pm-ico-img {
+  width: 1.1em;
+  height: 1.1em;
+  display: block;
+  object-fit: contain;
 }
 
 
@@ -1387,6 +1393,52 @@ html { scroll-behavior: smooth; }
   font:700 17px/1.25 monospace;
   color:#f1f1f1;
 }
+
+.post-item { position: relative; }
+.post-actions{
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  display: flex;
+  gap: 8px;
+}
+.post-actions .feed-like-btn,
+.post-actions .feed-fav-btn{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 8px;
+  border-radius: 8px;
+  background: #1b1b1b;
+  border: 1px solid #2a2a2a;
+  color: #eaeaea;
+  cursor: pointer;
+  font: 12px monospace;
+}
+.post-actions .feed-like-btn[aria-pressed="true"] .ico{ color:#50e9ba; } /* grün fürs Herz */
+.post-actions .feed-fav-btn[aria-pressed="true"]  .ico{ color:#ffd76b; } /* gelb für Stern */
+.post-actions .ico{ font-size: 14px; line-height: 1; }
+
+
+.post-actions-right{position:absolute;right:12px;top:12px;display:flex;gap:8px}
+.feed-like-btn,.feed-fav-btn{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:8px;background:#1b1b1b;border:1px solid #2a2a2a;color:#eaeaea;cursor:pointer;font:12px monospace}
+.feed-like-btn[aria-pressed="true"] .ico{color:#ff6b6b}
+.feed-fav-btn[aria-pressed="true"] .ico{color:#ffd76b}
+
+
+.post-actions-right{
+  position:absolute; right:12px; top:12px; display:flex; gap:8px;
+}
+.feed-like-btn,.feed-fav-btn{
+  display:inline-flex; align-items:center; gap:6px;
+  height:28px; padding:0 10px; border-radius:8px;
+  background:#1b1b1b; border:1px solid #2a2a2a; color:#eaeaea;
+  cursor:pointer; font:12px monospace;
+}
+.feed-like-btn[aria-pressed="true"] .ico{ color:#ff6b6b; }
+.feed-fav-btn[aria-pressed="true"]  .ico{ color:#ffd76b; }
+
 .post-title a{ color:inherit; text-decoration:none; }
 .post-title a:hover{ text-decoration:underline; }
 
@@ -1438,6 +1490,8 @@ html { scroll-behavior: smooth; }
   font:12px monospace;
   border-radius:8px;
 }
+
+.pm-btn.pm-report[aria-pressed="true"] .pm-ico { color: #ff6b6b; }
 
 /* Wenn kein Bild vorhanden → 1spaltig */
 .post-item.no-media{
@@ -1719,6 +1773,42 @@ html { scroll-behavior: smooth; }
   overflow: hidden;
   z-index: 5;
 }
+
+
+/* Feed-Merken-Button */
+.fav-btn{
+  display:inline-flex; align-items:center; gap:6px;
+  height:28px; padding:0 10px; border-radius:8px;
+  background:#1b1b1b; border:1px solid #2a2a2a; color:#eaeaea;
+  cursor:pointer; font:12px monospace;
+  transition:background .2s ease, border-color .2s ease, transform .15s ease;
+}
+.fav-btn:hover{ background:#222; border-color:#333; transform:translateY(-1px); }
+.fav-btn .ico{ font-size:14px; line-height:1; }
+
+/* nicht gemerkt = heller Stern */
+.fav-btn[aria-pressed="false"] .ico { color:#ddd; }
+/* gemerkt = gelber Stern */
+.fav-btn[aria-pressed="true"]  .ico { color:#ffd76b; }
+
+/* Modal-Button nutzt schon .pm-btn – dort hast du ähnliche Regeln.
+   Falls nötig, ergänzen:
+*/
+.pm-btn.pm-fav[aria-pressed="true"] .pm-ico { color:#ffd76b; }
+
+
+
+
+.pm-btn.pm-fav .pm-ico {
+  font-size: 18px;
+  line-height: 1;
+  color: #bbb;            /* weiß/grau im "nicht gemerkt" Zustand */
+  transition: color .15s;
+}
+.pm-btn.pm-fav[aria-pressed="true"] .pm-ico {
+  color: #f7c948;         /* GELB wenn gemerkt */
+}
+/* optional: Label einfärben, wenn aktiv */
 .pm-menu__item {
   display: block;
   width: 100%;
@@ -1878,3 +1968,4 @@ html { scroll-behavior: smooth; }
 }
 
 .pm-reply-actions { margin-top: 6px; display: flex; gap: 6px; }
+
