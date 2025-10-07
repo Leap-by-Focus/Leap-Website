@@ -267,21 +267,32 @@ const buildMeta = p => {
 };
 const renderTags = tags =>
   (tags || []).map(t => `<span class="tag">#${escapeHtml(t)}</span>`).join("");
-
 async function showPostInModal(id, preloadData = null, push = true) {
   try {
     const data = preloadData || await fetchPostById(id);
 
+    // 🛑 Entfernte/gesperrte Posts gar nicht öffnen
+    if (data?.removed || data?.moderation?.status === "removed") {
+      alert("Dieser Beitrag wurde aufgrund eines Regelverstoßes entfernt.");
+      try { closeModal(); } catch {}
+      if (push) {
+        const url = new URL(location.href);
+        url.searchParams.delete("post");
+        history.replaceState({ view: "feed" }, "", url);
+      }
+      return;
+    }
+
     if (!data.authorName) {
       data.authorName = await fetchUsername(data.authorUid, data.authorEmail);
     }
-    syncLikeButtonState();
-setLikeCount(Number(data.likeCount || 0));
 
-syncFavButtonState();
-// Falls du auch einen Fav-Zähler im Modal anzeigen willst:
-const favCntEl = modalEl?.querySelector('.pm-btn.pm-fav .pm-count');
-if (favCntEl) favCntEl.textContent = String(Number(data.favoriteCount || 0));
+    syncLikeButtonState();
+    setLikeCount(Number(data.likeCount || 0));
+
+    syncFavButtonState();
+    const favCntEl = modalEl?.querySelector('.pm-btn.pm-fav .pm-count');
+    if (favCntEl) favCntEl.textContent = String(Number(data.favoriteCount || 0));
 
     await incrementViewOnce(id);
 
@@ -295,14 +306,11 @@ if (favCntEl) favCntEl.textContent = String(Number(data.favoriteCount || 0));
       ? html
       : `<p>${escapeHtml(text).replace(/\n/g, "<br>")}</p>`;
 
-    // ✅ Post-ID merken & Favoritenstatus synchronisieren
-currentOpenPostId = id;
-syncFavButtonState();
-// ✅ Like-Status + Zähler setzen
-syncLikeButtonState();
-setLikeCount(Number(data.likeCount || 0));
+    currentOpenPostId = id;
+    syncFavButtonState();
+    syncLikeButtonState();
+    setLikeCount(Number(data.likeCount || 0));
 
-    // Replies/Composer aktivieren
     attachRepliesStream(id);
     setupReplyComposer(id);
 
@@ -526,6 +534,8 @@ function renderPosts(posts) {
   feedEl.innerHTML = "";
 
   let out = posts.slice();
+  // 0) Entfernte/hidden Posts rausfiltern
+  out = out.filter(p => !p?.removed && p?.moderation?.status !== "removed");
 
   // 1) Tag-Filter + Gemerkte
   if (activeTag === "gemerkte") {
