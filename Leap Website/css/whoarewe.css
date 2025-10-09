@@ -12,6 +12,28 @@ html {
   scroll-behavior: smooth; /* Sanftes Scrollen */
 }
 
+.expandedContent {
+  transition: max-height 0.3s ease;
+  overflow: hidden;
+  max-height: 0; /* geschlossen */
+}
+
+#expandedContent {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+}
+
+button.open + #expandedContent,
+button.open ~ #expandedContent {
+  /* wenn expandedContent direkt nach dem Button kommt */
+  max-height: 2000px; /* genügend groß, um alles sichtbar zu machen */
+}
+
+button.open .expandedContent {
+  max-height: 2000px; /* oder ein hoher Wert, geöffnet */
+}
+
 .welcome
 {
   font-family: 'Courier New', Courier, monospace;

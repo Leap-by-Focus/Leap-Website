@@ -11,7 +11,8 @@
   <script src="../js/loginFormularDiv.js" defer></script>
   <script src="../js/openLogin.js" defer></script>
   <script src="../js/whoareweAnimation.js" defer></script>
-  <script src="../js/expandButton.js" defer></script>
+<script src="./js/whoareweButtonExpansion.js"></script>
+
 </head>
 <body>
   <div class="hauptMenu">
@@ -99,34 +100,45 @@
   <div class="start">
     <h1 span class="gradient-text">Die Entwickler von Leap</h1>
     
-    <button class="next" id="expandButton">
-      <span class="buttonLabel">Weiter</span>
-    
-      <section id="expandedContent" class="expandedContent">
-        <div class="drittel">
-          <div class="texth1">Das Herz des Projekts</div>
-          <div class="text"> Leap ist die Antwort auf ein häufiges Problem: Programmieren lernen ist oft zu kompliziert und unübersichtlich. Mit Leap schaffen wir eine einfache, intuitive Programmiersprache, die speziell für Einsteiger entwickelt wurde. So können alle – vom Schüler bis zum Quereinsteiger – schnell Erfolgserlebnisse erleben und ihre eigenen Ideen zum Leben erwecken.</div>
-          <video class="video" src="../assets/videos/vorlage.mp4" muted preload="metadata" poster="../assets/images/video-pre-picture.jpg"></video>
-        </div>
-        <div class="drittel reverse">
-          <video class="video" src="../assets/videos/vorlage.mp4"  muted preload="metadata" poster="../assets/images/video-pre-picture.jpg"></video>
- <div class="texth1">Die Lösung für ein häufiges Problem</div>
-          <div class="text">Jeder von uns hatte seine ganz persönliche Motivation, Leap zu entwickeln. In diesem Video erzählen wir offen und ehrlich, welche Herausforderungen wir als Anfänger erlebt haben und wie Leap genau diese Lücken schließen soll. Es ist die Geschichte von echten Programmieranfängern – für echte Programmieranfänger. </div>
-        </div>
-        <div class="drittel" style="background-color: #888 !important; border-radius: 20px; ">
-          <div class="text">
-            <h2>Unterstütze uns mit einem Kaffee</h2>
-            <p>Wenn dir Leap gefällt, freuen wir uns über eine kleine Spende.</p>
-            <p>
-              <a href="https://www.paypal.com/donate/DEINE_PAYPAL_LINK" target="_blank" rel="noopener noreferrer" style="color: #50e9ba; text-decoration: underline;">                
-                Hier kannst du uns ganz einfach einen Kaffee spendieren ☕
-              </a>
-            </p>
-          </div>
-          
-        </div>
-      </section>
-    </button>
+<!-- Who-are-we: Expand Button + Content -->
+<button class="next" id="expandButton" type="button" aria-expanded="false" aria-controls="expandedContent">
+  <span class="buttonLabel">Weiter</span>
+</button>
+
+<section id="expandedContent" class="expandedContent" hidden>
+  <div class="drittel">
+    <div class="texth1">Das Herz des Projekts</div>
+    <div class="text">
+      Leap ist die Antwort auf ein häufiges Problem: Programmieren lernen ist oft zu kompliziert und unübersichtlich.
+      Mit Leap schaffen wir eine einfache, intuitive Programmiersprache, die speziell für Einsteiger entwickelt wurde.
+      So können alle – vom Schüler bis zum Quereinsteiger – schnell Erfolgserlebnisse erleben und ihre eigenen Ideen zum Leben erwecken.
+    </div>
+    <video class="video" src="../assets/videos/vorlage.mp4" muted preload="metadata" poster="../assets/images/video-pre-picture.jpg"></video>
+  </div>
+
+  <div class="drittel reverse">
+    <video class="video" src="../assets/videos/vorlage.mp4" muted preload="metadata" poster="../assets/images/video-pre-picture.jpg"></video>
+    <div class="texth1">Die Lösung für ein häufiges Problem</div>
+    <div class="text">
+      Jeder von uns hatte seine ganz persönliche Motivation, Leap zu entwickeln. In diesem Video erzählen wir offen und
+      ehrlich, welche Herausforderungen wir als Anfänger erlebt haben und wie Leap genau diese Lücken schließen soll.
+      Es ist die Geschichte von echten Programmieranfängern – für echte Programmieranfänger.
+    </div>
+  </div>
+
+  <div class="drittel" style="background-color:#888;border-radius:20px;">
+    <div class="text">
+      <h2>Unterstütze uns mit einem Kaffee</h2>
+      <p>Wenn dir Leap gefällt, freuen wir uns über eine kleine Spende.</p>
+      <p>
+        <a href="https://www.paypal.com/donate/DEINE_PAYPAL_LINK" target="_blank" rel="noopener noreferrer"
+           style="color:#50e9ba;text-decoration:underline;">
+          Hier kannst du uns ganz einfach einen Kaffee spendieren ☕
+        </a>
+      </p>
+    </div>
+  </div>
+</section>
 
     <div class="gallery-container" aria-label="Automatisch scrollende Bildergalerie" role="region">
       <div class="gallery-track">

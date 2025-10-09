@@ -1,7 +1,7 @@
 // === IMPORTS & SETUP ======================================================
 const { setGlobalOptions, logger } = require("firebase-functions/v2");
 const { onDocumentCreated } = require("firebase-functions/v2/firestore");
-const { onCall } = require("firebase-functions/v2/https");
+const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const admin = require("firebase-admin");
 
 admin.initializeApp();
@@ -12,46 +12,109 @@ setGlobalOptions({
   maxInstances: 10,
 });
 
-// === HELPER FUNKTIONEN ====================================================
+// === HELPER ===============================================================
 
+// HTML → Plaintext
 function stripHtml(html) {
-  return String(html || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+  return String(html || "")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
-// beleidigende/toxische Muster (DE/EN)
-const BAD_PATTERNS = [
-  // Deutsch
-  /\bfick(?:\s*dich)?\b/i,
-  /\bhuren(?:sohn|kind)\b/i,
-  /\bwix+er\b/i,
-  /\bmissgeburt\b/i,
-  /\bfotze\b/i,
-  /\barschloch\b/i,
-  /\bverpiss\s*dich\b/i,
-  /\bschlampe\b/i,
-  /\bmongo\b/i,
-  /\bspasst\b/i,
-  /\bspast\b/i,
-  /\bdrecksau\b/i,
-  /\bdumm(?:kopf)?\b/i,
-  /\bidiot\b/i,
-  /\bdepp\b/i,
-  /\bbehindert(?:er|e|es)?\b/i,
-  // Englisch
-  /\bfuck(?:\s*you)?\b/i,
-  /\basshole\b/i,
-  /\bretard\b/i,
-  /\bbitch\b/i,
-  /\bslut\b/i,
-  /\bcunt\b/i,
-  /\bmotherfucker\b/i,
-  /\bdumbass\b/i,
-  // Hate / harassment
-  /\bkill\s*yourself\b/i,
-  /\bdie\b/i,
+// Emojis / Zero-Width / Diakritika weg → robustere Prüfung
+const EMOJI_REGEX =
+  /([\u2700-\u27BF]|[\uE000-\uF8FF]|[\uD83C-\uDBFF][\uDC00-\uDFFF]|[\u2600-\u26FF]|\u24C2|[\u2B50\u23F0\u2764\uFE0F]|\p{Extended_Pictographic}|\p{Emoji_Component})/gu;
+
+function normalizeForCheck(text) {
+  return String(text || "")
+    .normalize("NFKD")
+    .replace(/\p{Diacritic}+/gu, "")
+    .replace(/\u200B|\u200C|\u200D|\uFEFF/gu, "")
+    .replace(EMOJI_REGEX, "")
+    .toLowerCase();
+}
+
+// tolerantes Pattern (Leetspeak, Sonderzeichen, Punkte dazwischen)
+function makeLoose(word) {
+  const chars = [...word.toLowerCase()];
+  const map = {
+    a: "[a4@àáâäãåæ]",
+    b: "[b8ß]",
+    c: "[c(¢ćčç]",
+    d: "[dð]",
+    e: "[e3€èéêëę]",
+    f: "[fƒ]",
+    g: "[g9ğ]",
+    h: "[h#]",
+    i: "[i1!íìîïı|]",
+    j: "[j]",
+    k: "[kκ]",
+    l: "[l1|ł]",
+    m: "[mµ]",
+    n: "[nñń]",
+    o: "[o0°öóòôõøœ]",
+    p: "[pþ]",
+    q: "[q9]",
+    r: "[r®]",
+    s: "[s5$śš]",
+    t: "[t7+†]",
+    u: "[uüúùû]",
+    v: "[v]",
+    w: "[wvv]",
+    x: "[x×✕]",
+    y: "[yÿý]",
+    z: "[z2žźż]",
+  };
+  const between = "[\\W_]*"; // erlaubte Trennzeichen
+  const parts = chars.map((ch) =>
+    map[ch] ? map[ch] + between : ch.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + between
+  );
+
+  // Lockerere Ränder: erlaubt Buchstaben/Zahlen direkt davor/danach (z.B. superziganehaus)
+  return new RegExp(`${parts.join("")}`, "i");
+}
+
+// Wörterlisten (Auszug – erweiterbar)
+const INSULT_TERMS = [
+  "fick dich", "fick", "hurensohn", "hurensohnkind", "hure", "fotze", "arschloch",
+  "verpiss dich", "schlampe", "wixer", "wixxer", "missgeburt", "drecksau",
+  "idiot", "depp", "dummkopf", "spast", "spasst", "behindert",
+  "fuck you", "fuck", "asshole", "bitch", "slut", "cunt", "motherfucker", "dumbass",
+  "kill yourself",
 ];
 
-// === AUTO-MODERATION BEI REPORTS ==========================================
+const HATE_SLUR_TERMS = [
+  "zigeuner", "zigane", "gypsy",
+  "nigger", "negro", "chink", "spic", "kike", "faggot",
+  "raghead", "camel jockey",
+];
+
+// Final: Regexe bauen
+const BAD_PATTERNS = [
+  ...INSULT_TERMS.map(makeLoose),
+  ...HATE_SLUR_TERMS.map(makeLoose),
+];
+
+function matchAny(text) {
+  const hits = [];
+  for (const rx of BAD_PATTERNS) {
+    if (rx.test(text)) hits.push(rx.toString());
+  }
+  return hits;
+}
+
+function buildRawTextFromPost(post) {
+  const tagsText = Array.isArray(post.tags) ? post.tags.join(" ") : "";
+  return [
+    post.title || "",
+    post.bodyText || "",
+    stripHtml(post.bodyHtml || post.html || ""),
+    tagsText,
+  ].join(" ");
+}
+
+// === AUTO-MODERATION: BEI REPORT =========================================
 exports.autoModerateOnReport = onDocumentCreated(
   "posts/{postId}/reports/{reportId}",
   async (event) => {
@@ -61,25 +124,18 @@ exports.autoModerateOnReport = onDocumentCreated(
     const postRef = db.doc(`posts/${postId}`);
     const postSnap = await postRef.get();
     if (!postSnap.exists) {
-      logger.warn("Post nicht gefunden", { postId, reportId });
+      logger.warn("Post nicht gefunden für Report", { postId, reportId });
       return;
     }
-
     const post = postSnap.data() || {};
-    const plain = [
-      post.title || "",
-      post.bodyText || "",
-      stripHtml(post.bodyHtml || post.html || ""),
-    ]
-      .join(" ")
-      .toLowerCase();
+
+    const rawText = buildRawTextFromPost(post);
+    const plain = normalizeForCheck(rawText);
 
     const reason = String(report.reason || "").toLowerCase();
-    const matches = BAD_PATTERNS.filter((rx) => rx.test(plain));
+    const matches = matchAny(plain);
     const reasonHintsInsult =
-      reason.includes("beleidig") ||
-      reason.includes("insult") ||
-      reason.includes("hate");
+      reason.includes("beleidig") || reason.includes("insult") || reason.includes("hate");
 
     const shouldRemove = matches.length > 0 || reasonHintsInsult;
 
@@ -93,24 +149,22 @@ exports.autoModerateOnReport = onDocumentCreated(
             decidedBy: "auto",
             decidedAt: admin.firestore.FieldValue.serverTimestamp(),
             reportId,
-            reasonDetected: matches.length ? "insult" : "reason_hint_only",
-            patternHits: matches.map((m) => String(m)),
+            reasonDetected: matches.length ? "insult_or_slur" : "reason_hint_only",
+            patternHits: matches,
           },
         },
         { merge: true }
       );
 
-      await db
-        .doc(`posts/${postId}/reports/${reportId}`)
-        .set(
-          {
-            status: "resolved_auto",
-            resolvedAt: admin.firestore.FieldValue.serverTimestamp(),
-          },
-          { merge: true }
-        );
+      await db.doc(`posts/${postId}/reports/${reportId}`).set(
+        {
+          status: "resolved_auto",
+          resolvedAt: admin.firestore.FieldValue.serverTimestamp(),
+        },
+        { merge: true }
+      );
 
-      logger.info("✅ Post auto-removed", { postId });
+      logger.info("✅ Post auto-removed (report)", { postId, matches });
     } else {
       await postRef.set(
         {
@@ -124,7 +178,52 @@ exports.autoModerateOnReport = onDocumentCreated(
         },
         { merge: true }
       );
-      logger.info("⚠️ Post nur geflaggt", { postId });
+      logger.info("⚠️ Post nur geflaggt (report)", { postId });
+    }
+  }
+);
+
+// === AUTO-MODERATION: BEI ERSTELLUNG =====================================
+exports.autoModerateOnPostCreate = onDocumentCreated(
+  "posts/{postId}",
+  async (event) => {
+    const { postId } = event.params;
+    const post = event.data?.data() || {};
+
+    const rawText = buildRawTextFromPost(post);
+    const plain = normalizeForCheck(rawText);
+    const matches = matchAny(plain);
+
+    if (matches.length > 0) {
+      await db.doc(`posts/${postId}`).set(
+        {
+          removed: true,
+          removedAt: admin.firestore.FieldValue.serverTimestamp(),
+          moderation: {
+            status: "removed",
+            decidedBy: "auto",
+            decidedAt: admin.firestore.FieldValue.serverTimestamp(),
+            reportId: "system",
+            reasonDetected: "insult_or_slur",
+            patternHits: matches,
+          },
+        },
+        { merge: true }
+      );
+      logger.info("✅ Post auto-removed (create)", { postId, matches });
+    } else {
+      await db.doc(`posts/${postId}`).set(
+        {
+          moderation: {
+            status: "clean",
+            decidedBy: "auto",
+            decidedAt: admin.firestore.FieldValue.serverTimestamp(),
+            reportId: "system",
+            reasonDetected: "none",
+          },
+        },
+        { merge: true }
+      );
     }
   }
 );
@@ -132,25 +231,24 @@ exports.autoModerateOnReport = onDocumentCreated(
 // === ADMIN SLASH COMMANDS =================================================
 exports.adminSlash = onCall(async (req) => {
   const uid = req.auth?.uid;
-  if (!uid) throw new Error("Nicht eingeloggt.");
+  if (!uid) throw new HttpsError("unauthenticated", "Nicht eingeloggt.");
 
-  // Admin prüfen
   const userDoc = await db.collection("users").doc(uid).get();
   if (!userDoc.exists || userDoc.data()?.role !== "admin") {
-    throw new Error("Keine Berechtigung.");
+    throw new HttpsError("permission-denied", "Keine Berechtigung.");
   }
 
   const raw = String(req.data?.command || "").trim();
   if (!raw.startsWith("/")) return { message: "❓ Kein Command erkannt." };
 
-  const [cmd, ...args] = tokenize(raw);
-
+  const [cmd, ...args] = raw.split(/\s+/);
   switch (cmd.toLowerCase()) {
     case "/clearchat":
       await clearChat();
       return { message: "✅ Chat geleert." };
 
-    case "/deletethread": {
+    case "/deletethread":
+    case "/deletepost": {
       const id = args[0];
       if (!id) return { message: "⚠️ usage: /deleteThread <thread_id>" };
       await deleteThread(id);
@@ -162,25 +260,27 @@ exports.adminSlash = onCall(async (req) => {
       const dur = args[1] || "30m";
       if (!who) return { message: "⚠️ usage: /muteUser <username|uid> [dauer]" };
       const ms = parseDuration(dur);
-      const until = Date.now() + ms;
-      const updated = await muteUser(who, until);
-      return {
-        message: updated
-          ? `🔇 ${updated} bis ${new Date(until).toLocaleString()}`
-          : "⚠️ User nicht gefunden.",
-      };
+      if (ms <= 0) return { message: "⚠️ Ungültige Dauer." };
+      const untilTs = Date.now() + ms;
+      const updated = await muteUser(who, untilTs);
+      if (!updated) return { message: "⚠️ User nicht gefunden." };
+      return { message: `🔇 ${updated} bis ${new Date(untilTs).toLocaleString()}` };
     }
 
     case "/maintenance": {
       const scope = (args[0] || "all").toLowerCase();
-      let state = (args[1] || "on").toLowerCase();
-      if (!["on", "off"].includes(state)) state = "on";
-      await setMaintenance(scope, state === "on");
-      return { message: `🛠 Maintenance ${scope}: ${state.toUpperCase()}` };
+      const stateArg = (args[1] || "on").toLowerCase();
+      const state = stateArg === "off" ? false : true;
+      if (!["all", "forum", "ai", "docs"].includes(scope)) {
+        return { message: "⚠️ usage: /maintenance <all|forum|ai|docs> [on|off]" };
+      }
+      await setMaintenance(scope, state);
+      return { message: `🛠 Maintenance ${scope}: ${state ? "ON" : "OFF"}` };
     }
 
     case "/log": {
-      const logs = await getLastMessages(25);
+      const limit = Number(args[0]) || 25;
+      const logs = await getLastMessages(limit);
       return { message: "🧾 Log:\n" + logs.join("\n") };
     }
 
@@ -189,16 +289,11 @@ exports.adminSlash = onCall(async (req) => {
   }
 });
 
-// === HELPER FUNKTIONEN ====================================================
-
-function tokenize(s) {
-  return s.split(/\s+/);
-}
-
+// === SLASH-HELPERS ========================================================
 async function clearChat() {
   const snap = await db.collection("chatMessages").limit(500).get();
   const batch = db.batch();
-  snap.forEach((d) => batch.delete(d.ref));
+  snap.docs.forEach((d) => batch.delete(d.ref));
   await batch.commit();
 }
 
@@ -213,54 +308,43 @@ async function deleteThread(threadId) {
 }
 
 async function muteUser(usernameOrUid, untilTs) {
-  let q = db.collection("users").where("username", "==", usernameOrUid).limit(1);
-  if (/^[A-Za-z0-9]{20,28}$/.test(usernameOrUid)) {
-    const direct = await db.collection("users").doc(usernameOrUid).get();
-    if (direct.exists) {
-      await direct.ref.update({ mutedUntil: untilTs });
-      return direct.data()?.username || direct.id;
+  // UID?
+  if (/^[A-Za-z0-9_-]{20,}$/.test(usernameOrUid)) {
+    const docu = await db.collection("users").doc(usernameOrUid).get();
+    if (docu.exists) {
+      await docu.ref.set({ mutedUntil: untilTs }, { merge: true });
+      return docu.data()?.username || usernameOrUid;
     }
   }
-  const snap = await q.get();
-  if (snap.empty) return null;
-  const docRef = snap.docs[0].ref;
-  await docRef.update({ mutedUntil: untilTs });
-  return snap.docs[0].data()?.username || docRef.id;
+  // Username
+  const q = await db.collection("users").where("username", "==", usernameOrUid).limit(1).get();
+  if (q.empty) return null;
+  const doce = q.docs[0];
+  await doce.ref.set({ mutedUntil: untilTs }, { merge: true });
+  return doce.data()?.username || doce.id;
 }
 
 async function setMaintenance(scope, on) {
   await db
     .collection("system")
     .doc("maintenance")
-    .set(
-      {
-        [scope]: on,
-        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-      },
-      { merge: true }
-    );
+    .set({ [scope]: on, updatedAt: admin.firestore.FieldValue.serverTimestamp() }, { merge: true });
 }
 
 async function getLastMessages(n) {
-  const snap = await db
-    .collection("chatMessages")
-    .orderBy("timestamp", "desc")
-    .limit(n)
-    .get();
+  const snap = await db.collection("chatMessages").orderBy("timestamp", "desc").limit(n).get();
   return snap.docs.reverse().map((d) => {
     const x = d.data();
-    const t = x.timestamp?.toDate
-      ? x.timestamp.toDate().toLocaleTimeString()
-      : "";
+    const t = x.timestamp?.toDate ? x.timestamp.toDate().toLocaleTimeString() : "";
     return `[${t}] ${x.author}: ${x.text}`;
   });
 }
 
 function parseDuration(s) {
   const m = String(s).trim().match(/^(\d+)([smhd])?$/i);
-  if (!m) return 30 * 60 * 1000; // default 30m
+  if (!m) return 0;
   const val = parseInt(m[1], 10);
   const unit = (m[2] || "m").toLowerCase();
-  const f = { s: 1000, m: 60000, h: 3600000, d: 86400000 }[unit];
-  return val * f;
+  const multipliers = { s: 1000, m: 60_000, h: 3_600_000, d: 86_400_000 };
+  return val * (multipliers[unit] || 0);
 }
