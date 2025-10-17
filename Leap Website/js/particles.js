@@ -147,3 +147,12 @@ window.addEventListener("resize", () => {
 setParticleInterval(0.4);
 initBaseParticles();
 animate();
+
+
+particlesJS('stars-bg', {
+  particles: {
+    color: { value: getComputedStyle(document.body).getPropertyValue('--particle-color') },
+    number: { value: 80 },
+    size: { value: 2 }
+  }
+});

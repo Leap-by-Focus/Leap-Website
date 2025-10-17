@@ -1969,3 +1969,910 @@ html { scroll-behavior: smooth; }
 
 .pm-reply-actions { margin-top: 6px; display: flex; gap: 6px; }
 
+
+
+
+
+
+
+
+
+
+.settings-button {
+  position: relative;
+  display: inline-block;
+}
+
+.settings-popup {
+  position: absolute;
+  bottom: 50px;
+  right: 0;
+  width: 240px;
+  background: #1e1f23;
+  color: white;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.1);
+  box-shadow: 0 4px 20px rgba(0,0,0,.4);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition: all .25s ease;
+  z-index: 1000;
+}
+
+.settings-button.open .settings-popup {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.settings-popup h3 {
+  font-size: 16px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+  padding-bottom: 4px;
+}
+
+.settings-popup label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.settings-popup input[type="color"],
+.settings-popup select {
+  width: 100%;
+  height: 32px;
+  border-radius: 6px;
+  border: none;
+  background: #2a2d33;
+  color: white;
+  cursor: pointer;
+}
+
+.glow-option {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.footer-btn.gear-btn {
+  font-size: 22px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: white;
+}
+
+
+
+
+
+
+/* =========================================================
+   THEME LAYER (farben & hintergründe)
+   nutzt body[data-theme="..."] + Variablen, die der JS-Patch setzt.
+========================================================= */
+
+:root {
+  /* Basisfarben (werden von JS ggf. überschrieben) */
+  --bg: #14272A;
+
+  /* Gradient-Bar (oben/unten der Leiste) – wird per JS gesetzt */
+  --grad-top: #14272A;
+  --grad-bottom: #0c181a;
+
+  /* Textfarben */
+  --text: #eaeef0;
+  --text-muted: #aab3b7;
+  --text-strong: #ffffff;
+
+  /* Flächen */
+  --panel: #151515;         /* Seitenleiste / Footer / Panels */
+  --panel-2: #111;          /* Headerleisten etc. */
+  --card: #141414;          /* Kartenflächen */
+  --card-hover: #181818;    /* Karten Hover */
+  --modal: #151515;
+  --input: #1a1a1a;
+
+  /* Rahmen */
+  --border: #2a2a2a;
+  --card-border: #262626;
+
+  /* Interaktion / Buttons */
+  --btn-bg: #151515;
+  --btn-bg-hover: #222;
+
+  /* Bereits im Projekt genutzte Variablen (werden per JS gesetzt) */
+  --name-color: #50e9ba;
+  --hover-border-color: #148fac;
+}
+
+/* ========== Dark (grün) ========== */
+body[data-theme="dark"] {
+  color: var(--text);
+  background: var(--bg);
+}
+body[data-theme="dark"] .gradient-transition {
+  background: linear-gradient(var(--grad-top), var(--grad-bottom));
+}
+
+/* ========== Light (freundlich, nicht zu hell) ========== */
+body[data-theme="light"] {
+  --text: #111827;             /* dunkles, aber kein reines Schwarz */
+  --text-muted: #6b7280;
+  --text-strong: #0b1220;
+
+  --panel: #f4f6f8;            /* Haupt-Hintergrund */
+  --panel-2: #e9edf1;          /* Headerleisten etc. */
+  --card: #ffffff;             /* Karten und Posts */
+  --card-hover: #f9fafb;       /* Hover leicht betont */
+  --modal: #ffffff;            /* Modals & Popups */
+  --input: #f9fafb;            /* Inputs leicht grau hinterlegt */
+
+  --border: #d1d5db;           /* Rahmen hellgrau */
+  --card-border: #d8dde2;
+
+  --btn-bg: #f3f4f6;           /* Buttons */
+  --btn-bg-hover: #e5e7eb;
+
+  background: var(--bg);       /* wird von JS auf #f4f6f8 gesetzt */
+  color: var(--text);
+}
+body[data-theme="light"] .gradient-transition {
+  background: linear-gradient(var(--grad-top), var(--grad-bottom));
+}
+
+/* ========== Gradient (neu: komplett neutrales Grau) ========== */
+body[data-theme="gradient"] {
+  /* Seite & Übergangsleiste */
+  --bg: linear-gradient(120deg, #2b3035, #3a4046);
+  --grad-top: #3a4046;
+  --grad-bottom: #2b3035;
+
+  /* Text */
+  --text: #e7e9ec;
+  --text-muted: #b5bdc4;
+  --text-strong: #ffffff;
+
+  /* Flächen */
+  --panel: #2f343a;
+  --panel-2: #2a2f34;
+  --card: #2d3237;
+  --card-hover: #33383e;
+  --modal: #2a2f34;
+  --input: #343a40;
+
+  /* Rahmen */
+  --border: #3c444c;
+  --card-border: #3b434b;
+
+  /* Interaktion */
+  --btn-bg: #2b3137;
+  --btn-bg-hover: #343a40;
+
+  background: var(--bg);
+  color: var(--text);
+}
+body[data-theme="gradient"] .gradient-transition {
+  background: linear-gradient(var(--grad-top), var(--grad-bottom));
+}
+
+/* ========== Stars ========== */
+body[data-theme="stars"] {
+  --text: #e9f1f3;
+  --text-muted: #a6b3ba;
+  --panel: #0b1014;
+  --panel-2: #0a0f12;
+  --card: #0f1418;
+  --card-hover: #131a1f;
+  --modal: #0c1114;
+  --input: #12181d;
+  --border: #1e2a31;
+  --card-border: #1b252c;
+  --btn-bg: #12181d;
+  --btn-bg-hover: #172129;
+
+  background: radial-gradient(#000, #0a1a1d);
+  color: var(--text);
+}
+body[data-theme="stars"] .gradient-transition {
+  background: linear-gradient(var(--grad-top), var(--grad-bottom));
+}
+
+/* ========== Globale Elemente auf Variablen mappen ========== */
+
+/* Gradient-Leiste */
+.gradient-transition {
+  height: 150px;
+  width: 100%;
+  background: linear-gradient(var(--grad-top), var(--grad-bottom));
+  transition: background .25s ease; /* smooth switch beim Theme-Wechsel */
+}
+
+/* SideNav */
+.sideMenu {
+  background: var(--panel);
+}
+.sideMenu button {
+  color: var(--text);
+  background: transparent;
+  border: 1px solid transparent;
+  transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+}
+.sideMenu .divider {
+  background: var(--border);
+}
+.sideMenu .untertitel {
+  color: var(--text-muted);
+}
+
+/* SideNav – variabler Hover-/Active-Rahmen (deine Wunschlogik) */
+.sideMenu button:hover,
+.sideMenu button.active {
+  border-color: var(--hover-border-color);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--hover-border-color) 30%, transparent);
+}
+/* Animierten ::before-Rand im Hover deaktivieren, damit es sich nicht beißt */
+.sideMenu button:hover::before,
+.sideMenu button.active::before {
+  opacity: 0 !important;
+}
+
+/* Suchleiste */
+.search-container {
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--hover-border-color) 45%, transparent);
+}
+.search-input {
+  background: var(--input);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.search-btn {
+  background: var(--btn-bg);
+  color: var(--text);
+}
+.search-btn:hover {
+  background: var(--btn-bg-hover);
+}
+
+/* Hauptbereich / Cards / Feed */
+.post-feed { background: transparent; }
+.post-item {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+}
+.post-item.no-media { background: var(--card); }
+
+.post-item:hover {
+  background: var(--card-hover);
+  border-color: var(--hover-border-color);
+  box-shadow: 0 6px 28px color-mix(in srgb, var(--hover-border-color) 25%, transparent);
+}
+
+/* Optional: generische Module mit Hover-Rahmen */
+.module:hover,
+.card:hover,
+.thread-card:hover,
+.widget:hover,
+.tile:hover {
+  border-color: var(--hover-border-color);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--hover-border-color) 35%, transparent);
+}
+
+.post-title { color: var(--text-strong); }
+.post-body-preview { color: var(--text); }
+.post-tags .tag {
+  background: color-mix(in srgb, var(--card) 85%, #ffffff);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+/* Aktionen */
+.post-actions .feed-like-btn,
+.post-actions .feed-fav-btn,
+.fav-btn {
+  background: var(--btn-bg);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+/* Livechat */
+.livechat { background: var(--panel); border-left: 1px solid var(--border); }
+.livechat-header { background: var(--panel-2); border-bottom: 1px solid var(--border); color: var(--text); }
+.chat-messages { background: color-mix(in srgb, var(--panel) 90%, #000); }
+.chat-msg { background: var(--card); color: var(--text); }
+.chat-msg:not(.me) { background: var(--card-hover); }
+.chat-form { background: var(--panel-2); border-top: 1px solid var(--border); }
+#chat-input { background: var(--input); color: var(--text); }
+#chat-send { background: var(--hover-border-color); color: #111; }
+
+/* Eigener Chat-Rand nutzt Hover-Farbe als Akzent */
+.chat-msg.me::before {
+  background: var(--hover-border-color) !important;
+  opacity: .6;
+}
+
+/* Footer / Create Panel */
+.footer { background: var(--panel); border-top: 1px solid var(--border); }
+.create-btn { background: var(--btn-bg); color: var(--text); }
+.create-btn:hover { background: var(--btn-bg-hover); }
+.create-panel { background: var(--panel); }
+
+/* Modal */
+.post-modal__dialog {
+  background: var(--modal);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.post-modal__title { color: var(--text-strong); }
+.post-modal__meta { color: var(--text-muted); }
+.post-modal__body { color: var(--text); }
+.post-modal__body pre {
+  background: var(--input);
+  border: 1px solid var(--border);
+}
+
+/* Editor / Inputs im Create-Form */
+.create-form .post-title {
+  background: var(--input);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.post-body {
+  background: var(--input);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+/* Toolbar */
+.toolbar button {
+  background: var(--btn-bg);
+  color: var(--text);
+}
+.toolbar button:hover { background: var(--btn-bg-hover); }
+
+/* Tag-Picker */
+.tag-picker {
+  background: var(--input);
+  border: 1px solid var(--border);
+}
+.tag-chip {
+  background: var(--card-hover);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.tag-suggest {
+  background: var(--panel);
+  border: 1px solid var(--border);
+}
+.tag-suggest-item { color: var(--text); }
+.tag-suggest-item:hover { background: var(--card-hover); }
+
+/* Settings-Popup (⚙️) */
+.settings-popup {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
+}
+.settings-popup input[type="color"],
+.settings-popup select {
+  background: var(--input);
+  color: var(--text);
+}
+
+/* Buttons rechts unten */
+.footer-btn { background: var(--btn-bg); color: var(--text); }
+.footer-btn:hover { background: var(--btn-bg-hover); }
+
+/* Namen auf dynamische Namensfarbe mappen */
+.post-author,
+.pm-reply-author,
+.livechat .author,
+.chat-msg .meta .author,
+.usernameDisplay,
+.CharacterName {
+  color: var(--name-color) !important;
+}
+
+/* === Nur SideNav-Icons invertieren im Light-Theme === */
+body[data-theme="light"] .sideMenu .button-icon {
+  filter: invert(1) brightness(0.1) contrast(1.1);
+  transition: filter 0.25s ease;
+}
+body[data-theme="light"] .sideMenu button:hover .button-icon {
+  filter: invert(1) brightness(0.3);
+}
+
+/* === Controls-Bar: Light Theme Fix === */
+body[data-theme="light"] .controls-bar {
+  background: #ffffff !important;
+  border-color: #dddddd !important;
+  color: #111111 !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+}
+body[data-theme="light"] .controls-bar label,
+body[data-theme="light"] .controls-bar .checkbox-inline,
+body[data-theme="light"] .controls-bar .checkbox-inline input {
+  color: #111111 !important;
+}
+body[data-theme="light"] .controls-bar select {
+  background: #ffffff !important;
+  color: #111111 !important;
+  border: 1px solid #d0d0d0 !important;
+  border-radius: 8px;
+}
+body[data-theme="light"] .controls-bar select:focus {
+  outline: none;
+  border-color: #b5b5b5 !important;
+  box-shadow: 0 0 0 3px rgba(0,0,0,.06);
+}
+body[data-theme="light"] .controls-bar .checkbox-inline input[type="checkbox"] {
+  accent-color: #148fac;
+}
+body[data-theme="light"] .controls-row {
+  color: #111111 !important;
+}
+
+/* === Post Actions (Like + Fav) – Light Theme Fix === */
+body[data-theme="light"] .post-actions-right,
+body[data-theme="light"] .feed-like-btn,
+body[data-theme="light"] .feed-fav-btn {
+  background: transparent !important;
+  color: #222 !important;
+}
+body[data-theme="light"] .feed-like-btn .ico,
+body[data-theme="light"] .feed-fav-btn .ico,
+body[data-theme="light"] .feed-like-btn .cnt {
+  color: #222 !important;
+  transition: color 0.25s ease, transform 0.15s ease;
+}
+body[data-theme="light"] .feed-like-btn:hover .ico {
+  color: #e63946 !important;
+  transform: scale(1.15);
+}
+body[data-theme="light"] .feed-fav-btn:hover .ico {
+  color: #f1c40f !important;
+  transform: scale(1.15);
+}
+.feed-like-btn.active .ico { color: #e63946 !important; }
+.feed-fav-btn.active .ico { color: #f1c40f !important; }
+.feed-like-btn .cnt { margin-left: 4px; font-weight: 600; color: inherit; }
+.feed-like-btn:hover, .feed-fav-btn:hover { transform: scale(1.05); }
+
+/* ===============================
+   POST-MODAL — LIGHT THEME FIX
+=============================== */
+body[data-theme="light"] .post-modal__dialog {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  color: #111;
+  box-shadow: 0 30px 80px rgba(0,0,0,.25);
+}
+body[data-theme="light"] .post-modal__title { color: #111; }
+body[data-theme="light"] .post-modal__meta  { color: #5b6470; }
+body[data-theme="light"] .post-modal__backdrop { background: #0006; }
+body[data-theme="light"] .post-modal__tags .tag {
+  background: #f6f7f9;
+  border: 1px solid #e5e7eb;
+  color: #333;
+}
+body[data-theme="light"] .post-modal__body { color: #222; }
+body[data-theme="light"] .post-modal__body pre {
+  background: #f6f7f9;
+  border: 1px solid #e5e7eb;
+  color: #111;
+}
+body[data-theme="light"] .post-modal__body code { color: #111; }
+body[data-theme="light"] .post-modal__actions {
+  background: #fafafa;
+  border: 1px solid #e5e7eb;
+}
+body[data-theme="light"] .pm-btn {
+  background: #ffffff;
+  color: #111;
+  border: 1px solid #e5e7eb;
+}
+body[data-theme="light"] .pm-btn:hover {
+  background: #f3f4f6;
+  border-color: #e1e5ea;
+  transform: translateY(-1px);
+}
+body[data-theme="light"] .pm-btn .pm-ico,
+body[data-theme="light"] .pm-btn .pm-label { color: inherit; }
+body[data-theme="light"] .pm-btn .pm-count {
+  background: #f6f7f9;
+  border: 1px solid #e5e7eb;
+  color: #333;
+}
+.pm-btn.pm-like[aria-pressed="true"] .pm-ico { color: #e63946; }
+.pm-btn.pm-fav[aria-pressed="true"]  .pm-ico { color: #f1c40f; }
+.pm-btn[aria-pressed="true"] {
+  background: #ffffff;
+  border-color: var(--hover-border-color, #148fac);
+}
+body[data-theme="light"] .pm-menu__list {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 12px 30px rgba(0,0,0,.15);
+}
+body[data-theme="light"] .pm-menu__item { color: #111; }
+body[data-theme="light"] .pm-menu__item:hover { background: #f3f4f6; }
+body[data-theme="light"] .pm-reply-composer {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+}
+body[data-theme="light"] .pm-reply-avatar {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+}
+body[data-theme="light"] .pm-reply-editor {
+  background: #fafafa;
+  border: 1px solid #e5e7eb;
+  color: #111;
+}
+body[data-theme="light"] .pm-reply-editor[contenteditable="true"][data-placeholder]:empty::before {
+  color: #9aa3ad;
+}
+body[data-theme="light"] .pm-mini {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  color: #111;
+}
+body[data-theme="light"] .pm-mini:hover { background: #f3f4f6; }
+body[data-theme="light"] .pm-submit {
+  background: #ffffff;
+  color: #111;
+}
+body[data-theme="light"] .pm-replies { color: #111; }
+body[data-theme="light"] .pm-reply {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+}
+body[data-theme="light"] .pm-reply-author { color: #111; font-weight: 700; }
+body[data-theme="light"] .pm-reply-time   { color: #5b6470; }
+body[data-theme="light"] .pm-reply-text   { color: #222; }
+body[data-theme="light"] .post-modal__close {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  color: #111;
+}
+body[data-theme="light"] .post-modal__close:hover { background: #f3f4f6; }
+body[data-theme="light"] .pm-split { background: #e5e7eb; }
+
+/* ===============================
+   LIVECHAT — LIGHT THEME FIX
+=============================== */
+body[data-theme="light"] #chatContainer,
+body[data-theme="light"] .chat-box,
+body[data-theme="light"] .chat-window {
+  background: #ffffff;
+  color: #111;
+  border: 1px solid #e5e7eb;
+}
+body[data-theme="light"] .chat-msg {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  color: #111;
+}
+body[data-theme="light"] .chat-msg.me {
+  background: #e8f8f5;
+  border: 1px solid #a7ede0;
+  color: #0c2b28;
+}
+body[data-theme="light"] .chat-msg .meta { color: #555; }
+body[data-theme="light"] .chat-msg .text { color: #111; }
+body[data-theme="light"] .chat-msg.me:hover {
+  border-color: var(--hover-border-color, #148fac);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--hover-border-color) 30%, transparent);
+}
+body[data-theme="light"] #chat-input {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  color: #111;
+  box-shadow: none;
+}
+body[data-theme="light"] #chat-input::placeholder { color: #888; }
+body[data-theme="light"] #chat-input:disabled {
+  background: #f6f7f9;
+  color: #aaa;
+  border-color: #e5e7eb;
+}
+body[data-theme="light"] #chat-send-btn {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  color: #111;
+}
+body[data-theme="light"] #chat-send-btn:hover {
+  background: #f3f4f6;
+  border-color: #d5d9de;
+}
+body[data-theme="light"] .chat-box::-webkit-scrollbar { width: 8px; }
+body[data-theme="light"] .chat-box::-webkit-scrollbar-thumb {
+  background: #ccc; border-radius: 4px;
+}
+body[data-theme="light"] .chat-box::-webkit-scrollbar-track { background: #f6f7f9; }
+
+/* =========================================================
+   GRADIENT THEME — Komponenten in Grau (keine Weißflächen)
+========================================================= */
+body[data-theme="gradient"] .post-modal__actions {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+body[data-theme="gradient"] .pm-btn {
+  background: var(--btn-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  transition: background .2s, border-color .2s, transform .15s;
+}
+body[data-theme="gradient"] .pm-btn:hover {
+  background: var(--btn-bg-hover);
+  border-color: var(--border);
+}
+body[data-theme="gradient"] .pm-btn .pm-count {
+  background: var(--input);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+body[data-theme="gradient"] .pm-reply-composer {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+body[data-theme="gradient"] .pm-reply-editor {
+  background: var(--input);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+body[data-theme="gradient"] .pm-mini {
+  background: var(--btn-bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+body[data-theme="gradient"] .pm-mini:hover {
+  background: var(--btn-bg-hover);
+  border-color: var(--border);
+}
+body[data-theme="gradient"] .pm-submit { background: var(--btn-bg); color: var(--text); }
+body[data-theme="gradient"] .pm-reply {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  color: var(--text);
+}
+body[data-theme="gradient"] .controls-bar {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+body[data-theme="gradient"] .controls-bar label { color: var(--text); }
+body[data-theme="gradient"] .controls-bar select {
+  background: var(--input);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+body[data-theme="gradient"] .controls-bar .checkbox-inline { color: var(--text); }
+body[data-theme="gradient"] .controls-bar input[type="checkbox"] {
+  accent-color: var(--hover-border-color, #148fac);
+}
+body[data-theme="gradient"] .post-modal__dialog {
+  background: var(--modal);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+body[data-theme="gradient"] .post-modal__body pre {
+  background: var(--input);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+body[data-theme="gradient"] .pm-split { background: var(--border); }
+body[data-theme="gradient"] .pm-btn[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--hover-border-color, #148fac) 10%, var(--btn-bg));
+  border-color: color-mix(in srgb, var(--hover-border-color, #148fac) 40%, var(--border));
+}
+body[data-theme="gradient"] .pm-btn.pm-like[aria-pressed="true"] .pm-ico {
+  color: var(--hover-border-color, #148fac);
+}
+body[data-theme="gradient"] .pm-btn.pm-fav[aria-pressed="true"] .pm-ico {
+  color: #f7c948;
+}
+
+
+/* ==========================================
+   CODE / PRE FIX — passt sich Theme-Farben an
+========================================== */
+
+/* Standard für alle Themes */
+pre, code {
+  color: var(--text);
+  background: var(--input);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: monospace;
+}
+
+/* Light Theme */
+body[data-theme="light"] pre,
+body[data-theme="light"] code {
+  color: #111;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+}
+
+/* Gradient Theme */
+body[data-theme="gradient"] pre,
+body[data-theme="gradient"] code {
+  color: #e9ecef;
+  background: #2d3237;
+  border: 1px solid #3c444c;
+}
+
+
+/* ==========================================
+   SETTINGS POPUP — Textfarben Fix
+========================================== */
+
+/* Standard */
+.settings-popup {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+/* Light Theme explizit */
+body[data-theme="light"] .settings-popup {
+  background: #ffffff;
+  color: #111;
+  border: 1px solid #e5e7eb;
+}
+
+/* Gradient Theme */
+body[data-theme="gradient"] .settings-popup {
+  background: #2f343a;
+  color: #e9ecef;
+  border: 1px solid #3c444c;
+}
+
+
+/* =======================================================
+   🔧 HOTFIX: Lesbarkeit Light/Gradient (Posts + Settings)
+   → GANZ UNTEN EINFÜGEN
+======================================================= */
+
+/* ---------- POSTS / MODAL TEXT ---------- */
+
+/* Fließtext im Beitrag (Modal + Feed) in Light/Gradient dunkel genug halten */
+body[data-theme="light"] .post-modal__body,
+body[data-theme="light"] .post-body,
+body[data-theme="light"] .post-body-preview {
+  color: #111 !important;
+}
+
+body[data-theme="gradient"] .post-modal__body,
+body[data-theme="gradient"] .post-body,
+body[data-theme="gradient"] .post-body-preview {
+  color: #e9ecef !important;
+}
+
+/* Code/Pre IMMER sichtbar – überschreibt auch alte Inline-Styles */
+pre,
+code {
+  color: var(--text) !important;
+  background: var(--input) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 6px !important;
+  padding: 8px 10px !important;
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+  font-family: monospace !important;
+}
+
+/* Speziell Light: dunkle Schrift auf hellem Code-Block */
+body[data-theme="light"] pre,
+body[data-theme="light"] code {
+  color: #111 !important;
+  background: #f6f7f9 !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+/* Speziell Gradient: hellere Schrift auf grauem Block */
+body[data-theme="gradient"] pre,
+body[data-theme="gradient"] code {
+  color: #e9ecef !important;
+  background: #2d3237 !important;
+  border: 1px solid #3c444c !important;
+}
+
+/* Falls irgendwo <pre> mit fixem inline color sitzt, nimm das raus – 
+   aber mit obigen !important greifen wir trotzdem. */
+
+
+/* ---------- SETTINGS POPUP (⚙️) ---------- */
+
+/* Container sauber an Theme koppeln */
+.settings-popup {
+  background: var(--panel) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: 0 8px 30px rgba(0,0,0,.15) !important;
+}
+
+/* Light: weißer Kasten, dunkle Schrift */
+body[data-theme="light"] .settings-popup {
+  background: #ffffff !important;
+  color: #111 !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+/* Gradient: grauer Kasten, helle Schrift */
+body[data-theme="gradient"] .settings-popup {
+  background: #2f343a !important;
+  color: #e9ecef !important;
+  border: 1px solid #3c444c !important;
+}
+
+/* Überschrift + Labels gut lesbar */
+.settings-popup h3,
+.settings-popup label {
+  color: inherit !important;
+}
+
+/* Inputs/Select visuell klar (Light & Gradient) */
+.settings-popup input[type="color"],
+.settings-popup select {
+  background: var(--input) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 6px !important;
+  padding: 3px !important;
+}
+
+/* Light: wirklich dunkel auf weiß */
+body[data-theme="light"] .settings-popup input[type="color"],
+body[data-theme="light"] .settings-popup select {
+  background: #ffffff !important;
+  color: #111 !important;
+  border: 1px solid #ccc !important;
+}
+
+/* Fokus sichtbar, aber dezent */
+.settings-popup select:focus,
+.settings-popup input[type="color"]:focus {
+  outline: none !important;
+  border-color: var(--hover-border-color, #148fac) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--hover-border-color, #148fac) 25%, transparent) !important;
+}
+
+/* Checkbox farblich ans Akzentthema binden */
+.settings-popup input[type="checkbox"] {
+  accent-color: var(--hover-border-color, #148fac) !important;
+}
+
+/* Falls im Popup irgendwas Weiß-auf-Weiß war: alles erbt jetzt die Popup-Farbe */
+.settings-popup * {
+  color: inherit !important;
+}
+
+/* ---------- SONSTIGE SICHERHEIT – Controls-Bar Texte ---------- */
+body[data-theme="light"] .controls-bar,
+body[data-theme="light"] .controls-row,
+body[data-theme="light"] .controls-bar label,
+body[data-theme="light"] .controls-bar .checkbox-inline {
+  color: #111 !important;
+}
+
+:root {
+  --particle-color: #50e9ba; /* türkisgrün */
+}
+
+
+
+
