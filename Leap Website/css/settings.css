@@ -377,3 +377,102 @@
 .modal-actions button:hover {
   background: #666;
 }
+
+
+/* === Appearance Settings === */
+.appearance-card {
+  width: min(760px, 92vw);
+  margin: 24px 20px;
+  padding: 18px 18px 16px;
+  border-radius: 12px;
+  background: #1f1f1f;
+  color: #fff;
+  border: 1px solid #2d2f35;
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+  backdrop-filter: blur(4px);
+  animation: fadeSlideIn .3s ease forwards;
+}
+.appearance-card h2 {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: .2px;
+  color: #50e9ba;
+}
+.appearance-card .row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 10px 0;
+}
+.appearance-card .row.switch { justify-content: space-between; }
+.appearance-card label { width: 240px; color: #e9eef3; }
+.appearance-card input[type="color"] {
+  width: 48px; height: 28px;
+  border: none; border-radius: 6px;
+  background: #2a2a2a;
+  cursor: pointer;
+}
+.appearance-card select {
+  background: #2a2a2a;
+  color: #fff;
+  border: 1px solid #3a3a3a;
+  border-radius: 8px;
+  padding: 6px 10px;
+}
+.appearance-card input[type="checkbox"] {
+  width: 22px; height: 22px;
+  accent-color: #00e3b6;
+  cursor: pointer;
+}
+.appearance-card .hint {
+  margin-top: 8px;
+  font-size: 12px;
+  opacity: .8;
+  color: #aaa;
+}
+
+/* Light / Gradient Theme Overrides */
+body[data-theme="light"] .appearance-card {
+  background: #fff;
+  color: #111;
+  border-color: #e5e7eb;
+  box-shadow: 0 10px 24px rgba(0,0,0,.12);
+}
+body[data-theme="light"] .appearance-card label { color: #111; }
+body[data-theme="light"] .appearance-card select {
+  background: #fff;
+  color: #111;
+  border-color: #d1d5db;
+}
+body[data-theme="gradient"] .appearance-card {
+  background: #ffffff;
+  color: #111;
+  border-color: #e5e7eb;
+  box-shadow: 0 10px 24px rgba(0,0,0,.15);
+}
+
+/* Smooth Fade-In */
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+
+/* === Safety Defaults (falls root-Variablen fehlen) === */
+:root {
+  --name-color: #50e9ba;
+  --hover-border-color: #148fac;
+  --particle-color: #00e3b6;
+  --grad-top: #14272A;
+  --grad-bottom: #0c181a;
+}
+
+/* Gradient-Bar (falls du sie auf settings.html nutzt) */
+.gradient-transition {
+  height: 120px;
+  width: 100%;
+  background: linear-gradient(var(--grad-top), var(--grad-bottom));
+  transition: background .25s ease;
+}
+

@@ -42,9 +42,10 @@ document.addEventListener("DOMContentLoaded", () => {
     <link rel="stylesheet" href="../css/whoarewe.css" />
     <link rel="stylesheet" href="../css/index.css" />
     <link rel="stylesheet" href="../css/forum.css" />
-
+<script src="../js/appearance-apply.js" defer></script>
     <script src="../js/particlesMenu.js" defer></script>
       <script src="../js/adminCommands.js" defer></script>
+      <script src="../js/rulesPopover.js" defer></script>
     <script type="module" src="../js/firebaseauth.js" defer></script>
     <script src="../js/loginFormularDiv.js" defer></script>
     <script src="../js/openLogin.js" defer></script>
@@ -529,11 +530,12 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     </div>
 
-    <div class="footer-right">
+<div class="footer-right">
+  <!-- ⚙️ Settings (deine bestehende Struktur, unverändert) -->
   <div class="settings-button">
-    <button class="footer-btn gear-btn">⚙️</button>
+    <button class="footer-btn gear-btn" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="settingsPopup">⚙️</button>
 
-    <div class="settings-popup">
+    <div id="settingsPopup" class="settings-popup" role="dialog" aria-modal="false" tabindex="-1">
       <h3>🎨 Erscheinungsbild</h3>
 
       <label for="nameColor">Namensfarbe:</label>
@@ -560,7 +562,72 @@ document.addEventListener("DOMContentLoaded", () => {
     </div>
   </div>
 
-  <button class="footer-btn regeln-btn">📜</button>
+  <!-- 📜 Regeln -->
+<div class="rules-button">
+  <button class="footer-btn rules-btn" type="button"
+          aria-haspopup="dialog" aria-expanded="false" aria-controls="rulesPopup">📜</button>
+
+  <div id="rulesPopup" class="rules-popup" role="dialog" aria-modal="false" tabindex="-1">
+  <h3>📜 Leap Community-Regeln</h3>
+
+  <p>Willkommen in der <strong>Leap Community</strong>!  
+  Damit alle Spaß haben, freundlich bleiben und produktiv lernen können, bitten wir dich, diese Regeln zu respektieren.  
+  Unsere integrierte <strong>Leap AI</strong> achtet mit auf die Einhaltung und hilft, wenn du unsicher bist.</p>
+
+  <section class="rules-section">
+    <h4>🤝 Verhalten</h4>
+    <ul>
+      <li><strong>Respekt & Freundlichkeit:</strong> Behandle andere so, wie du selbst behandelt werden möchtest – keine Beleidigungen, kein toxisches Verhalten, keine Diskriminierung.</li>
+      <li><strong>Hilfsbereitschaft:</strong> Unterstütze andere, besonders neue Mitglieder. Leap ist ein Lernraum.</li>
+      <li><strong>Privatsphäre:</strong> Teile keine persönlichen Daten – weder deine noch die anderer.</li>
+    </ul>
+  </section>
+
+  <section class="rules-section">
+    <h4>💬 Inhalte & Beiträge</h4>
+    <ul>
+      <li><strong>Kein Spam:</strong> Bitte kein Flooding, keine Werbung und keine leeren Posts.</li>
+      <li><strong>Richtige Themenwahl:</strong> Poste in die passende Kategorie und verwende sinnvolle <code>#Tags</code>.</li>
+      <li><strong>Code & Quellen:</strong> Markiere Codeblöcke mit <code>&lt;pre&gt;</code> oder <code>&lt;code&gt;</code> und nenne deine Quellen, falls du etwas übernimmst.</li>
+      <li><strong>Urheberrecht:</strong> Nur eigene oder lizenzfreie Inhalte posten.</li>
+    </ul>
+  </section>
+
+  <section class="rules-section">
+    <h4>🧠 Leap AI-Moderation</h4>
+    <ul>
+      <li>Unsere <strong>Leap AI</strong> prüft öffentliche Beiträge automatisch auf beleidigende oder gefährliche Inhalte.  
+      Das passiert transparent, um die Community sicher und angenehm zu halten.</li>
+      <li>Wenn du einen Beitrag meldest (<span aria-hidden="true">⚑</span>), hilft die AI der Moderation bei der Einschätzung.</li>
+      <li>Du kannst auch direkt mit ihr interagieren:  
+      Erwähne sie mit <strong>@Leap</strong> oder <strong>@leapt</strong>, um Fragen zu stellen oder Hilfe bei Problemen zu bekommen.</li>
+      <li>Die AI reagiert nur auf inhaltliche oder technische Fragen – nicht auf persönliche oder private Themen.</li>
+    </ul>
+  </section>
+
+  <section class="rules-section">
+    <h4>⚖️ Moderation & Konsequenzen</h4>
+    <ul>
+      <li>Die Moderation kann Inhalte bearbeiten, sperren oder entfernen, wenn sie gegen die Regeln verstoßen.</li>
+      <li>Wiederholte Verstöße führen zu Verwarnungen oder Account-Einschränkungen.</li>
+      <li>Bei Unsicherheiten frag zuerst <strong>@Leap</strong> – sie erklärt dir, was erlaubt ist.</li>
+    </ul>
+  </section>
+
+  <section class="rules-section">
+    <h4>💡 Tipps für gute Posts</h4>
+    <ul>
+      <li>Füge Beispielcode hinzu, wenn du Fragen stellst.</li>
+      <li>Verwende klare Überschriften und beschreibe dein Problem kurz und präzise.</li>
+      <li>Bedanke dich bei Leuten, die dir helfen ❤️</li>
+    </ul>
+  </section>
+
+  <footer class="rules-footer">
+    <p class="rules-ai-note">Diese Community wird durch <strong>Leap AI</strong> unterstützt – dein digitaler Helfer für respektvolles und produktives Lernen.</p>
+    <button class="rules-close" type="button" aria-label="Schließen">Verstanden</button>
+  </footer>
+</div>
 </div>
 
     
