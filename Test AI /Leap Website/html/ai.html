@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leap - AI</title>
+    <link rel="stylesheet" href="../css/ai.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <a href="index.html">
+                <img href="index.html" src="../assets/images/Leap.png" alt="">
+            </a>
+            <h1>Leap AI</h1>
+        </div>
+    </header>
+
+    <!-- Chatbereich -->
+    <div class="chat-container">
+        <div class="message-box" id="messageBox">
+            <!-- AI Antworten und Benutzer Nachrichten kommen hierhin -->
+        </div>
+
+        <div class="input-container">
+            <textarea id="userInput" placeholder="Stelle deine Frage oder schreibe eine Nachricht..." rows="3"></textarea>
+            
+            <!-- Datei-Upload und Nachricht -->
+            <div class="buttons">
+                <input type="file" id="imageUpload" accept="image/*" />
+                <button id="sendMessage">Senden</button>
+            </div>
+        </div>
+    </div>
+
+    
+</body>
+    <script src="../js/ai.js" defer></script> <!-- Dein Partikel Skript -->
+
+</html>

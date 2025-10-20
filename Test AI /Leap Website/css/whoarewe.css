@@ -1,0 +1,832 @@
+/* 1. Reset für Vollbild (Body + HTML) */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  
+}
+
+html {
+  scroll-behavior: smooth; /* Sanftes Scrollen */
+}
+
+.welcome
+{
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+}
+
+/* 2. Gesamt-Styling (Hintergrund, Textfarbe) */
+body {
+  background-color: #14272A;
+  color: #ffffff;
+  font-family: Arial, sans-serif;
+}
+
+.start {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  min-height: calc(100vh - 100px); /* restliche Höhe der Seite */
+  padding: 1rem;
+}
+
+.start h1 {
+  font-family: monospace;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #50e9ba; /* Heller Grünton */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.hauptMenu {
+  position: relative;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  background-color: #14272A;
+  z-index: 0;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+}
+
+#particleCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.backToMainLogo img {
+  border-color: gray;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border-style: solid;
+  opacity: 1;
+}
+
+/* Gradient unter dem Menü */
+.gradient-transition {
+  height: 200px;
+  width: 100%;
+  background: linear-gradient(#14272A, white);
+}
+
+.loginDiv {
+  position: fixed;
+  top: 20px !important;
+  right: 30px;
+  background-color: transparent;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 6px;
+  font-family: sans-serif;
+  z-index: 100000;
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+  width: 300px;
+  height: 50px;
+
+  /* NEU */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;}
+.loginButton,
+.registerButton {
+    background-color: #444;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-family: sans-serif;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.25s ease-in-out;
+
+    /* Optional: Gleiche Höhe wie loginDiv */
+    height: 60%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1; /* Beide gleich breit */
+    margin: 0 5px; /* Abstand innen */}
+/* Hover-Effekt */
+.loginButton:hover{
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    background-color: green;}
+.registerButton:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    background-color: white;
+    color:black}
+.loginFormularDiv {
+    position: fixed;
+    top: 85px !important;
+    right: 50px;
+    background-color: transparent;
+    color: black;
+    padding: 10px 15px;
+    border-radius: 20px;
+    font-family: sans-serif;
+    z-index: 100000;
+    cursor: pointer;
+    transition: all 0.25s ease-in-out;
+    width: 260px;
+    height: 220px;
+    opacity: 0; /* Unsichtbar */
+    visibility: hidden; /* Formular unsichtbar und nicht interaktiv */
+    transform: translateY(-20px); /* Anfangszustand für die Animation */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color:white;
+    flex-direction: column;
+    padding-top:5px; }
+.loginFormularDiv.open {
+    opacity: 1; /* Sichtbar */
+    visibility: visible; /* Interaktionen möglich */
+    transform: translateY(0); /* Normaler Zustand */
+    background-color: #444; /* Hintergrundfarbe sichtbar */
+    color:white;}
+.loginForm {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;}
+label {
+    font-size: 14px;
+    color:white;
+    font-weight: bolder;
+    text-align: center;}
+input {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #333;
+    font-size: 14px;}
+.submitButton {
+    background-color: #444;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.25s ease-in-out;}
+.submitButton:hover {
+    background-color: green;
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);}
+.registerFormularDiv {
+    position: fixed;
+    top: 85px !important;
+    right: 50px;
+    background-color: transparent;
+    color: black;
+    padding: 10px 15px;
+    border-radius: 20px;
+    font-family: sans-serif;
+    z-index: 100000;
+    cursor: pointer;
+    transition: all 0.25s ease-in-out;
+    width: 260px;
+    height: 300px;  /* Höhe des Formulars */
+    opacity: 0; /* Unsichtbar */
+    visibility: hidden; /* Formular unsichtbar und nicht interaktiv */
+    transform: translateY(-20px); /* Anfangszustand für die Animation */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    flex-direction: column;
+    padding-top: 5px;}
+.registerFormularDiv.open {
+    opacity: 1; /* Sichtbar */
+    visibility: visible; /* Interaktionen möglich */
+    transform: translateY(0); /* Normaler Zustand */
+    background-color: #444; /* Hintergrundfarbe sichtbar */
+    color: white;}
+.registerForm {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;}
+label {
+    font-size: 14px;
+    color: white;
+    font-weight: bolder;
+    text-align: center;}
+input {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #333;
+    font-size: 14px;}
+.submitButton {
+    background-color: #444;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.25s ease-in-out;}
+.submitButton:hover {
+    background-color: green;
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);}
+.userinfo {
+  position: fixed;
+  top: 20px !important;
+  right: 30px;
+  background-color: #333;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 6px;
+  font-family: sans-serif;
+  z-index: 100000;
+  cursor: pointer;
+  width: 300px;
+  height: 50px;
+  display: none;
+
+  display: flex;                /* Flexbox aktivieren */
+  align-items: center;         /* Vertikal zentrieren */
+  justify-content: space-between; /* optional – verteilt Inhalte */}
+/* Button innerhalb .userinfo */
+.userinfo .logout {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;}
+/* Optional – Logout-Button-Stil */
+.logoutButton {
+  position: fixed;
+  right:40px;
+  top:30px !important;
+  width: 70px;
+  height:40px;
+  padding: 6px 10px;
+  background-color: #e74c3c;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 9999;
+  font-weight: bold;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: background-color 0.3s ease;
+  font-size: smaller;
+  display: flex;
+  align-items: center; /* Vertikale Zentrierung */}
+.logoutButton:hover {
+  background-color: #c0392b;}
+.character{
+  position: fixed;
+  width:50px;
+  height:50px !important;
+  display: flex;
+  justify-content: center;
+  background-color: gray;
+  border-radius: 50%;
+  font-size: 8px;}
+.welcomeNote{
+  right:185px !important;
+  position: fixed;
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  top: 30px !important;} 
+.CharacterName {
+  padding-top: 20px;
+  color: white;
+  font-weight: bolder;
+  font-size: 20px;
+  z-index: 1000000;
+  margin-left: 60px !important;
+  margin-right: 85px;
+  text-align: center;
+  font-family: monospace;
+  letter-spacing: 3px;
+  animation: colorRotate 2s linear 0s infinite;
+  
+  overflow: hidden;        /* Verhindert das Überlaufen */
+  white-space: nowrap;     /* Verhindert den Zeilenumbruch */
+  text-overflow: ellipsis; /* Zeigt '...' am Ende an, wenn der Text nicht passt */}
+
+
+
+
+.gradient-text {
+  position: absolute;
+  top:100px;
+  background-image: linear-gradient(to right, #50e9ba, #148fac, #e6f0f4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: bold;
+}
+
+
+
+
+.start {
+  transform: scale(0.01);
+  opacity: 0;
+  transform-origin: center center;
+  transition: transform 1.5s ease-out, opacity 3s ease-out;
+}
+
+.start.darkened,
+#start.darkened {
+  background-color: rgba(0, 0, 0, 0.6);
+  transition: background-color 0.5s ease;
+  position: relative;
+}
+
+/* Ursprünglicher Button */
+.next {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px;
+  height: 90px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: linear-gradient(to right, #50e9ba, #148fac, #e6f0f4);
+  border: none;
+  border-radius: 40px;
+  color: black;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 10;
+  overflow: hidden;
+
+  transition:
+  width 0.8s ease-in-out,
+  height 0.8s ease-in-out,
+  top 0.8s ease-in-out,
+  left 0.8s ease-in-out,
+  transform 0.8s ease-in-out,
+  border-radius 0.8s ease-in-out,
+  background-color 0.8s ease-in-out;
+}
+
+
+/* Zielzustand nach Klick */
+.next.expand {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 100vw;
+  height: 100vh;
+  transform: translate(-50%, -50%);
+  border-radius: 0px;
+  background-color: #14272A;
+  z-index: 999;
+}
+
+/* Hover-Effekt */
+.next:hover {
+  transform: translateX(-50%) scale(1.05);
+}
+
+/* Animation beim "Expandieren" */
+.next.expand {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90vw;
+  height: 80vh;
+  border-radius: 20px;
+  z-index: 999;
+  background-color: #14272A;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Der erscheinende Text */
+.fullscreen-text {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: black;
+  font-size: 40px;
+  opacity: 0;
+  z-index: 1000;
+  pointer-events: none;
+  transition: opacity 1s ease-in-out;
+}
+
+.fullscreen-text.show {
+  opacity: 1;
+}
+
+/* Stil des neuen grünen Divs (ersetzt Button) */
+.expandDiv {
+  border: 2px solid black;
+  background-color: green;
+  color: white;
+  padding: 10px;
+  cursor: default;
+}
+
+#expandButton {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px;
+  height: 90px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: linear-gradient(to right, #50e9ba, #148fac, #e6f0f4);
+  border: 2px solid black;
+  border-radius: 40px;
+  color: black;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 10;
+  overflow: hidden;
+
+  transition: 
+    width 0.5s ease-in-out,
+    height 0.5s ease-in-out 0.5s,
+    bottom 0.5s ease-in-out 0.5s,
+    border-radius 0.5s ease-in-out,
+    background-color 0.5s ease-in-out,
+    background-image 0.5s ease-in-out,
+    color 0.5s ease-in-out,
+    border 0.5s ease-in-out;
+}
+
+#expandButton.expanded {
+  width: 90vw;
+  height: 80vh;
+  bottom: 10%;
+  border-radius: 100px;
+
+  background-color: #222;       /* Schwarz als Hintergrund */
+  background-image: none;         /* Gradient Hintergrund weg */
+  border: 100px solid;
+  border-radius: 40px;
+  border-width: 10px;
+  border-image-slice: 1;
+  border-image-source: linear-gradient(to right, #50e9ba, #148fac, #e6f0f4); /* Gradient als Rahmen */
+  
+  color: white;                   /* Textfarbe weiß für besseren Kontrast */
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden; /* verhindert horizontales Scrollen */
+}
+
+
+
+
+
+
+.gallery-container {
+  width: 100%;
+  overflow: hidden;
+  border: 2px solid #50e9ba;
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
+.gallery-track {
+  display: flex;
+  width: max-content;
+  animation: scroll-left 25s linear infinite;
+}
+
+.gallery-item {
+  flex: 0 0 auto;
+  margin-right: 20px;
+}
+
+.gallery-item img {
+  display: block;
+  width: 500px;
+  height: 281px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 3px solid #148fac;
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+
+.gallery img {
+  height: 100%;
+  width: auto; /* proportional */
+  object-fit: contain; /* oder cover */
+}
+
+
+
+#expandedContent {
+  width: 90vw;
+  height: 80vh;
+  display: none;
+  gap: 10px;
+  padding: 10px;
+  box-sizing: border-box;
+  background-color: #14272A;
+  border-radius: 20px;
+  justify-content: center;
+  align-items: center;
+}
+
+.drittel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #222;
+  padding: 10px;
+  border-radius: 10px;
+  overflow: hidden;
+  gap: 10px;
+}
+
+.drittel.reverse {
+  flex-direction: row-reverse;
+}
+
+.text {
+  flex: 1;
+  color: white;
+  font-size: 1.2rem;
+  padding: 10px;
+}
+
+.video {
+  flex: 1;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+
+/* Label sichtbar nur im nicht-expanded Zustand */
+#expandButton .buttonLabel {
+  display: block;
+}
+
+#expandButton.expanded .buttonLabel {
+  display: none;
+}
+
+/* Section (Content) zunächst unsichtbar */
+#expandedContent {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+/* Wenn expanded – zeig die Section */
+#expandButton.expanded #expandedContent {
+  display: flex;
+}
+
+
+#expandedContent {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+/* Nur anzeigen, wenn der Button erweitert ist */
+#expandButton.expanded #expandedContent {
+  display: flex;
+}
+
+/* Verstecke den Text „Weiter“ wenn expanded */
+#expandButton .buttonLabel {
+  display: block;
+}
+
+#expandButton.expanded .buttonLabel {
+  display: none;
+}
+
+#expandedContent {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+/* Wenn Button geöffnet ist */
+#expandButton.expanded #expandedContent {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#expandButton .buttonLabel {
+  display: block;
+}
+
+#expandButton.expanded .buttonLabel {
+  display: none;
+}
+
+#expandButton {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px;
+  height: 90px;
+  background-image: linear-gradient(to right, #50e9ba, #148fac, #e6f0f4);
+  border: 2px solid black;
+  border-radius: 40px;
+  color: black;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 10;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  transition:
+    width 0.5s ease-in-out,
+    height 0.5s ease-in-out,
+    border-radius 0.5s ease-in-out,
+    background-color 0.5s ease-in-out,
+    background-image 0.5s ease-in-out,
+    color 0.5s ease-in-out,
+    border 0.5s ease-in-out;
+}
+
+.buttonLabel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 90px;
+  line-height: 90px;
+  pointer-events: none;
+}
+
+#expandButton.expanded .buttonLabel {
+  display: none;
+}
+
+.expandedContent {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+}
+
+#expandButton.expanded .expandedContent {
+  display: flex;
+}
+
+.drittel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #222;
+  padding: 10px;
+  border-radius: 10px;
+  gap: 10px;
+  width: 100%;
+}
+
+.drittel.reverse {
+  flex-direction: row-reverse;
+}
+
+.text {
+  flex: 1;
+  color: white;
+  font-size: 1.2rem;
+  padding: 10px;
+}
+
+.video {
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  max-width: 300px; /* oder eine andere feste/maximale Breite */
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.texth1 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: white;
+}
+
+.text {
+  font-size: 1.1rem;
+  color: #ddd;
+  margin-top: 0;
+}
+
+
+.drittel {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: #222;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.text-container {
+  display: flex;
+  flex-direction: column; 
+  flex: 1;                 
+  color: white;
+}
+
+
+
+.drittel {
+  position: relative;         /* Wichtig für absolute Positionierung der Überschrift */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #222;
+  padding: 40px 10px 10px;    /* oben mehr Platz, damit Überschrift nicht Text überlappt */
+  border-radius: 10px;
+  gap: 20px;
+  min-height: 200px;          /* Mindesthöhe, damit Platz für Überschrift da ist */
+}
+
+.text-container {
+  flex: 1;
+  padding-top: 30px;          /* Platz unten für Überschrift, damit Text nicht überlappt */
+  color: white;
+  position: relative;         /* für den Text selbst */
+}
+
+.texth1 {
+  position: absolute;         /* Absolut im .drittel positionieren */
+  top: 20px;                  /* oben 10px Abstand */
+  left: 50%;                  /* horizontal in der Mitte */
+  left : 40%;
+  transform: translateX(-50%);
+  font-size: 1.5rem;
+  font-weight: bold;
+  white-space: nowrap;        /* Verhindert Zeilenumbruch */
+  color: white;
+  pointer-events: none;       /* Überschrift klickt sich nicht */
+}
+
+.text {
+  font-size: 1rem;
+  margin-top: 1.5rem;         /* Abstand unter Überschrift */
+  text-align: center;         /* Text zentrieren */
+  max-width: 600px;           /* Optional, damit Text nicht zu breit wird */
+  margin-left: auto;
+  margin-right: auto;
+}

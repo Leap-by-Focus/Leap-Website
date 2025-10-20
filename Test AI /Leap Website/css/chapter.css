@@ -1,0 +1,179 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #14272A;
+}
+
+/* ----- HEADER ----- */
+header {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 300px;
+    margin-bottom: 20px;
+}
+
+header img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+
+header div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    color: white;
+}
+
+header h1, header h3 {
+    margin: 0;
+}
+
+/* ----- FIXIERTES MENÜ ----- */
+.menu {
+    position: fixed; /* Fixiert am linken Rand */
+    left: 0;
+    top: 0;
+    width: 60px;
+    height: 100vh;
+    background-color: #222;
+    transition: width 0.3s ease;
+    overflow: hidden;
+    z-index: 1000; /* Damit es über allem bleibt */
+}
+
+/* Menü fährt aus beim Hover */
+.menu:hover {
+    width: 250px;
+}
+
+/* Menü-Links */
+.menu a {
+    text-decoration: none;
+    color: white;
+    font-size: 18px;
+    padding: 15px;
+    display: block;
+    white-space: nowrap;
+    margin-left: 50px;
+}
+
+.Menu-menu-text {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    font-size: 20px;
+    height: 100%;
+    margin-left: 15px;
+    color: white;
+    text-align: center;
+    position: absolute;
+    left: 0px;
+    top: 50%;
+    transform: translateY(-50%) rotate(180deg);
+    transition: opacity 0.3s ease;
+}
+
+/* Wenn das Menü ausgeklappt wird, wird der Text unsichtbar */
+.menu:hover .Menu-menu-text {
+    opacity: 0;
+}
+
+/* Hover-Effekt für Menü-Links */
+.menu a:hover {
+    background-color: #575757;
+}
+
+/* ----- INHALTSBEREICH ----- */
+.container {
+    display: flex;
+    width: calc(100% - 60px); /* Reduziert Breite wegen Menü */
+    height: 100vh;
+    margin-left: 60px; /* Platz für das eingeklappte Menü */
+    transition: margin-left 0.3s ease, width 0.3s ease;
+}
+
+/* Wenn das Menü ausgeklappt ist */
+.menu:hover ~ .container {
+    margin-left: 250px;
+    width: calc(100% - 250px); /* Anpassung an Menügröße */
+}
+
+/* Links & Rechts Container */
+.links, .rechts {
+    flex: 1; /* Beide nehmen gleich viel Platz ein */
+    height: 100%;
+    display: flex;
+    padding: 30px;
+    box-sizing: border-box;
+}
+
+.links {
+    background-color: beige;
+    margin-left: -60px; /* Verschiebt .links leicht nach rechts */
+    padding: 30px;
+}
+
+.rechts {
+    background-color: darkgray;
+    position: relative; /* Ändere von absolute auf relative */
+    width: 50%; /* Setzt die Breite auf die Hälfte */
+    padding: 20px;
+    display: flex;
+    flex-direction: column; /* Stellt sicher, dass Inhalte untereinander sind */
+    align-items: center; /* Zentriert die Inhalte */
+}
+
+.video {
+
+    width: 100%;
+    margin:20px;
+}
+
+
+/* Textabstand in .links */
+.links h4 {
+    margin: 0 30px;
+    text-align: left;
+}
+
+
+.video {
+    width: 100%;
+
+}
+
+.code {
+    width: 100%; /* Verhindert, dass es breiter als .rechts wird */
+    max-width: 600px; /* Begrenzung der Breite */
+    background-color: #1e1e1e; /* Dunkler Hintergrund wie in Code-Editoren */
+    color: #ffffff; /* Weiße Schrift für Kontrast */
+    padding: 15px;
+    border-radius: 8px; /* Abgerundete Ecken für modernes Design */
+    overflow-x: auto; /* Falls der Code länger ist, horizontales Scrollen erlauben */
+    margin: 10px auto; /* Zentriert den Code-Block */
+    font-family: "Courier New", monospace; /* Konsistente Schriftart */
+}
+
+/* Falls der <pre> Tag zu viel Platz nimmt */
+.code pre {
+    margin: 0;
+}
+
+/* Falls du Syntax-Highlighting möchtest */
+.code code {
+    color: #f8f8f2;
+}
