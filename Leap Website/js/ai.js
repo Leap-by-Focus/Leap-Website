@@ -7,14 +7,55 @@
   // während des lokalen Tests: hart auf :8000 setzen
   const API_BASE = "http://127.0.0.1:8000";
 
-  const esc = s => s.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
-  const addMsg = (html, cls="ai-message") => {
+  // ---- Helpers --------------------------------------------------------
+  const esc = (s = "") =>
+    s.replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+  const escAttr = (s = "") => String(s).replace(/"/g, "&quot;");
+
+  // Rendert normalen Text sicher, lässt aber Markdown-Links als <a> durch
+  function renderTextWithLinksSafe(text = "") {
+    const re = /\[([^\]]+)\]\(([^)]+)\)/g; // [text](url)
+    let out = "";
+    let last = 0;
+    let m;
+    while ((m = re.exec(text)) !== null) {
+      out += esc(text.slice(last, m.index)); // Teil vor dem Link
+      const linkText = esc(m[1]);
+      const href = escAttr(m[2]);
+      out += `<a href="${href}" target="_self" rel="noopener">${linkText}</a>`;
+      last = m.index + m[0].length;
+    }
+    out += esc(text.slice(last));
+    return out;
+  }
+
+  // Zerlegt Antwort in Text-/Codeblöcke und rendert sie sicher
+  function renderAnswerHTML(raw = "") {
+    // Codeblöcke mit ```
+    const reFence = /```([\s\S]*?)```/g;
+    let html = "";
+    let last = 0;
+    let m;
+
+    while ((m = reFence.exec(raw)) !== null) {
+      const before = raw.slice(last, m.index);
+      html += renderTextWithLinksSafe(before);
+      const code = esc(m[1]);
+      html += `<pre><code>${code}</code></pre>`;
+      last = m.index + m[0].length;
+    }
+    html += renderTextWithLinksSafe(raw.slice(last));
+    return html;
+  }
+
+  const addMsg = (html, cls = "ai-message") => {
     const el = document.createElement("div");
     el.className = `message ${cls}`;
     el.innerHTML = html;
     box.appendChild(el);
     box.scrollTop = box.scrollHeight;
   };
+
   const setTyping = on => {
     let t = document.getElementById("typing");
     if (on && !t) {
@@ -27,6 +68,7 @@
     box.scrollTop = box.scrollHeight;
   };
 
+  // ---- Sendelogik -----------------------------------------------------
   async function send() {
     const text = input.value.trim();
     const file = imageInput.files?.[0] || null;
@@ -52,22 +94,14 @@
 
       const resp = await fetch(`${API_BASE}/api/chat`, { method: "POST", body: form });
       if (!resp.ok) {
-        const err = await resp.text().catch(()=> String(resp.status));
+        const err = await resp.text().catch(() => String(resp.status));
         addMsg(`<b>Fehler:</b> ${esc(err)}`);
         return;
       }
       const data = await resp.json();
 
-      let body = esc(data.answer || "");
-      if (body.includes("```")) {
-        body = body.replace(/```([\s\S]*?)```/g, (_, code) => `<pre><code>${esc(code)}</code></pre>`);
-      }
-      if (Array.isArray(data.doc_refs) && data.doc_refs.length) {
-        body += `<br/><b>Relevante Seiten:</b><ul>${
-          data.doc_refs.slice(0,5).map(d => `<li>${esc(d.title)} — <code>${esc(d.path)}</code></li>`).join("")
-        }</ul>`;
-      }
-      addMsg(body, "ai-message");
+      const html = renderAnswerHTML(String(data.answer || ""));
+      addMsg(html, "ai-message");
     } catch (e) {
       addMsg(`<b>Netzwerkfehler:</b> ${esc(String(e))}`);
     } finally {
@@ -77,7 +111,9 @@
   }
 
   sendBtn.addEventListener("click", send);
-  input.addEventListener("keydown", e => { if (e.key==="Enter" && !e.shiftKey) { e.preventDefault(); send(); } });
+  input.addEventListener("keydown", e => {
+    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); }
+  });
 
   addMsg("Hi! Ich bin <b>Leap&nbsp;AI</b>. Frag mich was — z. B. „Wo finde ich die Dokumentation?“", "ai-message");
 })();
