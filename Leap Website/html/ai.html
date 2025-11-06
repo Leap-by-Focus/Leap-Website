@@ -1,37 +1,221 @@
 <!doctype html>
 <html lang="de">
+<!doctype html>
+<html lang="de">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Leap - AI</title>
+  <title>Leap – AI</title>
+<link rel="stylesheet" href="../css/whoarewe.css" />
+    <link rel="stylesheet" href="../css/index.css" />
+    <link rel="stylesheet" href="../css/forum.css" />
   <link rel="stylesheet" href="../css/ai.css" />
+  <script type="module" src="../js/particlesMenu.js" defer></script>
+  <script type="module" src="../js/firebaseauth.js" defer></script>
+  <script src="../js/openLogin.js" defer></script>
+  <script src="../js/loginFormularDiv.js" defer></script>
   <script src="../js/ai.js" defer></script>
 </head>
-<body>
-  <header>
-    <div class="logo">
-      <a href="index.html" aria-label="Zur Startseite">
-        <img src="../assets/images/Leap.png" alt="Leap Logo" />
-      </a>
+
+    <div class="hauptMenu">
+      <canvas id="particleCanvas"></canvas>
+      <div class="backToMainLogo">
+  <a href="index.html" onclick="window.location.href='index.html'; return true;">
+    <img src="../assets/images/Leap.png" alt="Leap Logo" />
+  </a>
+</div>
+    </div>
+
+    <div class="loginDiv">
+      <div class="loginButton" id="loginButton">Login</div>
+      <div class="registerButton" id="registerButton">Register</div>
+
+      <div class="loginFormularDiv" id="loginFormular">
+        <form class="loginForm">
+          <label for="logUsername">Benutzername:</label>
+          <input type="text" id="logUsername" required />
+          <label for="logPassword">Passwort:</label>
+          <input type="password" id="logPassword" required />
+          <button type="submit" class="submitButton" id="submitbuttonlogin">
+            Anmelden
+          </button>
+          <div id="signInMessage" class="alert"></div>
+        </form>
+        <div class="reset-password-link">
+          <a href="#" id="forgotLink">Passwort vergessen?</a>
+        </div>
+      </div>
+
+      <div class="resetFormularDiv" id="resetFormular">
+        <form class="loginForm" id="resetForm">
+          <!-- Phase A -->
+          <div id="phase-request">
+            <label for="resetEmail">E-Mail-Adresse:</label>
+            <input
+              type="email"
+              id="resetEmail"
+              name="resetEmail"
+              placeholder="dein@mail.tld"
+              required
+            />
+            <button type="submit" class="submitButton" id="btnSendReset">
+              Link zum Zurücksetzen senden
+            </button>
+          </div>
+
+          <!-- Phase B (über E-Mail-Link sichtbar) -->
+          <div id="phase-set" style="display: none">
+            <p id="emailLine" class="muted"></p>
+
+            <label for="pw1">Neues Passwort:</label>
+            <input
+              type="password"
+              id="pw1"
+              name="newPassword"
+              minlength="6"
+              autocomplete="new-password"
+              required
+            />
+
+            <label for="pw2">Neues Passwort wiederholen:</label>
+            <input
+              type="password"
+              id="pw2"
+              name="newPasswordRepeat"
+              minlength="6"
+              autocomplete="new-password"
+              required
+            />
+
+            <button type="submit" class="submitButton" id="btnConfirmReset">
+              Passwort speichern
+            </button>
+          </div>
+
+          <div id="resetMessage" class="alert"></div>
+
+          <div class="reset-actions">
+            <button type="button" class="textButton" id="backToLogin">
+              ← Zurück zum Login
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="registerFormularDiv">
+        <form class="registerForm" id="registerForm">
+          <label for="regUsername">Benutzername:</label>
+          <input
+            type="text"
+            id="regUsername"
+            name="username"
+            placeholder="Benutzername"
+            required
+          />
+          <label for="regEmail">Email:</label>
+          <input
+            type="email"
+            id="regEmail"
+            name="email"
+            placeholder="Email"
+            required
+          />
+          <label for="regPassword">Passwort:</label>
+          <input
+            type="password"
+            id="regPassword"
+            placeholder="Passwort"
+            required
+          />
+          <button type="submit" class="submitButton" id="submitbuttonregister">
+            Registrieren
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="userinfo">
+      <div class="character" id="avatarLink"></div>
+      <div class="welcomeNote">Willkommen</div>
+      <div class="CharacterName"></div>
+      <div id="submitlogout" class="logoutButton" style="display: none">
+        ⎋ Logout
+      </div>
+    </div>
+
+    <!-- Willkommen-Text, wird nur angezeigt, wenn der Benutzer eingeloggt ist -->
+    <div id="welcomeMessage" class="welcomeMessage" style="display: none">
+      <p>Willkommen, <span id="usernameDisplay"></span>!</p>
+    </div>
+
+    <div class="gradient-transition"></div>
+
+
+<main class="chat-container" aria-live="polite">
+  <!-- Header -->
+  <header class="chat-header" aria-label="AI-Chat Kopfzeile">
+    <div class="title">
+      <span class="status-dot" aria-hidden="true"></span>
       <h1>Leap AI</h1>
+    </div>
+    <div class="chat-actions">
+      <button class="icon-btn" id="clearChat" title="Verlauf löschen" aria-label="Verlauf löschen">🗑️</button>
+      <button class="icon-btn" id="exportChat" title="Exportieren" aria-label="Chat exportieren">⬇️</button>
     </div>
   </header>
 
-  <main class="chat-container" aria-live="polite">
-    <div class="message-box" id="messageBox" role="log" aria-live="polite" aria-relevant="additions"></div>
-
-    <div class="input-container">
-      <label class="visually-hidden" for="userInput">Nachricht</label>
-      <textarea id="userInput" placeholder="Stelle deine Frage oder schreibe eine Nachricht..." rows="3"></textarea>
-
-      <div class="buttons">
-        <label class="file-label">
-          <input type="file" id="imageUpload" accept="image/*" />
-          Bild auswählen
-        </label>
-        <button id="sendMessage" type="button">Senden</button>
+  <!-- Nachrichten -->
+  <section
+    class="message-box pretty-scroll"
+    id="messageBox"
+    role="log"
+    aria-live="polite"
+    aria-relevant="additions"
+  >
+    <!-- Optional: Begrüßung -->
+    <div class="msg ai">
+      <div class="bubble">
+        <p>Hi! Ich bin <strong>Leap AI</strong> – stell mir deine Frage oder lade ein Bild hoch.</p>
+      </div>
+      <div class="meta">
+        <span class="time">Jetzt</span>
       </div>
     </div>
-  </main>
-</body>
+  </section>
+
+  <!-- Vorschläge (klickbar) -->
+  <div class="suggestions" role="list">
+    <button class="suggestion" role="listitem">Erkläre mir eine Leap-Methode</button>
+    <button class="suggestion" role="listitem">Analysiere meinen Code-Screenshot</button>
+    <button class="suggestion" role="listitem">Schlage Debug-Schritte vor</button>
+  </div>
+
+  <!-- Composer -->
+<div class="composer" aria-label="Nachrichten-Eingabe">
+  <div class="composer-top">
+    <!-- Textfeld links -->
+    <div class="textarea-wrap">
+      <label class="visually-hidden" for="userInput">Nachricht</label>
+      <textarea
+        id="userInput"
+        placeholder="Frage stellen oder '/help' eingeben …"
+        rows="1"
+      ></textarea>
+    </div>
+
+    <!-- Dropzone rechts (Button) -->
+    <label class="dropzone file-label" id="dropzone" aria-label="Bild auswählen" for="imageUpload" title="Bild auswählen">
+      <span class="icon" aria-hidden="true">📎</span>
+      <input type="file" id="imageUpload" accept="image/*" />
+    </label>
+  </div>
+
+  <!-- Untere Leiste -->
+  <div class="composer-right">
+    <div class="file-preview" id="filePreview" hidden></div>
+    <span class="counter" id="charCounter" aria-live="polite">0</span>
+    <button id="sendMessage" class="send-btn" type="button" aria-label="Senden">Senden</button>
+  </div>
+</div>
+</main>
 </html>

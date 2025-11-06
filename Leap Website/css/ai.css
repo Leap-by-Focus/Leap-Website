@@ -1,187 +1,767 @@
-/* Grundstil */
-* { box-sizing: border-box; }
-:root {
-  --bg: #2d2d2d;
-  --panel: #333;
-  --ink: #fff;
+/* =========================================================
+   AI – Scoped Styles (erbt voll von forum.css)
+========================================================= */
+
+/* Token-Variablen NUR für AI-Seite */
+.ai-page {
+  --bg: #111;
+  --panel: #1e1e1e;
+  --input-bg: #222;
+  --accent: #148fac;
+  --border: #333;
+  --text: #f2f2f2;
   --muted: #ccc;
-  --btn: #008CBA;
-  --btn-hover: #005f75;
-  --user: #4caf50;
 }
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  color: var(--ink);
+
+/* Hintergrund + Layout */
+.ai-page {
   background: var(--bg);
-  display: flex;
-  flex-direction: column;
   min-height: 100vh;
-}
-header {
-  background: #222;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  border-bottom: 1px solid #1c1c1c;
-}
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-height: 72px;
-  padding: 12px 16px;
-}
-.logo img {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  display: block;
-}
-.logo h1 {
-  margin: 0;
-  font-size: 20px;
+  position: relative;
+  overflow: hidden;
 }
 
-/* Chat */
-.chat-container {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 16px;
-  height: calc(100vh - 84px);
+/* Particle Canvas unter allem */
+.ai-page #particleCanvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
 }
-.message-box {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  overflow-y: auto;
-  padding-right: 4px;
-  flex: 1 1 auto;
-  background: #262626;
-  border: 1px solid #1f1f1f;
-  border-radius: 10px;
-  padding: 12px;
+
+/* Menu + Logo */
+.ai-page .hauptMenu {
+  position: relative;
+  width: 100%;
+  height: 120px;
+  z-index: 1;
 }
-.message {
-  padding: 10px 12px;
-  border-radius: 10px;
-  max-width: 80%;
-  line-height: 1.35;
-  word-wrap: break-word;
-  white-space: pre-wrap;
+
+.main
+{width: 100%;
+height: 100%;
 }
-.user-message {
-  align-self: flex-end;
-  background: var(--user);
-  color: #fff;
+
+.ai-page .backToMainLogo img {
+  height: 60px;
+  padding: 20px;
+  cursor: pointer;
 }
-.ai-message {
-  align-self: flex-start;
+
+/* Login/Register Container */
+.ai-page .loginDiv {
+  position: absolute;
+  top: 130px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px;
+  padding: 20px;
   background: var(--panel);
-  color: #fff;
-  border: 1px solid #3a3a3a;
-}
-.image-message img {
-  max-width: 240px;
-  max-height: 240px;
-  border-radius: 8px;
-  display: block;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  display: none;
+  z-index: 10;
 }
 
-/* Eingabe */
-.input-container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-textarea {
+.ai-page .loginButton,
+.ai-page .registerButton {
   width: 100%;
   padding: 10px;
+  background: var(--accent);
   border-radius: 8px;
-  border: 1px solid #1f1f1f;
-  background: #444;
-  color: #fff;
-  resize: vertical;
-  min-height: 56px;
-  outline: none;
-}
-.buttons {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-.file-label {
-  display: inline-block;
-  padding: 10px 12px;
-  border-radius: 8px;
-  background: #3a3a3a;
-  border: 1px solid #1f1f1f;
+  text-align: center;
   cursor: pointer;
+  margin-bottom: 12px;
 }
-.file-label input[type="file"] {
-  display: none;
+
+/* Formulare */
+.ai-page .loginFormularDiv,
+.ai-page .resetFormularDiv,
+.ai-page .registerFormularDiv {
+  width: 100%;
 }
-button {
-  padding: 10px 15px;
-  border-radius: 8px;
+
+.ai-page .loginForm label,
+.ai-page .registerForm label {
+  margin-top: 10px;
+  display: block;
+}
+
+.ai-page input {
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  padding: 8px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+/* Buttons */
+.ai-page .submitButton {
+  margin-top: 16px;
+  background: #3cb44a;
   border: none;
-  background: var(--btn);
-  color: white;
+  border-radius: 8px;
+  padding: 12px;
   cursor: pointer;
   font-size: 16px;
-}
-button:hover { background: var(--btn-hover); }
-button[disabled] { opacity: .6; cursor: default; }
-
-/* Accessibility */
-.visually-hidden {
-  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-  overflow: hidden; clip: rect(0,0,0,0); border: 0;
+  transition: all .25s ease-in-out;
 }
 
-/* Tippen-Animation */
-.typing .dot { display:inline-block; width:6px; height:6px; margin:0 2px; border-radius:50%; background:#bbb; opacity:.4; animation: t 1s infinite; }
-.typing .dot:nth-child(2){ animation-delay:.15s; }
-.typing .dot:nth-child(3){ animation-delay:.3s; }
-@keyframes t { 0%,80%,100%{ transform:translateY(0); opacity:.3 } 40%{ transform:translateY(-4px); opacity:.8 } }
-
-/* Codeblöcke */
-pre { background:#111; border:1px solid #333; border-radius:8px; padding:10px; overflow:auto; }
-code { font-family: ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size: 0.95em; }
-
-
-
-* { box-sizing: border-box; }
-:root {
-  --bg: #2d2d2d; --panel:#333; --ink:#fff;
-  --btn:#008CBA; --btn-h:#005f75; --user:#4caf50;
+.ai-page .submitButton:hover {
+  background-color: #2f7d36;
+  transform: scale(1.03);
 }
-body { margin:0; font-family: Arial, sans-serif; background:var(--bg); color:var(--ink); }
-header { background:#222; position:sticky; top:0; z-index:10; border-bottom:1px solid #1c1c1c; }
-.logo { display:flex; align-items:center; gap:12px; min-height:72px; padding:12px 16px; }
-.logo img { width:56px; height:56px; border-radius:50%; display:block; }
-.logo h1 { margin:0; font-size:20px; }
 
-.chat-container { display:flex; flex-direction:column; gap:12px; padding:16px; height:calc(100vh - 84px); }
-.message-box { flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:10px; padding:12px; background:#262626; border:1px solid #1f1f1f; border-radius:10px; }
-.message { padding:10px 12px; border-radius:10px; max-width:80%; line-height:1.35; white-space:pre-wrap; word-wrap:break-word; }
-.user-message { align-self:flex-end; background:var(--user); color:#fff; }
-.ai-message { align-self:flex-start; background:var(--panel); border:1px solid #3a3a3a; color:#fff; }
-.image-message img { max-width:240px; max-height:240px; border-radius:8px; display:block; }
+/* Reset Link */
+.ai-page .reset-password-link {
+  width: 100%;
+  margin-top: 8px;
+  text-align: center;
+}
 
-.input-container { display:flex; flex-direction:column; gap:10px; }
-textarea { width:100%; padding:10px; border-radius:8px; border:1px solid #1f1f1f; background:#444; color:#fff; resize:vertical; min-height:56px; outline:none; }
-.buttons { display:flex; gap:10px; align-items:center; }
-.file-label { display:inline-block; padding:10px 12px; border-radius:8px; background:#3a3a3a; border:1px solid #1f1f1f; cursor:pointer; }
-.file-label input[type="file"] { display:none; }
-button { padding:10px 15px; border-radius:8px; border:none; background:var(--btn); color:white; cursor:pointer; font-size:16px; }
-button:hover { background:var(--btn-h); }
-.visually-hidden { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0; }
+/* Userinfo */
+.ai-page .userinfo {
+  position: absolute;
+  top: 160px;
+  left: 20px;
+  z-index: 20;
+  display: none;
+}
 
-/* Tippen-Indikator & Codeblöcke (optional) */
-.typing .dot{display:inline-block;width:6px;height:6px;margin:0 2px;border-radius:50%;background:#bbb;opacity:.4;animation:t 1s infinite}
-.typing .dot:nth-child(2){animation-delay:.15s}.typing .dot:nth-child(3){animation-delay:.3s}
-@keyframes t{0%,80%,100%{transform:translateY(0);opacity:.3}40%{transform:translateY(-4px);opacity:.8}}
-pre{background:#111;border:1px solid #333;border-radius:8px;padding:10px;overflow:auto}
-code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.95em}
+/* Willkommen Text */
+.ai-page .welcomeMessage {
+  text-align: center;
+  margin-top: 200px;
+  color: var(--text);
+  font-size: 1.6rem;
+}
+
+
+
+
+
+
+
+
+
+/* =========================================================
+   CHAT UI – nur Chat Container, alles andere bleibt unverändert
+========================================================= */
+
+/* Container nutzt vollen Viewport unterhalb der Haupt-Navigation */
+.chat-container {
+  width: 90%;
+  margin: 0 auto;
+  padding: 0 16px;
+
+  display: grid;
+  grid-template-rows: auto 1fr auto auto;
+  /* 120px = Höhe .hauptMenu (Logo + Partikel) */
+  height: calc(100vh - 120px);
+}
+
+/* Header */
+.chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 4px 0;
+  margin-bottom: 10px;
+}
+.chat-header .title { display: flex; align-items: center; gap: 10px; }
+.chat-header h1 { font-size: 1.15rem; margin: 0 }
+
+/* Statuspunkt */
+.status-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: #2ed573;
+  box-shadow: 0 0 10px rgba(46,213,115,.6);
+}
+
+/* Chatverlauf */
+.message-box {
+  min-height: 0; /* wichtig damit 1fr scrollt */
+  overflow-y: auto;
+  background: rgba(0,0,0,.25);
+  border-radius: 12px;
+  padding: 16px;
+}
+.pretty-scroll::-webkit-scrollbar { width: 10px; }
+.pretty-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,.1);
+  border-radius: 10px;
+}
+
+/* Messages (Bubbles) */
+.msg {
+  display: flex;
+  flex-direction: column;
+  margin: 10px 0;
+  gap: 6px;
+}
+.msg .bubble {
+  background: #1e1e1e;
+  border-radius: 12px;
+  padding: 12px 14px;
+  line-height: 1.45;
+  border: 1px solid #333;
+}
+.msg.user .bubble {
+  background: #4caf50;
+  color: #fff;
+  align-self: flex-end;
+}
+.msg.ai .bubble {
+  background: #2c2c2c;
+}
+
+/* Code im Chat */
+.msg pre code {
+  display: block;
+  padding: 10px;
+  background: #0e0e0e;
+  border-radius: 8px;
+  border: 1px solid #333;
+  overflow-x: auto;
+}
+
+/* Zeit / Metatext */
+.msg .meta {
+  font-size: .8rem;
+  color: #aaa;
+}
+
+/* ============== Suggestions: immer sichtbar + Thinking-Animation ============== */
+
+/* Container bleibt sichtbar, auch wenn getippt wird */
+.suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 4px 0 30px;
+  min-height: 46px;            /* verhindert Layout-Springen */
+  position: relative;          /* Basis für Shimmer-Overlay */
+  height: auto;
+}
+
+/* einzelne Chips */
+.suggestion {
+  background: transparent;
+  border: 1px solid #333;
+  border-radius: 999px;
+  padding: 0px 10px;
+  cursor: pointer;
+  font-size: .85rem;
+  color: #fff;
+  position: relative;
+  transition: background .15s ease, transform .08s ease;
+  height: auto;
+}
+.suggestion:hover { background: rgba(255,255,255,.08); }
+.suggestion:active { transform: translateY(1px); }
+
+/* Ladezustand: Text ausblenden, 3 animierte Punkte zeigen */
+.suggestion.loading {
+  color: transparent;
+}
+.suggestion.loading::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 8px;
+  height: 8px;
+  margin: auto;
+  border-radius: 50%;
+  background: #cfcfcf;
+  opacity: .8;
+  animation: dotPulse 1s ease-in-out infinite;
+  /* zwei weitere Punkte links/rechts */
+  box-shadow:
+    14px 0 0 0 #cfcfcf,
+    -14px 0 0 0 #cfcfcf;
+}
+
+@keyframes dotPulse {
+  0%, 80%, 100% { transform: translateY(0); opacity: .6; }
+  40%          { transform: translateY(-3px); opacity: 1; }
+}
+
+/* Thinking-State für den gesamten Block */
+.suggestions.thinking {
+  animation: suggPulse 1.2s ease-in-out infinite alternate;
+}
+@keyframes suggPulse {
+  0%   { transform: translateY(0);     filter: brightness(1); }
+  100% { transform: translateY(-1px);  filter: brightness(1.02); }
+}
+
+/* Shimmer-Band über den kompletten Suggestions-Block */
+.suggestions.thinking::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,.06) 45%,
+    rgba(255,255,255,.10) 50%,
+    rgba(255,255,255,.06) 55%,
+    transparent 100%
+  );
+  transform: translateX(-150%);
+  animation: shimmer 1.25s linear infinite;
+  pointer-events: none;
+}
+
+/* dezente animierte Ränder an den Buttons (wie Chat-Bubbles) */
+.suggestions.thinking .suggestion::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 999px;
+  background: linear-gradient(
+    140deg,
+    rgba(20,143,172,.30),
+    rgba(50,90,110,.28),
+    rgba(230,244,246,.22),
+    rgba(20,143,172,.30)
+  );
+  background-size: 220% 220%;
+  animation: rotateBorder 16s ease-in-out infinite;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  z-index: -1;
+}
+
+/* Falls noch nicht global vorhanden, Keyframes mitnehmen */
+@keyframes shimmer {
+  to { transform: translateX(150%); }
+}
+@keyframes rotateBorder {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Composer (animierter Gradient-Rand wie AI Bubble) */
+.composer {
+  position: sticky;
+  bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  padding-top: 14px; /* Rand Platz */
+  backdrop-filter: blur(6px);
+  background: rgba(0,0,0,.20);
+  border-radius: 14px;
+  isolation: isolate;
+  z-index: 10;
+}
+
+/* Der animierte Rand */
+.composer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+
+  /* exakt die gleichen Farben wie AI Bubble */
+  background: linear-gradient(
+    270deg,
+    #50e9ba,
+    #148fac,
+    #e6f0f4,
+    #50e9ba
+  );
+  background-size: 300% 300%;
+  animation: rotateComposer 8s linear infinite;
+
+  /* Border ausschneiden */
+  padding: 2px;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+
+  z-index: -1;
+}
+
+/* Animation ident wie bei AI Bubbles */
+@keyframes rotateComposer {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Beim Tippen: etwas leuchtender + schneller */
+.composer:focus-within::before {
+  filter: brightness(1.06);
+  animation-duration: 5s;
+}
+
+/* Composer (animierter Gradient-Rand wie AI Bubble) */
+.composer {
+  position: sticky;
+  bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  padding-top: 14px; /* Rand Platz */
+  backdrop-filter: blur(6px);
+  background: rgba(0,0,0,.20);
+  border-radius: 14px;
+  isolation: isolate;
+  z-index: 10;
+}
+
+/* Der animierte Rand */
+.composer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+
+  /* exakt die gleichen Farben wie AI Bubble */
+  background: linear-gradient(
+    270deg,
+    #50e9ba,
+    #148fac,
+    #e6f0f4,
+    #50e9ba
+  );
+  background-size: 300% 300%;
+  animation: rotateComposer 8s linear infinite;
+
+  /* Border ausschneiden */
+  padding: 2px;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+
+  z-index: -1;
+}
+
+/* Animation ident wie bei AI Bubbles */
+@keyframes rotateComposer {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Beim Tippen: etwas leuchtender + schneller */
+.composer:focus-within::before {
+  filter: brightness(1.06);
+  animation-duration: 5s;
+}
+
+/* Layout: Text links, Dropzone rechts */
+.composer-top {
+  display: grid;
+  grid-template-columns: 1fr auto;  /* Textarea | Dropzone */
+  gap: 10px;
+  width: 100%;
+}
+
+/* Composer-Rand bleibt animiert (dein bestehender Code kann bleiben) */
+
+/* Dropzone: kompakter Button rechts, ohne Animation */
+.dropzone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  min-width: 46px;
+  min-height: 46px;
+  background: #202020;
+  border-radius: 10px;
+  border: 1px solid #333;
+  cursor: pointer;
+  transition: background .15s ease, border-color .15s ease;
+}
+
+.dropzone:hover {
+  background: #2b2b2b;
+  border-color: var(--accent);
+}
+
+.dropzone.dragover {
+  background: rgba(20,143,172,.20);
+  border-color: var(--accent);
+}
+
+/* Icon innen */
+.dropzone .icon {
+  font-size: 20px;
+  line-height: 1;
+  opacity: .85;
+  user-select: none;
+}
+
+/* File input verstecken */
+.file-label input { display: none; }
+
+/* Vorschau-Chip in der unteren Leiste */
+.file-preview[hidden] { display: none !important; }
+.file-preview {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 999px;
+  color: #ddd;
+}
+.file-preview .file-chip button {
+  margin-left: 8px;
+  background: transparent;
+  border: none;
+  color: #bbb;
+  cursor: pointer;
+}
+
+
+/* === Dynamische Schrift für User Input === */
+#userInput {
+  width: 97%;
+  min-height: 44px;
+  max-height: 180px;
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding: 14px;
+  color: #eee;
+  resize: none;
+  outline: none;
+  line-height: 1.4;
+  font-size: 22px;       /* ✅ Start: groß */
+  transition: font-size .12s;
+  overflow-y: auto;
+}
+
+#userInput.l2 { font-size: 18px; } /* mittlerer Textumfang */
+#userInput.l3 { font-size: 15px; } /* sehr viel Text */
+#userInput:focus {
+  border-color: #148fac;
+  box-shadow: 0 0 0 3px rgba(20,143,172,.25);
+}
+
+.composer-bottom {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.composer-right {
+  margin-left: auto; /* schiebt den ganzen Block nach rechts */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.counter { color: #ccc; }
+
+
+
+.send-btn {
+  background: #148fac;
+  border: none;
+  color: #fff;
+  border-radius: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: .15s;
+}
+.send-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.send-btn:active { transform: translateY(0); }
+.send-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+/* Mobile Anpassungen */
+@media (max-width: 640px) {
+  .composer-top { grid-template-columns: 1fr; }
+}
+
+
+
+/* === Thinking Animation für AI-Bubble === */
+.msg.ai.typing .bubble,
+.message.ai-message.typing .bubble {
+  position: relative;
+  overflow: hidden;
+  background: #262626;                 /* dezent dunkler als normale AI-Bubble */
+  border: 1px solid #3a3a3a;
+  animation: bubblePulse 1.2s ease-in-out infinite alternate;
+}
+
+/* sanftes „Atmen“ */
+@keyframes bubblePulse {
+  0%   { transform: translateY(0);     box-shadow: 0 2px 10px rgba(0,0,0,.25); }
+  100% { transform: translateY(-1px);  box-shadow: 0 4px 16px rgba(0,0,0,.35); }
+}
+
+/* Shimmer-Highlight, das über die Bubble wischt */
+.msg.ai.typing .bubble::after,
+.message.ai-message.typing .bubble::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,.06) 45%,
+    rgba(255,255,255,.10) 50%,
+    rgba(255,255,255,.06) 55%,
+    transparent 100%
+  );
+  transform: translateX(-150%);
+  animation: shimmer 1.25s linear infinite;
+  pointer-events: none;
+}
+@keyframes shimmer {
+  to { transform: translateX(150%); }
+}
+
+/* Dots: leicht pulsierend (du hast bereits .dot – hier „hübscher“) */
+.msg.ai.typing .dot,
+.message.ai-message.typing .dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #cfcfcf;
+  opacity: .8;
+  animation: dotBounce 1s infinite ease-in-out;
+  display: inline-block;
+}
+.msg.ai.typing .dot:nth-child(2),
+.message.ai-message.typing .dot:nth-child(2) { animation-delay: .12s; }
+.msg.ai.typing .dot:nth-child(3),
+.message.ai-message.typing .dot:nth-child(3) { animation-delay: .24s; }
+
+@keyframes dotBounce {
+  0%, 80%, 100% { transform: translateY(0);   opacity: .6; }
+  40%          { transform: translateY(-4px); opacity: 1;  }
+}
+
+/* Kleiner Equalizer unter den Dots (rein visuell) */
+.msg.ai.typing .eq,
+.message.ai-message.typing .eq {
+  display: flex; gap: 3px; align-items: flex-end;
+  height: 12px; margin-top: 8px;
+}
+.msg.ai.typing .bar,
+.message.ai-message.typing .bar {
+  width: 3px; height: 6px; border-radius: 2px;
+  background: #bdbdbd;
+  animation: barWave 900ms ease-in-out infinite;
+}
+.message.ai-message.typing .bar:nth-child(1),
+.msg.ai.typing .bar:nth-child(1) { animation-delay: 0ms;   }
+.message.ai-message.typing .bar:nth-child(2),
+.msg.ai.typing .bar:nth-child(2) { animation-delay: 100ms; }
+.message.ai-message.typing .bar:nth-child(3),
+.msg.ai.typing .bar:nth-child(3) { animation-delay: 200ms; }
+.message.ai-message.typing .bar:nth-child(4),
+.msg.ai.typing .bar:nth-child(4) { animation-delay: 300ms; }
+.message.ai-message.typing .bar:nth-child(5),
+.msg.ai.typing .bar:nth-child(5) { animation-delay: 400ms; }
+
+@keyframes barWave {
+  0%, 100% { height: 6px;  opacity: .6; }
+  50%      { height: 12px; opacity: 1;  }
+}
+
+
+
+/* =============================================
+   ✨ Minimal-Premium Animated Border
+============================================= */
+.msg .bubble {
+  position: relative;
+  border: none;
+  z-index: 0;
+}
+
+/* Gradient Rahmen */
+.msg .bubble::before {
+  content: "";
+  position: absolute;
+  inset: -1.5px;
+  border-radius: inherit;
+  
+  background: linear-gradient(
+    140deg,
+    rgba(20,143,172, 0.38),
+    rgba(50,90,110, 0.35),
+    rgba(230,244,246, 0.28),
+    rgba(20,143,172, 0.38)
+  );
+
+  background-size: 220% 220%;
+  animation: rotateBorder 16s ease-in-out infinite;
+
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  z-index: -1;
+}
+
+/* sanfte Bewegung */
+@keyframes rotateBorder {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Farben innen modernisieren */
+.msg.ai .bubble {
+  background: #1a1a1a;
+  color: #e9e9e9;
+}
+
+.msg.user .bubble {
+  background: #3ca447;
+  color: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .suggestions.thinking,
+  .suggestions.thinking::after,
+  .suggestions.thinking .suggestion::before {
+    animation: none !important;
+  }
+}
+
+
+
+/* Bild-Blase in Chatnachrichten */
+.image-message {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image-message img {
+  max-width: 500px;    /* ✅ Bildgröße begrenzen */
+  max-height: 500px;   /* ✅ quadratischer max. Rahmen */
+  width: auto;
+  height: auto;
+  border-radius: 12px; /* ✅ gleiche Bubble-Optik */
+  object-fit: cover;
+  cursor: zoom-in;     /* optional */
+  border: 1px solid rgba(255,255,255,.08); /* dezenter Rand */
+  box-shadow: 0 2px 6px rgba(0,0,0,.4);    /* leichtes Shadow */
+}

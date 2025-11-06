@@ -213,6 +213,13 @@ document.addEventListener("DOMContentLoaded", async () => {
           try { await updateProfile(auth.currentUser, { displayName: value }); } catch {}
         }
         lastChangeDate = new Date(); // lokal setzen
+        // === GLOBAL BROADCAST ===
+try {
+  localStorage.setItem("displayName", value);
+  window.dispatchEvent(new CustomEvent("leap:userProfile", { detail: { displayName: value } }));
+  // cross-tab
+  localStorage.setItem("LEAP_USER_PROFILE_BROADCAST", JSON.stringify({ ts: Date.now(), displayName: value }));
+} catch {}
       } else {
         localStorage.setItem("displayName", value);
       }

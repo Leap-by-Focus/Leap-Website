@@ -26,6 +26,21 @@
 
     <!-- ✅ NEU: Appearance-Settings -->
     <script type="module" src="../js/settingsAppearance.js" defer></script>
+    <script type="module">
+  import { getApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+  import { getAuth } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+  import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+  import { initUserBus, bindUsernameToDOM, startLiveUserProfile } from "../js/userProfileBus.js";
+
+  const app  = getApp();              // du initialisierst schon in firebaseauth.js
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  initUserBus({ db, auth });
+  bindUsernameToDOM(".usernameDisplay"); // schreibt überall den Namen rein
+  startLiveUserProfile();                // hört in Echtzeit auf Firestore
+</script>
   </head>
 
   <body>
