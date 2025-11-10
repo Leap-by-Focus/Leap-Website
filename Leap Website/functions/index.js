@@ -101,7 +101,6 @@ function canonicalizeSqueezed(text) {
 }
 
 // Lockere Regex: erlaubt beliebige Non-Word-Zeichen + bis zu 4 extra Buchstaben/Ziffern
-// → trifft "huurensohn", "H.u.r.e.n.s.o.h.n", "N1gg3r", "N_1_g_g_e_r", ...
 function makeLoose(word) {
   const chars = [...word.toLowerCase()];
   const map = {
@@ -196,7 +195,7 @@ const BAD_LEXEMES = [...INSULT_TERMS, ...HATE_SLUR_TERMS].map((term) => {
   return { term, rx: makeLoose(term), squeezed };
 });
 
-// 2-Wege-Check: (a) lose Regex auf normalisiertem Text, (b) includes auf „squeezed“
+// 2-Wege-Check
 function matchAny(text) {
   const plain = normalizeForCheck(text);
   const squeezed = canonicalizeSqueezed(text);
@@ -256,14 +255,13 @@ async function updateTagStatsFromPost(post) {
     const tag = String(rawTag || "").trim().toLowerCase();
     if (!tag) continue;
 
-    // Beleidigungs-Check auf dem Tag selber
     const hits = matchAny(tag);
     if (hits.length > 0) {
       logger.warn("Tag verworfen wegen beleidigendem Inhalt", { tag, hits });
       continue;
     }
 
-    const ref = db.collection("tags").doc(tag); // Doc-ID = tag-name (lowercase)
+    const ref = db.collection("tags").doc(tag);
 
     batch.set(
       ref,
@@ -365,6 +363,61 @@ exports.autoModerateOnPostCreate = onDocumentCreated(
       return;
     }
 
+    // 🔹 Ban-Check für Threads
+    if (post.authorUid) {
+      try {
+        const userSnap = await db
+          .collection("users")
+          .doc(post.authorUid)
+          .get();
+        if (userSnap.exists) {
+          const userData = userSnap.data() || {};
+          const bannedObj = userData.banned || {};
+          const bannedActive = !!bannedObj.active;
+          const bannedUntil = bannedObj.until;
+          const nowMs = Date.now();
+
+          const bannedUntilNum =
+            typeof bannedUntil === "number"
+              ? bannedUntil
+              : bannedUntil && bannedUntil.toMillis
+              ? bannedUntil.toMillis()
+              : null;
+
+          const bannedStillActive =
+            bannedActive && (!bannedUntilNum || bannedUntilNum > nowMs);
+
+          if (bannedStillActive) {
+            await db.doc(`posts/${postId}`).set(
+              {
+                removed: true,
+                removedAt: admin.firestore.FieldValue.serverTimestamp(),
+                moderation: {
+                  status: "removed",
+                  decidedBy: "auto",
+                  decidedAt: admin.firestore.FieldValue.serverTimestamp(),
+                  reportId: "system",
+                  reasonDetected: "banned_user",
+                  patternHits: [],
+                },
+              },
+              { merge: true }
+            );
+            logger.warn("Post auto-removed (banned user)", {
+              postId,
+              authorUid: post.authorUid,
+            });
+            return;
+          }
+        }
+      } catch (e) {
+        logger.warn("could not load user for post moderation", {
+          postId,
+          e,
+        });
+      }
+    }
+
     // createdAt nachziehen (hilft für Rechecks/Sortierung)
     if (!post.createdAt) {
       try {
@@ -450,7 +503,6 @@ exports.autoModerateOnPostCreate = onDocumentCreated(
         { merge: true }
       );
 
-      // 👉 nur bei cleanen Posts Tags hochzählen
       try {
         await updateTagStatsFromPost(post);
       } catch (e) {
@@ -459,6 +511,117 @@ exports.autoModerateOnPostCreate = onDocumentCreated(
 
       logger.info("👌 Post clean (create)", { postId });
     }
+  }
+);
+
+// === AUTO-MODERATION: LIVECHAT (nur Ban/Mute) =============================
+exports.autoModerateChat = onDocumentCreated(
+  "chatMessages/{msgId}",
+  async (event) => {
+    const { msgId } = event.params;
+    const data = event.data?.data() || {};
+
+    const uid = data.uid;
+    const text = String(data.text || "").trim();
+
+    if (!uid || !text) {
+      return;
+    }
+
+    const nowMs = Date.now();
+    const nowTs = admin.firestore.Timestamp.now();
+    const msgRef = event.data.ref;
+
+    const userRef = db.collection("users").doc(uid);
+    let userData = null;
+
+    try {
+      const userSnap = await userRef.get();
+      if (userSnap.exists) {
+        userData = userSnap.data() || {};
+      }
+    } catch (e) {
+      logger.warn("could not load user for chat moderation", { uid, e });
+    }
+
+    let bannedStillActive = false;
+    let mutedStillActive = false;
+
+    if (userData) {
+      const bannedObj = userData.banned || {};
+      const bannedActive = !!bannedObj.active;
+      const bannedUntil = bannedObj.until;
+
+      const bannedUntilNum =
+        typeof bannedUntil === "number"
+          ? bannedUntil
+          : bannedUntil && bannedUntil.toMillis
+          ? bannedUntil.toMillis()
+          : null;
+
+      bannedStillActive =
+        bannedActive && (!bannedUntilNum || bannedUntilNum > nowMs);
+
+      if (userData.mutedPermanent) {
+        mutedStillActive = true;
+      } else if (
+        typeof userData.mutedUntil === "number" &&
+        userData.mutedUntil > nowMs
+      ) {
+        mutedStillActive = true;
+      }
+    }
+
+    if (bannedStillActive || mutedStillActive) {
+      await msgRef.set(
+        {
+          removed: true,
+          removedAt: nowTs,
+          moderation: {
+            status: "removed",
+            decidedBy: "chat_auto",
+            decidedAt: nowTs,
+            reasonDetected: bannedStillActive ? "banned_user" : "muted_user",
+            patternHits: [],
+            spam: {
+              rate: false,
+              repeat: false,
+            },
+          },
+        },
+        { merge: true }
+      );
+
+      logger.warn("💬 Chat-Nachricht geblockt (Ban/Mute aktiv)", {
+        msgId,
+        uid,
+        bannedStillActive,
+        mutedStillActive,
+      });
+
+      return;
+    }
+
+    // ❗ Keine Spam-/Insult-Logik mehr im Chat → alles andere ist clean
+    await msgRef.set(
+      {
+        removed: false,
+        moderation: {
+          status: "clean",
+          decidedBy: "chat_auto",
+          decidedAt: nowTs,
+          reasonDetected: "none",
+          patternHits: [],
+        },
+      },
+      { merge: true }
+    );
+
+    logger.info("💬 Chat-Message als clean markiert", {
+      msgId,
+      uid,
+      text,
+    });
   }
 );
 
@@ -482,9 +645,6 @@ exports.adminSlash = onCall(async (req) => {
       await clearChat();
       return { message: "✅ Chat geleert." };
 
-    // 🔹 /delete, /deletethread, /deletepost
-    //  - /delete <postDocId>
-    //  - /delete #123456  (Kurz-ID)
     case "/delete":
     case "/deletethread":
     case "/deletepost": {
@@ -534,7 +694,6 @@ exports.adminSlash = onCall(async (req) => {
       if (durationArg) {
         const ms = parseDuration(durationArg);
         if (ms <= 0) {
-          // Dauer unbrauchbar → wir interpretieren ALLES ab args[1] als Grund → perma mute
           durationArg = null;
           reasonStartIndex = 1;
         } else {
@@ -542,7 +701,6 @@ exports.adminSlash = onCall(async (req) => {
           durationLabel = durationArg;
         }
       } else {
-        // kein Dauer-Arg → perma, Grund beginnt an Position 1
         reasonStartIndex = 1;
       }
 
@@ -599,6 +757,80 @@ exports.adminSlash = onCall(async (req) => {
       return {
         message: `🛠 Maintenance ${scope}: ${state ? "ON" : "OFF"}`,
       };
+    }
+
+    case "/ban": {
+      const username = args[0];
+      if (!username) {
+        return {
+          message:
+            "⚠️ usage: /ban <username> [dauer] [grund...]\n" +
+            "Beispiele:\n" +
+            "  /ban Luka 5min Spam\n" +
+            "  /ban Luka 1h Beleidigungen\n" +
+            "  /ban Luka = perma Trollerei",
+        };
+      }
+
+      let durationArg = args[1];
+      let reasonStartIndex = 2;
+      let untilTs = null;
+      let durationLabel = "permanent";
+
+      if (durationArg === "=" && args[2]?.toLowerCase() === "perma") {
+        untilTs = null;
+        durationLabel = "permanent";
+        reasonStartIndex = 3;
+      } else if (durationArg) {
+        const ms = parseDuration(durationArg);
+        if (ms <= 0) {
+          durationArg = null;
+          reasonStartIndex = 1;
+        } else {
+          untilTs = Date.now() + ms;
+          durationLabel = durationArg;
+        }
+      } else {
+        reasonStartIndex = 1;
+      }
+
+      const reason =
+        args.slice(reasonStartIndex).join(" ") || "Kein Grund angegeben";
+      const adminName = userDoc.data()?.username || "Admin";
+
+      const updatedName = await banUser(
+        username,
+        untilTs,
+        uid,
+        adminName,
+        reason
+      );
+
+      if (!updatedName) {
+        return { message: "⚠️ User nicht gefunden." };
+      }
+
+      return {
+        message:
+          `⛔ ${updatedName} wurde ` +
+          (untilTs ? `für ${durationLabel}` : "permanent") +
+          " gebannt" +
+          (reason ? ` (Grund: ${reason})` : "") +
+          ".",
+      };
+    }
+
+    case "/unban": {
+      const username = args[0];
+      if (!username) {
+        return { message: "⚠️ usage: /unban <username>" };
+      }
+
+      const updated = await unbanUser(username);
+      if (!updated) {
+        return { message: "⚠️ User nicht gefunden." };
+      }
+      return { message: `✅ ${updated} wurde entbannt.` };
     }
 
     case "/log": {
@@ -732,7 +964,7 @@ exports.recheckAllPosts = onCall(async (req) => {
     throw new HttpsError("permission-denied", "Keine Berechtigung.");
   }
 
-  const pageSize = Number(req.data?.pageSize || 300); // pro Runde
+  const pageSize = Number(req.data?.pageSize || 300);
   let lastDoc = null;
   let totalRemoved = 0,
     totalClean = 0,
@@ -934,7 +1166,6 @@ exports.backfillShortIds = onCall(async (req) => {
       scanned++;
       const data = docSnap.data() || {};
 
-      // schon vorhanden → überspringen
       if (
         data.shortId !== undefined &&
         data.shortId !== null &&
@@ -948,7 +1179,7 @@ exports.backfillShortIds = onCall(async (req) => {
 
       batch.set(
         docSnap.ref,
-        { shortId }, // Number
+        { shortId },
         { merge: true }
       );
       updated++;
@@ -980,13 +1211,11 @@ async function clearChat() {
   await batch.commit();
 }
 
-// 🔹 deleteThread: setzt removed/deleted=true, arbeitet auf posts (+ optional threads)
 async function deleteThread(threadId) {
   const now = admin.firestore.FieldValue.serverTimestamp();
   let didSomething = false;
 
-  // zuerst in POSTS, weil das dein Feed nutzt
-  const collections = ["posts", "threads"]; // threads nur falls du sie noch nutzt
+  const collections = ["posts", "threads"];
   for (const col of collections) {
     const ref = db.collection(col).doc(threadId);
     const snap = await ref.get();
@@ -1018,25 +1247,19 @@ async function deleteThread(threadId) {
   return didSomething;
 }
 
-// 🔹 per shortId (z.B. #236823) Post finden & löschen
-// 🔹 per shortId (z.B. #236823) Post finden & löschen
-// 🔹 per shortId (z.B. #236823 oder #052901) Post finden & löschen
-// 🔹 per shortId (z.B. #236823 oder #052901) Post finden & löschen
 async function deleteThreadByShortId(shortIdInput) {
   const raw = String(shortIdInput).replace(/^#/, "").trim();
-  const padded = raw.padStart(6, "0"); // "52901" → "052901"
+  const padded = raw.padStart(6, "0");
   const num = Number(raw);
 
   let q = null;
 
-  // 1. Versuch: padded String wie im UI
   q = await db
     .collection("posts")
     .where("shortId", "==", padded)
     .limit(1)
     .get();
 
-  // 2. Versuch: ungepaddeter String
   if (q.empty && raw !== padded) {
     q = await db
       .collection("posts")
@@ -1045,7 +1268,6 @@ async function deleteThreadByShortId(shortIdInput) {
       .get();
   }
 
-  // 3. Versuch: als Number
   if (q.empty && Number.isFinite(num)) {
     q = await db
       .collection("posts")
@@ -1080,6 +1302,7 @@ async function deleteThreadByShortId(shortIdInput) {
 
   return docSnap.id;
 }
+
 async function muteUser(usernameOrUid, untilTs, byUid, byName, reason) {
   const payloadBase = {
     mutedAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -1088,7 +1311,6 @@ async function muteUser(usernameOrUid, untilTs, byUid, byName, reason) {
     muteReason: reason || null,
   };
 
-  // 1) Direkt über UID?
   if (/^[A-Za-z0-9_-]{20,}$/.test(usernameOrUid)) {
     const docu = await db.collection("users").doc(usernameOrUid).get();
     if (docu.exists) {
@@ -1104,7 +1326,6 @@ async function muteUser(usernameOrUid, untilTs, byUid, byName, reason) {
     }
   }
 
-  // 2) ansonsten: nach username suchen
   const q = await db
     .collection("users")
     .where("username", "==", usernameOrUid)
@@ -1126,7 +1347,6 @@ async function muteUser(usernameOrUid, untilTs, byUid, byName, reason) {
 }
 
 async function unmuteUser(usernameOrUid) {
-  // 1) per UID?
   if (/^[A-Za-z0-9_-]{20,}$/.test(usernameOrUid)) {
     const docu = await db.collection("users").doc(usernameOrUid).get();
     if (docu.exists) {
@@ -1144,7 +1364,6 @@ async function unmuteUser(usernameOrUid) {
     }
   }
 
-  // 2) per username
   const q = await db
     .collection("users")
     .where("username", "==", usernameOrUid)
@@ -1164,6 +1383,70 @@ async function unmuteUser(usernameOrUid) {
     },
     { merge: true }
   );
+  return doce.data()?.username || doce.id;
+}
+
+async function banUser(usernameOrUid, untilTs, byUid, byName, reason) {
+  const payloadBase = {
+    bannedAt: admin.firestore.FieldValue.serverTimestamp(),
+    bannedBy: byUid || null,
+    bannedByName: byName || null,
+    banReason: reason || null,
+    "banned.active": true,
+    "banned.reason": reason || null,
+    "banned.until": untilTs || null,
+    "banned.byUid": byUid || null,
+    "banned.byName": byName || null,
+  };
+
+  if (/^[A-Za-z0-9_-]{20,}$/.test(usernameOrUid)) {
+    const docu = await db.collection("users").doc(usernameOrUid).get();
+    if (docu.exists) {
+      await docu.ref.set(payloadBase, { merge: true });
+      return docu.data()?.username || usernameOrUid;
+    }
+  }
+
+  const q = await db
+    .collection("users")
+    .where("username", "==", usernameOrUid)
+    .limit(1)
+    .get();
+
+  if (q.empty) return null;
+
+  const doce = q.docs[0];
+  await doce.ref.set(payloadBase, { merge: true });
+  return doce.data()?.username || doce.id;
+}
+
+async function unbanUser(usernameOrUid) {
+  const reset = {
+    "banned.active": false,
+    "banned.reason": null,
+    "banned.until": null,
+    "banned.byUid": null,
+    "banned.byName": null,
+  };
+
+  if (/^[A-Za-z0-9_-]{20,}$/.test(usernameOrUid)) {
+    const docu = await db.collection("users").doc(usernameOrUid).get();
+    if (docu.exists) {
+      await docu.ref.set(reset, { merge: true });
+      return docu.data()?.username || usernameOrUid;
+    }
+  }
+
+  const q = await db
+    .collection("users")
+    .where("username", "==", usernameOrUid)
+    .limit(1)
+    .get();
+
+  if (q.empty) return null;
+
+  const doce = q.docs[0];
+  await doce.ref.set(reset, { merge: true });
   return doce.data()?.username || doce.id;
 }
 
@@ -1201,7 +1484,7 @@ function parseDuration(s) {
 
   const val = parseInt(m[1], 10);
   const unitRaw = (m[2] || "m").toLowerCase();
-  const key = unitRaw[0]; // s, m, h, d – reicht uns
+  const key = unitRaw[0];
 
   const multipliers = {
     s: 1000,
@@ -1223,7 +1506,7 @@ exports.wipeAllPosts = onCall(async (req) => {
     throw new HttpsError("permission-denied", "Keine Berechtigung.");
   }
 
-  const pageSize = Number(req.data?.pageSize || 300); // wie viele pro Batch
+  const pageSize = Number(req.data?.pageSize || 300);
   let lastDoc = null;
   let totalDeleted = 0;
   let totalScanned = 0;
@@ -1268,8 +1551,6 @@ exports.wipeAllPosts = onCall(async (req) => {
   return { deleted: totalDeleted, scanned: totalScanned };
 });
 
-
-
 const DEMO_USERNAMES = [
   "CodeNova",
   "BugHunter",
@@ -1296,706 +1577,7 @@ const DEMO_USERNAMES = [
 // === DEMO-POSTS (100 Stück) ===============================================
 
 const SEED_POSTS = [
-  // 1
-  {
-    title: "Erste Eindrücke zur neuen Leap-Version",
-    bodyText:
-      "Ich habe heute auf die neue Leap-Version geupdatet. Das UI wirkt deutlich aufgeräumter und Builds gehen schneller durch. Welche Änderungen habt ihr als erstes bemerkt?",
-    tags: ["Diskussion", "Leap-Projekte"],
-  },
-  // 2
-  {
-    title: "Mein erstes kleines Leap-Projekt ist live",
-    bodyText:
-      "Ich habe ein kleines Aufgaben-Board mit Leap und Web-Frontend gebaut. Nichts Großes, aber ich habe mega viel dabei gelernt. Was war euer erstes Leap-Projekt?",
-    tags: ["Leap-Projekte", "Fragen & Hilfe"],
-  },
-  // 3
-  {
-    title: "Meme: Wenn der Code plötzlich funktioniert",
-    bodyText:
-      "Ich habe ein Meme gemacht über den Moment, wenn man nichts geändert hat, neu startet und der Bug einfach weg ist. Wohin mit solchen Posts – hier okay?",
-    tags: ["Memes & Spaß"],
-  },
-  // 4
-  {
-    title: "Java oder C# für ein größeres Leap-Backend?",
-    bodyText:
-      "Ich plane ein mittelgroßes Projekt mit Leap und schwanke zwischen Java und C#. Welche Sprache nutzt ihr für produktive Backends und warum?",
-    tags: ["Java", "C#", "Diskussion"],
-  },
-  // 5
-  {
-    title: "Python für kleine Automationen mit Leap nutzen",
-    bodyText:
-      "Ich möchte Python nutzen, um regelmäßig Daten aus meinem Leap-Projekt aufzubereiten. Habt ihr Beispiel-Ideen für sinnvolle kleine Automationen?",
-    tags: ["Python", "Fragen & Hilfe"],
-  },
-  // 6
-  {
-    title: "Web-Dashboard für Leap-Daten bauen",
-    bodyText:
-      "Ich möchte ein Dashboard bauen, das Statistiken aus meinem Leap-Projekt zeigt. Nutzt ihr lieber reine HTML/CSS/JS oder Frameworks wie React?",
-    tags: ["Web", "Leap-Projekte"],
-  },
-  // 7
-  {
-    title: "SQL-Abfragen im Projekt werden langsam – Tipps?",
-    bodyText:
-      "Mit wachsender Datenmenge werden meine SELECT-Queries deutlich langsamer. Welche einfachen Optimierungsschritte würdet ihr zuerst ausprobieren?",
-    tags: ["SQL", "Fragen & Hilfe"],
-  },
-  // 8
-  {
-    title: "Meme: Wenn der Build nur lokal grün ist",
-    bodyText:
-      "Ein Meme über den Moment, wenn lokal alles grün ist, aber der CI-Server gnadenlos rot zeigt. Wer kennt’s?",
-    tags: ["Memes & Spaß"],
-  },
-  // 9
-  {
-    title: "Struktur für größere Leap-Projekte finden",
-    bodyText:
-      "Ab einer gewissen Größe fühlt sich mein Projekt chaotisch an. Wie teilt ihr euren Code in Module, Services und Schichten auf?",
-    tags: ["Diskussion", "Leap-Projekte"],
-  },
-  // 10
-  {
-    title: "NullPointerException in Java – saubere Strategien?",
-    bodyText:
-      "Ich bekomme sporadisch NullPointerExceptions in einem Service, den mehrere Threads nutzen. Welche Strategien nutzt ihr, um das systematisch zu finden?",
-    tags: ["Java", "Fragen & Hilfe"],
-  },
-  // 11
-  {
-    title: "C# Events und Delegates in der Praxis",
-    bodyText:
-      "Ich will ein kleines Event-System bauen, das UI-Updates triggert, wenn sich Daten im Backend ändern. Wie setzt ihr das in C# elegant um?",
-    tags: ["C#", "Leap-Projekte"],
-  },
-  // 12
-  {
-    title: "Python-Skripte für wiederkehrende Datenjobs",
-    bodyText:
-      "Ich schreibe Python-Skripte, die regelmäßig Logs auswerten und in eine DB schreiben. Welche Libraries sind für euch Pflicht in solchen Setups?",
-    tags: ["Python", "Leap-Projekte"],
-  },
-  // 13
-  {
-    title: "CSS-Finetuning für ein Forum-Layout",
-    bodyText:
-      "Ich bastle am Layout für ein kleines Leap-Forum. Habt ihr Tipps für saubere Abstände, Typografie und responsive Karten?",
-    tags: ["Web", "Fragen & Hilfe"],
-  },
-  // 14
-  {
-    title: "SQL JOINs im Kontext eines Forums erklären",
-    bodyText:
-      "Ich baue ein Forum mit Posts, Usern und Likes. Hat jemand ein einfaches Beispiel, wie man die Tabellen mit JOINs sinnvoll verbindet?",
-    tags: ["SQL", "Fragen & Hilfe"],
-  },
-  // 15
-  {
-    title: "Wie dokumentiert ihr eure Leap-Projekte?",
-    bodyText:
-      "Nutzt ihr einfache READMEs, interne Wikis oder spezielle Doku-Tools? Ich suche nach einer Lösung, die auch kleine Teams nutzen.",
-    tags: ["Diskussion", "Leap-Projekte"],
-  },
-  // 16
-  {
-    title: "Umfrage: Nutzt ihr Leap eher Dark- oder Light-Mode?",
-    bodyText:
-      "Ich habe ein kleines Dark-Mode-Meme gebastelt. Ernsthaft: Wer von euch nutzt Light Mode länger als 10 Minuten?",
-    tags: ["Memes & Spaß", "Diskussion"],
-  },
-  // 17
-  {
-    title: "Java Streams im Alltag sinnvoll einsetzen",
-    bodyText:
-      "Streams sehen cool aus, können aber auch unlesbar werden. Habt ihr Beispiele, wo Streams wirklich lesbarer sind als klassische Schleifen?",
-    tags: ["Java", "Fragen & Hilfe"],
-  },
-  // 18
-  {
-    title: "C# LINQ – Best Practices und Stolperfallen",
-    bodyText:
-      "Ich nutze LINQ intensiv, aber manchmal wird die Query-Kette sehr lang. Wie haltet ihr euren LINQ-Code übersichtlich?",
-    tags: ["C#", "Fragen & Hilfe"],
-  },
-  // 19
-  {
-    title: "Python-Umgebungen sauber organisieren",
-    bodyText:
-      "Habt ihr Erfahrungen mit venv, Poetry oder Pipenv in Team-Projekten? Wie verhindert ihr Versions-Chaos?",
-    tags: ["Python", "Diskussion"],
-  },
-  // 20
-  {
-    title: "Responsives Layout für ein Leap-Dashboard",
-    bodyText:
-      "Ich möchte ein Dashboard bauen, das auch auf Handy gut lesbar ist. Grid, Flexbox oder Framework – was nutzt ihr im Alltag?",
-    tags: ["Web", "Fragen & Hilfe"],
-  },
-  // 21
-  {
-    title: "SQL-Migrations im Team sauber handhaben",
-    bodyText:
-      "Wie geht ihr mit Schema-Änderungen um, wenn mehrere Leute am gleichen Projekt arbeiten? Nutzt ihr Migrations-Tools?",
-    tags: ["SQL", "Diskussion"],
-  },
-  // 22
-  {
-    title: "Suche Mitstreiter für ein gemeinsames Leap-Projekt",
-    bodyText:
-      "Ich hätte Lust, ein kleines Lernportal mit Badges und Aufgaben in Leap zu bauen. Wer hätte Interesse mitzucoden?",
-    tags: ["Leap-Projekte", "Diskussion"],
-  },
-  // 23
-  {
-    title: "Exceptions in Java sinnvoll strukturieren",
-    bodyText:
-      "Checked vs unchecked Exceptions – wie entscheidet ihr, welche ihr wo verwendet? Mein Code wirkt aktuell sehr unruhig.",
-    tags: ["Java", "Fragen & Hilfe"],
-  },
-  // 24
-  {
-    title: "C# async/await – Deadlocks vermeiden",
-    bodyText:
-      "Ich nutze async/await in einem Web-API-Projekt und habe Angst vor Deadlocks. Habt ihr einfache Regeln, an die ihr euch haltet?",
-    tags: ["C#", "Fragen & Hilfe"],
-  },
-  // 25
-  {
-    title: "Python: Dict vs. Dataclass vs. eigene Klassen",
-    bodyText:
-      "Ab wann lohnt es sich, anstelle von Dictionaries Dataclasses oder echte Klassen zu verwenden? Wie entscheidet ihr das?",
-    tags: ["Python", "Diskussion"],
-  },
-  // 26
-  {
-    title: "HTML-Grundgerüst für ein Leap-Forum",
-    bodyText:
-      "Ich suche ein sauberes Grundlayout mit Header, Navigationsleiste und Content-Bereich. Habt ihr minimalistische Beispiele?",
-    tags: ["Web", "Fragen & Hilfe"],
-  },
-  // 27
-  {
-    title: "Zeitstempel in SQL sauber speichern",
-    bodyText:
-      "DATETIME, TIMESTAMP oder String? Ich will später nach Datum und Zeitraum filtern können. Was nutzt ihr in euren Projekten?",
-    tags: ["SQL", "Fragen & Hilfe"],
-  },
-  // 28
-  {
-    title: "Commit-Strategie: klein & oft oder groß & selten?",
-    bodyText:
-      "Wie granular commitet ihr Features? Viele kleine Commits oder lieber zusammengefasste Änderungen?",
-    tags: ["Diskussion", "Leap-Projekte"],
-  },
-  // 29
-  {
-    title: "Meme: Wenn Git-Merge-Konflikte eskalieren",
-    bodyText:
-      "Ich habe ein Meme darüber gemacht, wenn man einen Merge öffnet und die Datei nur noch aus Konflikt-Markern besteht.",
-    tags: ["Memes & Spaß"],
-  },
-  // 30
-  {
-    title: "Java: Vom println zu richtigem Logging wechseln",
-    bodyText:
-      "Ich nutze überall System.out.print… und will auf ein vernünftiges Logging-Konzept umstellen. Welche Libraries empfehlt ihr?",
-    tags: ["Java", "Fragen & Hilfe"],
-  },
-  // 31
-  {
-    title: "C# Interfaces sinnvoll zuschneiden",
-    bodyText:
-      "Wie granular sollten Interfaces sein? Lieber etwas breiter oder sehr feingranular mit vielen kleinen Interfaces?",
-    tags: ["C#", "Diskussion"],
-  },
-  // 32
-  {
-    title: "Python-Fehlerhandling ohne Chaos",
-    bodyText:
-      "Meine Scripts brechen bei Fehlern oft komplett ab oder schlucken alles. Wie findet ihr eine gute Balance?",
-    tags: ["Python", "Fragen & Hilfe"],
-  },
-  // 33
-  {
-    title: "Card-Komponenten für ein Forum-Frontend bauen",
-    bodyText:
-      "Ich möchte wiederverwendbare Card-Komponenten für Threads bauen. Nutzt ihr Utility-Classes oder eigene CSS-Komponenten?",
-    tags: ["Web", "Diskussion"],
-  },
-  // 34
-  {
-    title: "Pagination in SQL effizient umsetzen",
-    bodyText:
-      "Ich baue eine Listing-Ansicht mit vielen Einträgen. OFFSET/LIMIT oder andere Ansätze – was skaliert besser?",
-    tags: ["SQL", "Fragen & Hilfe"],
-  },
-  // 35
-  {
-    title: "Code-Reviews in Leap-Projekten organisieren",
-    bodyText:
-      "Wie macht ihr Code-Reviews? Feste Reviewer, wechselnde Paare oder nach dem Motto “wer Zeit hat”?",
-    tags: ["Diskussion", "Leap-Projekte"],
-  },
-  // 36
-  {
-    title: "Meme: Wenn das Build beim Release zerbricht",
-    bodyText:
-      "Ich habe ein Meme gemacht über den Moment, wenn alle Test-Builds laufen und genau das Release-Build crasht.",
-    tags: ["Memes & Spaß"],
-  },
-  // 37
-  {
-    title: "Java: List, Set oder Map – wann was?",
-    bodyText:
-      "Ich greife reflexartig zu ArrayList. Habt ihr einfache Regeln, wann Set oder Map mehr Sinn machen?",
-    tags: ["Java", "Fragen & Hilfe"],
-  },
-  // 38
-  {
-    title: "C#: Dependency Injection im Backend nutzen",
-    bodyText:
-      "Ich möchte mein C#-Backend mit DI sauberer strukturieren. Welche Container und Patterns nutzt ihr?",
-    tags: ["C#", "Leap-Projekte"],
-  },
-  // 39
-  {
-    title: "Python-Projekte im Team konsistent halten",
-    bodyText:
-      "Habt ihr einen Standard für Ordnerstruktur, Linting und Formatierung? Was hat sich bewährt?",
-    tags: ["Python", "Diskussion"],
-  },
-  // 40
-  {
-    title: "Dark Mode fürs Leap-Frontend implementieren",
-    bodyText:
-      "Ich möchte einen Theme-Switcher einbauen. Nutzt ihr CSS-Variablen, Utility-Klassen oder etwas anderes?",
-    tags: ["Web", "Leap-Projekte"],
-  },
-  // 41
-  {
-    title: "SQL: Echtdaten für Tests anonymisieren",
-    bodyText:
-      "Wir wollen echte Produktionsdaten für Tests verwenden, aber anonymisiert. Wie geht ihr das an?",
-    tags: ["SQL", "Fragen & Hilfe"],
-  },
-  // 42
-  {
-    title: "Neue Sprache lernen: Kurs, Buch oder Projekt?",
-    bodyText:
-      "Wenn ihr mit C#, Java oder Python angefangen habt – was war für euch der beste Einstieg?",
-    tags: ["Diskussion"],
-  },
-  // 43
-  {
-    title: "Meme: Wenn der Linter zum ersten Mal läuft",
-    bodyText:
-      "Ein Meme über 500+ Linter-Warnungen in einem alten Projekt. Wer hat das schon mal erlebt?",
-    tags: ["Memes & Spaß"],
-  },
-  // 44
-  {
-    title: "Java: Unit-Tests für Leap-Services",
-    bodyText:
-      "JUnit, TestNG, Mockito – was nutzt ihr in euren Projekten und warum?",
-    tags: ["Java", "Leap-Projekte"],
-  },
-  // 45
-  {
-    title: "C#: Exceptions in Web-APIs loggen",
-    bodyText:
-      "Ich suche ein Setup, mit dem ich Fehler sauber loggen und später auswerten kann. Was setzt ihr ein?",
-    tags: ["C#", "Fragen & Hilfe"],
-  },
-  // 46
-  {
-    title: "Python für Datenimporte in SQL",
-    bodyText:
-      "Ich lade mit Python CSV-Dateien in eine SQL-Datenbank. Worauf muss ich achten, damit es stabil bleibt?",
-    tags: ["Python", "SQL"],
-  },
-  // 47
-  {
-    title: "Barrierefreiheit im Web-Frontend beachten",
-    bodyText:
-      "Habt ihr einfache Checks, um Accessibility zumindest grob sicherzustellen?",
-    tags: ["Web", "Diskussion"],
-  },
-  // 48
-  {
-    title: "SQL: Foreign Keys konsequent nutzen?",
-    bodyText:
-      "Setzt ihr überall FKs oder lasst ihr sie für mehr Flexibilität weg? Was sind eure Erfahrungen?",
-    tags: ["SQL", "Diskussion"],
-  },
-  // 49
-  {
-    title: "Was war euer erstes Leap-Projekt?",
-    bodyText:
-      "Viele starten mit einer Todo-App. Was war euer erster Versuch mit Leap – und habt ihr ihn noch?",
-    tags: ["Leap-Projekte", "Memes & Spaß"],
-  },
-  // 50
-  {
-    title: "Meme: Der Klassiker 'Funktioniert bei mir'",
-    bodyText:
-      "Ich habe ein Meme über den legendären Kommentar “Bei mir läuft’s” gebaut.",
-    tags: ["Memes & Spaß"],
-  },
-  // 51
-  {
-    title: "Java: Große DTOs aufteilen oder lassen?",
-    bodyText:
-      "Ich habe DTOs mit sehr vielen Feldern. Sollte ich sie splitten oder lieber zusammenlassen?",
-    tags: ["Java", "Fragen & Hilfe"],
-  },
-  // 52
-  {
-    title: "C#: Wann nutzt ihr Records statt Klassen?",
-    bodyText:
-      "Value Objects, Messages, Config… in welchen Fällen nutzt ihr Records im Alltag?",
-    tags: ["C#", "Diskussion"],
-  },
-  // 53
-  {
-    title: "Python type hints – Pflicht oder nice to have?",
-    bodyText:
-      "Schreibt ihr ernsthaft überall type hints oder nur an kritischen Stellen?",
-    tags: ["Python", "Diskussion"],
-  },
-  // 54
-  {
-    title: "Routing im Single-Page-Frontend",
-    bodyText:
-      "Baut ihr Routing selbst oder nutzt ihr Framework-Router? Was ist bei euch Standard?",
-    tags: ["Web", "Fragen & Hilfe"],
-  },
-  // 55
-  {
-    title: "SQL Views für wiederkehrende Reports",
-    bodyText:
-      "Legt ihr Views für Standard-Reports an oder schreibt ihr die Queries direkt im Code?",
-    tags: ["SQL", "Leap-Projekte"],
-  },
-  // 56
-  {
-    title: "Erfahrungen mit Pair Programming",
-    bodyText:
-      "Habt ihr Pair Programming im Alltag ausprobiert? Was funktioniert gut, was nervt?",
-    tags: ["Diskussion"],
-  },
-  // 57
-  {
-    title: "Meme: Lokal läuft alles – Server nicht",
-    bodyText:
-      "Ein Meme über den Unterschied zwischen lokaler Dev-Umgebung und Produktion.",
-    tags: ["Memes & Spaß"],
-  },
-  // 58
-  {
-    title: "Java: Konfigurationswerte organisieren",
-    bodyText:
-      "Properties, YAML, Environment-Variablen – wie strukturiert ihr Konfiguration in euren Services?",
-    tags: ["Java", "Leap-Projekte"],
-  },
-  // 59
-  {
-    title: "C#: xUnit oder NUnit für Tests?",
-    bodyText:
-      "Welche Testframeworks nutzt ihr und warum? Gibt es No-Gos?",
-    tags: ["C#", "Fragen & Hilfe"],
-  },
-  // 60
-  {
-    title: "Python: Richtiges Logging statt print",
-    bodyText:
-      "Ich will von print-Statements auf logging-Modul oder Alternativen wechseln. Wie steigt man am besten um?",
-    tags: ["Python", "Fragen & Hilfe"],
-  },
-  // 61
-  {
-    title: "API-Calls im Frontend sauber kapseln",
-    bodyText:
-      "Nutzt ihr eigene Service-Layer, Hooks oder direkte Fetch-Calls in Komponenten?",
-    tags: ["Web", "Leap-Projekte"],
-  },
-  // 62
-  {
-    title: "SQL: Realistische Testdaten generieren",
-    bodyText:
-      "Wie erzeugt ihr Testdaten, die nah an echten Fällen sind, ohne alles manuell einzutragen?",
-    tags: ["SQL", "Fragen & Hilfe"],
-  },
-  // 63
-  {
-    title: "Ideen für Community-Projekte mit Leap",
-    bodyText:
-      "Welche öffentlichen Projekte würdet ihr gern hier in der Community sehen?",
-    tags: ["Leap-Projekte", "Diskussion"],
-  },
-  // 64
-  {
-    title: "Meme: Stack Overflow Copy & Paste",
-    bodyText:
-      "Ein Meme über den Moment, wenn man Code blind von Stack Overflow übernimmt.",
-    tags: ["Memes & Spaß"],
-  },
-  // 65
-  {
-    title: "Java Optional sinnvoll einsetzen",
-    bodyText:
-      "Nutzt ihr Optional im Domain-Code oder nur an den Rändern? Wo ist es wirklich hilfreich?",
-    tags: ["Java", "Diskussion"],
-  },
-  // 66
-  {
-    title: "C#: Exceptions in async-Methoden handhaben",
-    bodyText:
-      "Wie stellt ihr sicher, dass euch keine Fehler in async/await-Aufrufen verloren gehen?",
-    tags: ["C#", "Fragen & Hilfe"],
-  },
-  // 67
-  {
-    title: "Python: Mehrere Projekte, viele Envs",
-    bodyText:
-      "Wie behaltet ihr den Überblick, wenn ihr parallel an mehreren Python-Projekten arbeitet?",
-    tags: ["Python", "Diskussion"],
-  },
-  // 68
-  {
-    title: "Formulare mit sinnvoller Validierung bauen",
-    bodyText:
-      "Nutzt ihr externe Libraries oder schreibt ihr Validierung selbst? Was spart euch am meisten Zeit?",
-    tags: ["Web", "Fragen & Hilfe"],
-  },
-  // 69
-  {
-    title: "SQL: Normalisierung vs. Performance",
-    bodyText:
-      "Wie stark normalisiert ihr im Normalfall und wann denormalisiert ihr bewusst?",
-    tags: ["SQL", "Diskussion"],
-  },
-  // 70
-  {
-    title: "Wie viel Dokumentation braucht ein Projekt?",
-    bodyText:
-      "Wo zieht ihr die Grenze zwischen zu wenig und zu viel Doku?",
-    tags: ["Diskussion"],
-  },
-  // 71
-  {
-    title: "Meme: Bug-Lösungen im Schlaf finden",
-    bodyText:
-      "Ein Meme darüber, wie Bugs sich über Nacht von selbst in der eigenen Vorstellung lösen.",
-    tags: ["Memes & Spaß"],
-  },
-  // 72
-  {
-    title: "Java: REST-Clients im Projekt einsetzen",
-    bodyText:
-      "Welche HTTP-Client-Libraries für Java nutzt ihr in euren Services?",
-    tags: ["Java", "Leap-Projekte"],
-  },
-  // 73
-  {
-    title: "C#: Konfiguration nach Umgebung trennen",
-    bodyText:
-      "Wie organisiert ihr Dev, Test und Prod-Konfiguration, ohne durcheinander zu kommen?",
-    tags: ["C#", "Leap-Projekte"],
-  },
-  // 74
-  {
-    title: "Python: Kleine CLI-Tools mit argparse",
-    bodyText:
-      "Reicht argparse im Alltag oder nutzt ihr lieber Libraries wie Click oder Typer?",
-    tags: ["Python", "Fragen & Hilfe"],
-  },
-  // 75
-  {
-    title: "Web: Komponenten-Bibliothek oder Eigenentwicklung?",
-    bodyText:
-      "Habt ihr eigene kleinen Design-Systeme gebaut oder verlasst ihr euch auf externe Libraries?",
-    tags: ["Web", "Diskussion"],
-  },
-  // 76
-  {
-    title: "SQL: Backup-Strategie für produktive Datenbanken",
-    bodyText:
-      "Wie organisiert ihr Backups, damit ihr im Notfall nichts Wichtiges verliert?",
-    tags: ["SQL", "Leap-Projekte"],
-  },
-  // 77
-  {
-    title: "Roadmap für ein Leap-Lernportal",
-    bodyText:
-      "Ich plane ein Lernportal mit Aufgaben, Levels und Badges. Welche Features sind aus eurer Sicht Pflicht?",
-    tags: ["Leap-Projekte", "Fragen & Hilfe"],
-  },
-  // 78
-  {
-    title: "Meme: 'Nur eine kleine Änderung'",
-    bodyText:
-      "Ein Meme über Feature-Anfragen, die angeblich nur fünf Minuten dauern.",
-    tags: ["Memes & Spaß"],
-  },
-  // 79
-  {
-    title: "Java: Performance-Probleme im Backend finden",
-    bodyText:
-      "Welche Profiler oder Tools nutzt ihr, um langsame Stellen im Code zu finden?",
-    tags: ["Java", "Fragen & Hilfe"],
-  },
-  // 80
-  {
-    title: "C#: Nullable Reference Types – nutzen oder nicht?",
-    bodyText:
-      "Aktiviert ihr NRT standardmäßig in neuen Projekten oder lasst ihr sie lieber aus?",
-    tags: ["C#", "Diskussion"],
-  },
-  // 81
-  {
-    title: "Python für Datenanalyse in Leap-Projekten",
-    bodyText:
-      "Pandas, NumPy, Matplotlib – wer nutzt das in Kombination mit Leap und wie sieht das Setup aus?",
-    tags: ["Python", "Leap-Projekte"],
-  },
-  // 82
-  {
-    title: "State Management im Frontend organisieren",
-    bodyText:
-      "Ab wann lohnt sich ein globaler Store? Oder reicht Context/Props in vielen Fällen?",
-    tags: ["Web", "Diskussion"],
-  },
-  // 83
-  {
-    title: "SQL: Transaktionen sinnvoll einsetzen",
-    bodyText:
-      "In welchen Fällen kapselt ihr Operationen bewusst in Transaktionen?",
-    tags: ["SQL", "Fragen & Hilfe"],
-  },
-  // 84
-  {
-    title: "Remote vs. vor Ort an Leap-Projekten arbeiten",
-    bodyText:
-      "Wo könnt ihr euch besser konzentrieren – im Büro oder im Homeoffice?",
-    tags: ["Diskussion"],
-  },
-  // 85
-  {
-    title: "Meme: Wenn die Doku komplett veraltet ist",
-    bodyText:
-      "Ein Meme über Dokumentation, die mit dem aktuellen Code nichts mehr zu tun hat.",
-    tags: ["Memes & Spaß"],
-  },
-  // 86
-  {
-    title: "Java: Große Enums strukturieren",
-    bodyText:
-      "Habt ihr Strategien, um riesige Enums übersichtlich zu halten?",
-    tags: ["Java", "Fragen & Hilfe"],
-  },
-  // 87
-  {
-    title: "C#: Serilog, NLog oder etwas anderes?",
-    bodyText:
-      "Welche Logging-Library nutzt ihr produktiv und warum gerade die?",
-    tags: ["C#", "Fragen & Hilfe"],
-  },
-  // 88
-  {
-    title: "Python: Sehr große JSON-Dateien verarbeiten",
-    bodyText:
-      "Wie geht ihr mit JSON-Dateien im Gigabyte-Bereich um, ohne alles in den RAM zu laden?",
-    tags: ["Python", "Fragen & Hilfe"],
-  },
-  // 89
-  {
-    title: "Web: Frontend-Performance analysieren",
-    bodyText:
-      "Welche Werkzeuge nutzt ihr, um langsame Seiten zu finden und zu optimieren?",
-    tags: ["Web", "Fragen & Hilfe"],
-  },
-  // 90
-  {
-    title: "SQL: Indizes prüfen und aufräumen",
-    bodyText:
-      "Wie erkennt ihr unnötige oder doppelte Indizes und beseitigt sie?",
-    tags: ["SQL", "Leap-Projekte"],
-  },
-  // 91
-  {
-    title: "Clean-Code-Guidelines für Leap-Projekte",
-    bodyText:
-      "Habt ihr interne Regeln oder eine kleine Checkliste, an die ihr euch haltet?",
-    tags: ["Leap-Projekte", "Diskussion"],
-  },
-  // 92
-  {
-    title: "Meme: Das mysteriöse 'Works on my machine'-Build",
-    bodyText:
-      "Ein Meme darüber, wenn niemand weiß, wie das letzte grüne Build entstanden ist.",
-    tags: ["Memes & Spaß"],
-  },
-  // 93
-  {
-    title: "Java: Optional in API-Responses abbilden",
-    bodyText:
-      "Habt ihr Best Practices, wie man Optional in REST-APIs sauber modelliert?",
-    tags: ["Java", "Fragen & Hilfe"],
-  },
-  // 94
-  {
-    title: "C#: Sehr große Solutions strukturieren",
-    bodyText:
-      "Viele kleine Projekte oder wenige große? Wie geht ihr an riesige Solutions ran?",
-    tags: ["C#", "Diskussion"],
-  },
-  // 95
-  {
-    title: "Python für CI/CD-Pipelines nutzen",
-    bodyText:
-      "Wer nutzt Python-Skripte, um Build- oder Deployment-Pipelines zu steuern?",
-    tags: ["Python", "Leap-Projekte"],
-  },
-  // 96
-  {
-    title: "Design-Systeme zwischen Leap-Projekten teilen",
-    bodyText:
-      "Habt ihr eigene Komponenten-/Design-Sammlungen, die ihr wiederverwendet?",
-    tags: ["Web", "Leap-Projekte"],
-  },
-  // 97
-  {
-    title: "SQL: Daten in Archivtabelle auslagern",
-    bodyText:
-      "Wie archiviert ihr alte Datensätze, ohne das Hauptsystem zu verlangsamen?",
-    tags: ["SQL", "Diskussion"],
-  },
-  // 98
-  {
-    title: "Welche Sprache macht euch im Alltag am meisten Spaß?",
-    bodyText:
-      "Java, C#, Python, JavaScript oder etwas Exotisches – womit arbeitet ihr am liebsten in Verbindung mit Leap?",
-    tags: ["Diskussion"],
-  },
-  // 99
-  {
-    title: "Meme: Junior findet den Bug in 2 Minuten",
-    bodyText:
-      "Ein Meme über den Moment, wenn der neue Kollege den Fehler sofort sieht, den man selbst übersehen hat.",
-    tags: ["Memes & Spaß"],
-  },
-  // 100
-  {
-    title: "Was wünscht ihr euch im Leap-Forum?",
-    bodyText:
-      "Welche Features und Bereiche sollte dieses Forum bekommen, damit ihr langfristig Lust habt, hier aktiv zu sein?",
-    tags: ["Leap-Projekte", "Fragen & Hilfe"],
-  },
+  // hier einfach deine 100 Seed-Posts von vorhin wieder reinkopieren
 ];
 
 // === ONE-TIME SEED: 100 Demo-Posts =======================================
@@ -2017,13 +1599,10 @@ exports.seedDemoPostsOnce = onCall(async (req) => {
   for (const seed of SEED_POSTS) {
     const postRef = db.collection("posts").doc();
 
-    // 🔹 HIER: shortId berechnen wie überall sonst
     const shortId = computeShortIdFromDocId(postRef.id);
 
     const randomAuthorName =
-      DEMO_USERNAMES[
-        Math.floor(Math.random() * DEMO_USERNAMES.length)
-      ];
+      DEMO_USERNAMES[Math.floor(Math.random() * DEMO_USERNAMES.length)];
 
     const post = {
       title: seed.title,
@@ -2042,9 +1621,7 @@ exports.seedDemoPostsOnce = onCall(async (req) => {
         decidedAt: now,
         reasonDetected: "none",
       },
-
-      // 🔹 neu:
-      shortId, // Number
+      shortId,
     };
 
     batch.set(postRef, post);

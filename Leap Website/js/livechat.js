@@ -33,8 +33,8 @@ if (!elMessages || !elForm || !elInput) {
 }
 
 // Cloud Functions (Region europe-west3 wie in functions.js)
-const functions = getFunctions(undefined, "europe-west3");
-const adminSlash = httpsCallable(functions, "adminSlash");
+const functions   = getFunctions(undefined, "europe-west3");
+const adminSlash  = httpsCallable(functions, "adminSlash");
 
 /* ---------- Helpers ---------- */
 const toMillis = (v) =>
@@ -45,7 +45,26 @@ function formatTime(ts) {
   try {
     const d = ts?.toDate ? ts.toDate() : (ts ? new Date(ts) : new Date());
     return d.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
-  } catch { return ""; }
+  } catch {
+    return "";
+  }
+}
+
+/* ---------- Mute-Cache pro User ---------- */
+let lastMuteCheckUid   = null;
+let cachedMuteData     = null;
+let muteAlertShownOnce = false; // damit nicht bei jedem Send-Versuch 100 Alerts kommen
+
+function showMuteAlert(data) {
+  const durationText = data.perma
+    ? "permanent"
+    : "bis " + new Date(data.until).toLocaleString("de-DE");
+
+  alert(
+    `Du wurdest gemutet von ${data.by}.\n` +
+    `Grund: ${data.reason}\n` +
+    `Dauer: ${durationText}`
+  );
 }
 
 async function isMutedAndShowReason() {
@@ -55,9 +74,25 @@ async function isMutedAndShowReason() {
     return true;
   }
 
+  // Wenn wir für diesen User schon geprüft haben → Cache verwenden
+  if (lastMuteCheckUid === user.uid && cachedMuteData) {
+    if (cachedMuteData.muted) {
+      if (!muteAlertShownOnce) {
+        showMuteAlert(cachedMuteData);
+        muteAlertShownOnce = true;
+      }
+      return true;
+    }
+    return false;
+  }
+
   const userRef = doc(db, "users", user.uid);
   const snap = await getDoc(userRef);
-  if (!snap.exists()) return false;
+  if (!snap.exists()) {
+    lastMuteCheckUid = user.uid;
+    cachedMuteData = { muted: false };
+    return false;
+  }
 
   const data = snap.data() || {};
   const now = Date.now();
@@ -66,23 +101,28 @@ async function isMutedAndShowReason() {
   const until =
     typeof data.mutedUntil === "number" ? data.mutedUntil : null;
 
-  // Nicht gemutet / Mute abgelaufen
-  if (!perma && (!until || now >= until)) {
-    return false;
+  let muted = false;
+  if (perma || (until && now < until)) {
+    muted = true;
   }
 
-  const by = data.mutedByName || data.mutedBy || "Moderation";
-  const reason = data.muteReason || "Kein Grund angegeben";
-  const durationText = perma
-    ? "permanent"
-    : "bis " + new Date(until).toLocaleString("de-DE");
+  cachedMuteData = {
+    muted,
+    by: data.mutedByName || data.mutedBy || "Moderation",
+    reason: data.muteReason || "Kein Grund angegeben",
+    perma,
+    until,
+  };
+  lastMuteCheckUid = user.uid;
 
-  alert(
-    `Du wurdest gemutet von ${by}.\n` +
-      `Grund: ${reason}\n` +
-      `Dauer: ${durationText}`
-  );
-  return true;
+  if (muted) {
+    if (!muteAlertShownOnce) {
+      showMuteAlert(cachedMuteData);
+      muteAlertShownOnce = true;
+    }
+    return true;
+  }
+  return false;
 }
 
 /* ---------- Username-Handling ---------- */
@@ -119,7 +159,7 @@ function renderMessage(docSnap, myUid) {
     || data.displayName
     || (data.email ? data.email.split("@")[0] : "User");
 
-  const time = formatTime(data.createdAt);
+  const time = formatTime(data.timestamp || data.createdAt);
   meta.textContent = `${fallbackName} • ${time}`;
 
   const text = document.createElement("div");
@@ -131,7 +171,7 @@ function renderMessage(docSnap, myUid) {
 
   // asynchron Firestore-Username nachladen (falls fehlt)
   if (data.uid && !data.username) {
-    fetchUsername(data.uid).then(realName => {
+    fetchUsername(data.uid).then((realName) => {
       if (realName && realName !== fallbackName) {
         meta.textContent = `${realName} • ${time}`;
       }
@@ -214,7 +254,9 @@ async function ensureResetTimestamp() {
 async function trySetGlobal(payload) {
   try {
     await setDoc(configRef, payload, { merge: true });
-  } catch {}
+  } catch {
+    // ignore
+  }
 }
 
 function startTimerLoop() {
@@ -235,7 +277,10 @@ function startTimerLoop() {
 let lastSnapshotDocs = [];
 
 function attachMessagesStream() {
-  if (unsubMsgs) { try { unsubMsgs(); } catch {} unsubMsgs = null; }
+  if (unsubMsgs) {
+    try { unsubMsgs(); } catch {}
+    unsubMsgs = null;
+  }
 
   unsubMsgs = onSnapshot(
     messagesQuery,
@@ -255,8 +300,13 @@ function renderFromCache() {
   elMessages.innerHTML = "";
   for (const docSnap of lastSnapshotDocs) {
     const data = docSnap.data();
+
+    // vom Backend gelöschte/spam-Nachrichten überspringen
+    if (data.removed) continue;
+
     const createdMs = toMillis(data.timestamp);
     if (!createdMs || createdMs < windowStartMs) continue;
+
     elMessages.appendChild(renderMessage(docSnap, currentUid));
   }
 
@@ -279,6 +329,12 @@ onSnapshot(configRef, (snap) => {
 /* ---------- Auth ---------- */
 onAuthStateChanged(auth, async (user) => {
   currentUid = user?.uid || null;
+
+  // Mute-Cache beim Benutzerwechsel zurücksetzen
+  cachedMuteData     = null;
+  lastMuteCheckUid   = null;
+  muteAlertShownOnce = false;
+
   setInputEnabled(!!user);
 
   if (user?.uid) {
@@ -286,6 +342,15 @@ onAuthStateChanged(auth, async (user) => {
     currentName = fsName
       || user.displayName
       || (user.email ? user.email.split("@")[0] : "User");
+
+    // direkt beim Login prüfen, ob der User gemutet ist
+    if (await isMutedAndShowReason()) {
+      elInput.disabled = true;
+      elSend.disabled  = true;
+    } else {
+      elInput.disabled = false;
+      elSend.disabled  = false;
+    }
   } else {
     currentName = null;
   }
@@ -297,47 +362,6 @@ onAuthStateChanged(auth, async (user) => {
   startTimerLoop();
   attachMessagesStream();
 })();
-
-/* ---------- Senden + Cooldown ---------- */
-const COOLDOWN_MS = 3000;
-let lastSentMs = 0;
-let cooldownTimer = null;
-const SEND_ICON = "➤";
-const ORIGINAL_PH = elInput?.getAttribute("placeholder") || "Nachricht…";
-
-function startCooldown() {
-  const now = Date.now();
-  lastSentMs = now;
-
-  elInput.disabled = true;
-  elSend.disabled  = true;
-  elInput.classList.add("cooldown");
-
-  const end = now + COOLDOWN_MS;
-  const tick = () => {
-    const remaining = Math.max(0, end - Date.now());
-    const sec = Math.ceil(remaining / 1000);
-    elInput.value = "";
-    elInput.setAttribute("placeholder", `Bitte warten… ${sec}s`);
-    elSend.textContent = sec > 0 ? String(sec) : SEND_ICON;
-
-    if (remaining <= 0) {
-      clearInterval(cooldownTimer);
-      cooldownTimer = null;
-      elInput.disabled = false;
-      elSend.disabled  = false;
-      elInput.classList.remove("cooldown");
-      elInput.setAttribute("placeholder", ORIGINAL_PH);
-      elSend.textContent = SEND_ICON;
-      elInput.focus();
-    }
-  };
-  tick();
-  cooldownTimer = setInterval(tick, 100);
-}
-function canSendNow() {
-  return Date.now() - lastSentMs >= COOLDOWN_MS;
-}
 
 /* ---------- Submit: Normaler Chat + Slash-Commands ---------- */
 elForm?.addEventListener("submit", async (e) => {
@@ -376,23 +400,41 @@ elForm?.addEventListener("submit", async (e) => {
       scrollToBottom(elMessages);
     } catch (err) {
       console.error("[livechat] Admin-Command fehlgeschlagen:", err);
-      alert("Admin-Command fehlgeschlagen: " + (err.message || err));
+
+      // etwas freundlichere Ausgabe im Chat
+      const wrap = document.createElement("div");
+      wrap.className = "chat-msg system";
+
+      const meta = document.createElement("div");
+      meta.className = "meta";
+      meta.textContent = "System";
+
+      const body = document.createElement("div");
+      body.className = "text";
+
+      if (err.code === "functions/permission-denied") {
+        body.textContent = "🚫 Keine Berechtigung für diesen Befehl.";
+      } else if (err.code === "functions/unauthenticated") {
+        body.textContent = "🔑 Bitte einloggen, um Admin-Befehle zu nutzen.";
+      } else {
+        body.textContent =
+          "Admin-Command fehlgeschlagen: " + (err.message || String(err));
+      }
+
+      wrap.appendChild(meta);
+      wrap.appendChild(body);
+      elMessages.appendChild(wrap);
+      scrollToBottom(elMessages);
     } finally {
       elInput.value = "";
     }
-    // kein Cooldown für Admin-Commands
+    // kein Frontend-Cooldown für Admin-Commands
     return;
   }
 
-  // 👉 2. Normale Nachricht (Mute-Check + Cooldown)
+  // 👉 2. Normale Nachricht (Mute-Check)
   if (await isMutedAndShowReason()) {
     elInput.value = "";
-    return;
-  }
-
-  if (!canSendNow()) {
-    elInput.classList.add("deny");
-    setTimeout(() => elInput.classList.remove("deny"), 150);
     return;
   }
 
@@ -409,7 +451,7 @@ elForm?.addEventListener("submit", async (e) => {
     });
     elInput.value = "";
     scrollToBottom(elMessages);
-    startCooldown();
+    // 🔥 kein startCooldown() mehr → keine 3s Sperre
   } catch (err) {
     console.error("[livechat] Senden fehlgeschlagen:", err);
   }
