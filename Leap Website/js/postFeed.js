@@ -12,7 +12,7 @@ import {
 /* ──────────────────────────────────────────────────────────────────────
    User-Profile Cache (Username + Avatar)
 ──────────────────────────────────────────────────────────────────────── */
-const USER_COLLECTION = "users"; // ggf. anpassen
+const USER_COLLECTION = "users";
 const profileCache = new Map();  // uid -> { name, avatar }
 let currentOpenPostId = null;
 
@@ -38,14 +38,15 @@ async function fetchUserProfile(uid, emailFallback, authPhotoURL = null) {
       name = u.username || u.displayName || u.name || name;
       avatar = u.avatarUrl || u.photoURL || u.avatar || u.imageUrl || avatar;
     }
-  } catch {}
+  } catch {
+    // ignore
+  }
 
   const prof = { name, avatar: avatar || null };
   profileCache.set(uid, prof);
   return prof;
 }
 
-// nur Name
 async function fetchUsername(uid, emailFallback) {
   const p = await fetchUserProfile(uid, emailFallback, null);
   return p.name;
@@ -55,8 +56,8 @@ async function fetchUsername(uid, emailFallback) {
    Hybrid-Konfiguration (Modal vs. Seite)
 ──────────────────────────────────────────────────────────────────────── */
 const HYBRID = {
-  mobileMax: 900,                                 // < 900px => echte Detailseite
-  pageURL: id => `/forum/post/${id}`,             // ggf. anpassen
+  mobileMax: 900,
+  pageURL: id => `/forum/post/${id}`,
   modalParam: id => `?post=${encodeURIComponent(id)}`
 };
 const prefersPage = () =>
@@ -74,24 +75,26 @@ const elReplies      = document.getElementById("pm-replies");
 const elReplyEditor  = document.getElementById("pm-reply-editor");
 const elReplySubmit  = document.getElementById("pm-reply-submit");
 const elReplyCancel  = document.getElementById("pm-reply-cancel");
-const elReplyAvatar  = document.getElementById("pm-reply-avatar"); // <div class="pm-reply-avatar" id="pm-reply-avatar"></div>
+const elReplyAvatar  = document.getElementById("pm-reply-avatar");
 
 syncFavButtonState();
-function openModal(){
+
+function openModal() {
   if (!modalEl) return;
   modalEl.classList.add("open");
-  modalEl.setAttribute("aria-hidden","false");
+  modalEl.setAttribute("aria-hidden", "false");
   document.body.style.overflow = "hidden";
 }
-function closeModal(pushHistory = true){
+
+function closeModal(pushHistory = true) {
   if (!modalEl) return;
   modalEl.classList.remove("open");
-  modalEl.setAttribute("aria-hidden","true");
+  modalEl.setAttribute("aria-hidden", "true");
   document.body.style.overflow = "";
-  if (pushHistory){
+  if (pushHistory) {
     const url = new URL(location.href);
     url.searchParams.delete("post");
-    history.pushState({view:"feed"}, "", url);
+    history.pushState({ view: "feed" }, "", url);
   }
 }
 
@@ -101,9 +104,8 @@ function closeModal(pushHistory = true){
 const auth = getAuth();
 
 // Favoriten-State
-let favoritePosts = [];        // IDs der gemerkten Posts
-let favoriteListener = null;   // unsubscribe
-
+let favoritePosts = [];
+let favoriteListener = null;
 
 function listenToFavorites() {
   if (favoriteListener) { try { favoriteListener(); } catch {} favoriteListener = null; }
@@ -122,8 +124,8 @@ function listenToFavorites() {
 }
 
 // Likes-State
-let likedPosts = [];       // IDs der gelikten Posts
-let likeListener = null;   // unsubscribe
+let likedPosts = [];
+let likeListener = null;
 
 function listenToLikes() {
   if (likeListener) { try { likeListener(); } catch {} likeListener = null; }
@@ -131,24 +133,19 @@ function listenToLikes() {
   const u = auth.currentUser;
   if (!u) {
     likedPosts = [];
-    syncLikeButtonState();   // Modal-Button neutralisieren
+    syncLikeButtonState();
     renderPosts(latestPosts);
     return;
   }
   const likeCol = collection(db, "users", u.uid, "likes");
   likeListener = onSnapshot(likeCol, (snap) => {
     likedPosts = snap.docs.map(d => d.id);
-    syncLikeButtonState();   // Modal-Button passend setzen
-    renderPosts(latestPosts); // falls du im Feed Likes zeigen willst
+    syncLikeButtonState();
+    renderPosts(latestPosts);
   });
 }
 
-
-
-
-
-// global für Buttons nutzbar
-
+// Favorit toggeln
 async function toggleFavorite(postId) {
   const u = auth.currentUser;
   if (!u) { alert("Bitte einloggen, um Beiträge zu merken."); return; }
@@ -166,9 +163,7 @@ async function toggleFavorite(postId) {
   }
 }
 
-
-
-// Likes toggeln (pro User in users/{uid}/likes/{postId}) + Aggregat am Post
+// Likes toggeln
 async function toggleLike(postId) {
   const u = auth.currentUser;
   if (!u) { alert("Bitte einloggen, um zu liken."); return; }
@@ -179,26 +174,22 @@ async function toggleLike(postId) {
   const isLiked = Array.isArray(likedPosts) && likedPosts.includes(postId);
 
   if (isLiked) {
-    // Like entfernen
     await deleteDoc(likeRef);
     try { await updateDoc(postRef, { likeCount: increment(-1) }); } catch {}
   } else {
-    // Like setzen
     await setDoc(likeRef, { createdAt: serverTimestamp() });
     try { await updateDoc(postRef, { likeCount: increment(1) }); } catch {}
   }
 }
 
-// Report speichern (ein Report pro User & Post)
+// Report speichern
 async function sendReport(postId, { reason, details }) {
   const u = auth.currentUser;
   if (!u) { alert("Bitte einloggen, um zu melden."); return; }
 
-  // Ein Report pro User: users/{uid}/reports/{postId} + posts/{postId}/reports/{uid}
   const userReportRef = doc(db, "users", u.uid, "reports", postId);
   const postReportRef = doc(db, "posts", postId, "reports", u.uid);
 
-  // Falls schon gemeldet → Hinweis
   const existsSnap = await getDoc(userReportRef);
   if (existsSnap.exists()) {
     alert("Du hast diesen Beitrag bereits gemeldet. Danke!");
@@ -212,17 +203,15 @@ async function sendReport(postId, { reason, details }) {
     reporterUid: u.uid
   };
 
-  // beidseitig speichern (optional, aber praktisch fürs Moderations-UI)
   await setDoc(userReportRef, payload);
   await setDoc(postReportRef, payload);
 
-  // (Optional) Zähler am Post
   try { await updateDoc(doc(db, "posts", postId), { reportCount: increment(1) }); } catch {}
 }
 
 onAuthStateChanged(auth, () => {
   listenToFavorites();
-  listenToLikes();   // << Likes einschalten
+  listenToLikes();
 });
 
 function getViewerKey() {
@@ -252,7 +241,7 @@ async function incrementViewOnce(postId) {
 /* ──────────────────────────────────────────────────────────────────────
    Post holen + Modal füllen
 ──────────────────────────────────────────────────────────────────────── */
-async function fetchPostById(id){
+async function fetchPostById(id) {
   const ref = doc(db, "posts", id);
   const snap = await getDoc(ref);
   if (!snap.exists()) throw new Error("Post nicht gefunden");
@@ -267,11 +256,12 @@ const buildMeta = p => {
 };
 const renderTags = tags =>
   (tags || []).map(t => `<span class="tag">#${escapeHtml(t)}</span>`).join("");
+
 async function showPostInModal(id, preloadData = null, push = true) {
   try {
     const data = preloadData || await fetchPostById(id);
 
-    // 🛑 Entfernte/gesperrte Posts gar nicht öffnen
+    // entfernte Posts blocken
     if (data?.removed || data?.moderation?.status === "removed") {
       alert("Dieser Beitrag wurde aufgrund eines Regelverstoßes entfernt.");
       try { closeModal(); } catch {}
@@ -388,6 +378,7 @@ function smartGuess(slug) {
   if (/^(sql|db|database)/.test(slug)) return "sql";
   return slug || null;
 }
+
 function normalizeTag(input) {
   const slug = deSlug(input);
   if (!slug) return null;
@@ -404,30 +395,14 @@ const controls   = document.getElementById("controlsBar");
 const selSort    = document.getElementById("sortBy");
 const selRange   = document.getElementById("timeRange");
 const chkWithCode= document.getElementById("withCode");
-document.querySelectorAll(".sideMenu button[data-tag]").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    const raw = (btn.dataset.tag || "").trim().toLowerCase();
-
-    // Spezialfall Gemerkte ohne Heuristiken:
-    if (raw === "gemerkte") {
-      activeTag = "gemerkte";
-    } else {
-      activeTag = normalizeTag(raw);
-    }
-
-    document.querySelectorAll(".sideMenu button").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    renderPosts(latestPosts);
-  });
-});
 
 let latestPosts   = [];
-let activeTag     = null;    // null = alle
+let activeTag     = null;
 let prevActiveTag = null;
 let searchQuery   = "";
 let onlyWithCode  = false;
-let sortMode      = "newest"; // "newest" | "oldest" | "title" | "likes" | "comments"
-let timeRange     = "all";    // "all" | "24h" | "7d" | "30d"
+let sortMode      = "newest";
+let timeRange     = "all";
 
 /* ──────────────────────────────────────────────────────────────────────
    Controls-Bar an Searchbar-Breite anpassen
@@ -489,13 +464,16 @@ if (searchBox) {
   });
 }
 
-/* ──────────────────────────────────────────────────────────────────────
-   SideMenu: Tag-Filter
-──────────────────────────────────────────────────────────────────────── */
+/* SideMenu: Tag-Filter (inkl. Sonderfall "gemerkte") */
 document.querySelectorAll(".sideMenu button[data-tag]").forEach((btn) => {
   btn.addEventListener("click", () => {
-    const raw = btn.dataset.tag || "";
-    activeTag = normalizeTag(raw);
+    const raw = (btn.dataset.tag || "").trim().toLowerCase();
+
+    if (raw === "gemerkte") {
+      activeTag = "gemerkte";
+    } else {
+      activeTag = normalizeTag(raw);
+    }
 
     document.querySelectorAll(".sideMenu button").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
@@ -503,6 +481,7 @@ document.querySelectorAll(".sideMenu button[data-tag]").forEach((btn) => {
     renderPosts(latestPosts);
   });
 });
+
 const defaultBtn = document.querySelector('.sideMenu button[data-tag="beliebt"]');
 if (defaultBtn) defaultBtn.classList.add("active");
 
@@ -526,6 +505,23 @@ onSnapshot(qLive, async (snap) => {
 });
 
 /* ──────────────────────────────────────────────────────────────────────
+   6-stellige Short-ID für Anzeige
+──────────────────────────────────────────────────────────────────────── */
+function computeShortId(post) {
+  if (post.shortId) {
+    return String(post.shortId).padStart(6, "0");
+  }
+
+  const src = String(post.id || "");
+  let hash = 0;
+  for (let i = 0; i < src.length; i++) {
+    hash = (hash * 31 + src.charCodeAt(i)) >>> 0;
+  }
+  const num = hash % 1_000_000;      // 0 – 999999
+  return String(num).padStart(6, "0");
+}
+
+/* ──────────────────────────────────────────────────────────────────────
    Feed rendern
 ──────────────────────────────────────────────────────────────────────── */
 function renderPosts(posts) {
@@ -534,10 +530,11 @@ function renderPosts(posts) {
   feedEl.innerHTML = "";
 
   let out = posts.slice();
-  // 0) Entfernte/hidden Posts rausfiltern
+
+  // entfernte Posts ausblenden
   out = out.filter(p => !p?.removed && p?.moderation?.status !== "removed");
 
-  // 1) Tag-Filter + Gemerkte
+  // Tag-Filter + Gemerkte
   if (activeTag === "gemerkte") {
     const ids = new Set(favoritePosts);
     out = out.filter(p => ids.has(p.id));
@@ -545,24 +542,24 @@ function renderPosts(posts) {
     out = out.filter(p => (p.tags || []).some(t => normalizeTag(t) === activeTag));
   }
 
-  // 2) Zeitraum
+  // Zeitraum
   if (timeRange !== "all") {
     const now = Date.now();
     let cutoff = 0;
-    if (timeRange === "24h") cutoff = now - 24*60*60*1000;
-    else if (timeRange === "7d") cutoff = now - 7*24*60*60*1000;
-    else if (timeRange === "30d") cutoff = now - 30*24*60*60*1000;
+    if (timeRange === "24h") cutoff = now - 24 * 60 * 60 * 1000;
+    else if (timeRange === "7d") cutoff = now - 7 * 24 * 60 * 60 * 1000;
+    else if (timeRange === "30d") cutoff = now - 30 * 24 * 60 * 60 * 1000;
     if (cutoff > 0) {
       out = out.filter(p => tsToDate(p.createdAt).getTime() >= cutoff);
     }
   }
 
-  // 3) Nur mit Code?
+  // Nur mit Code
   if (onlyWithCode) {
     out = out.filter(hasCodeInPost);
   }
 
-  // 4) Suche in Titel + Text
+  // Suche
   if (searchQuery) {
     out = out.filter(p => {
       const t = (p.title || "").toLowerCase();
@@ -571,7 +568,7 @@ function renderPosts(posts) {
     });
   }
 
-  // 5) Sortierung
+  // Sortierung
   out.sort((a, b) => {
     switch (sortMode) {
       case "oldest": {
@@ -599,7 +596,6 @@ function renderPosts(posts) {
     }
   });
 
-  // 6) Rendern
   if (!out.length) {
     feedEl.innerHTML = `<p style="color:#888;font:14px monospace;">Keine Beiträge gefunden.</p>`;
     return;
@@ -633,32 +629,39 @@ function renderPosts(posts) {
       ${codePreview}
     `;
 
-    const liked = Array.isArray(likedPosts) && likedPosts.includes(p.id);
-const faved = Array.isArray(favoritePosts) && favoritePosts.includes(p.id);
-const likeCnt = Number(p.likeCount || 0);
+    const liked   = Array.isArray(likedPosts)    && likedPosts.includes(p.id);
+    const faved   = Array.isArray(favoritePosts) && favoritePosts.includes(p.id);
+    const likeCnt = Number(p.likeCount || 0);
 
-const actions = document.createElement("div");
-actions.className = "post-actions-right";
-actions.innerHTML = `
-  <button class="feed-like-btn"
-          data-id="${p.id}"
-          aria-pressed="${liked ? "true" : "false"}"
-          title="${liked ? "Like entfernen" : "Gefällt mir"}">
-    <span class="ico">❤</span>
-    <span class="cnt">${likeCnt}</span>
-  </button>
+    const actions = document.createElement("div");
+    actions.className = "post-actions-right";
+    actions.innerHTML = `
+      <button class="feed-like-btn"
+              data-id="${p.id}"
+              aria-pressed="${liked ? "true" : "false"}"
+              title="${liked ? "Like entfernen" : "Gefällt mir"}">
+        <span class="ico">❤</span>
+        <span class="cnt">${likeCnt}</span>
+      </button>
 
-  <button class="feed-fav-btn"
-          data-id="${p.id}"
-          aria-pressed="${faved ? "true" : "false"}"
-          title="${faved ? "Aus Favoriten entfernen" : "Zu Favoriten"}">
-    <span class="ico">★</span>
-  </button>
-`;
+      <button class="feed-fav-btn"
+              data-id="${p.id}"
+              aria-pressed="${faved ? "true" : "false"}"
+              title="${faved ? "Aus Favoriten entfernen" : "Zu Favoriten"}">
+        <span class="ico">★</span>
+      </button>
+    `;
 
-item.appendChild(content);
-item.appendChild(actions);
-feedEl.appendChild(item);
+    // 🆔 Short-ID-Badge oben rechts
+    const shortBadge = document.createElement("span");
+    shortBadge.className = "post-shortid";
+    shortBadge.textContent = `#${computeShortId(p)}`;
+
+    item.appendChild(content);
+    item.appendChild(actions);
+    item.appendChild(shortBadge);
+
+    feedEl.appendChild(item);
   }
 
   try { feedEl.scrollTop = 0; } catch {}
@@ -667,14 +670,14 @@ feedEl.appendChild(item);
 /* ──────────────────────────────────────────────────────────────────────
    Interaktion: Klick/Enter → Modal/Seite
 ──────────────────────────────────────────────────────────────────────── */
-feedEl?.addEventListener("click", async (e)=>{
+feedEl?.addEventListener("click", async (e) => {
   if (e.button === 1 || e.metaKey || e.ctrlKey) return;
   const item = e.target.closest(".post-item");
   if (!item) return;
   const id = item.dataset.id;
   if (!id) return;
 
-  if (prefersPage()){
+  if (prefersPage()) {
     location.href = HYBRID.pageURL(id);
     return;
   }
@@ -682,14 +685,14 @@ feedEl?.addEventListener("click", async (e)=>{
   await showPostInModal(id, item.__postPreview, true);
 });
 
-feedEl?.addEventListener("keydown", async (e)=>{
+feedEl?.addEventListener("keydown", async (e) => {
   if (e.key !== "Enter") return;
   const item = e.target.closest(".post-item");
   if (!item) return;
   const id = item.dataset.id;
   if (!id) return;
 
-  if (prefersPage()){
+  if (prefersPage()) {
     location.href = HYBRID.pageURL(id);
     return;
   }
@@ -700,7 +703,6 @@ feedEl?.addEventListener("keydown", async (e)=>{
 /* ──────────────────────────────────────────────────────────────────────
    Modal schließen
 ──────────────────────────────────────────────────────────────────────── */
-// Close per Klick: Button mit [data-close] ODER die Backdrop-Fläche
 modalEl?.addEventListener("click", (e) => {
   if (e.target.classList.contains("post-modal__backdrop")) {
     closeModal();
@@ -711,40 +713,34 @@ modalEl?.addEventListener("click", (e) => {
   }
 });
 
-// Close per ESC
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && modalEl?.classList.contains("open")) {
     closeModal();
   }
 });
 
-// Fallback, falls irgendwo noch die alte (falsche) Klasse verwendet wird:
 document.addEventListener("click", (e) => {
   if (e.target.closest(".post-modal__close, .post_modall__close")) {
     closeModal();
   }
 });
 
-// 🔸 Favoriten-Button: Bild wechseln beim Klicken
+// Favoriten-Button im Modal
 const FAV_IMG_SRC = "../assets/images/markieren.png";
 
-// Helper: Visuals des Buttons setzen (Icon + Label + Title + aria-pressed)
 function setFavVisual(btn, pressed) {
   if (!btn) return;
   const ico   = btn.querySelector(".pm-ico");
   const label = btn.querySelector(".pm-label");
 
-  // steuert CSS-Farbe
   btn.setAttribute("aria-pressed", pressed ? "true" : "false");
 
-  // Stern bleibt gleich – Farbe kommt aus CSS
   if (ico) ico.textContent = "★";
-
   if (label) label.textContent = pressed ? "Gemerkt" : "Merken";
   btn.title = pressed ? "Aus Favoriten entfernen" : "Zu Favoriten";
 }
-// Falls du schon syncFavButtonState() hast, ersetze dessen Inhalt so:
-function syncFavButtonState(){
+
+function syncFavButtonState() {
   const btn = modalEl?.querySelector('.pm-btn.pm-fav[data-action="favorite"]');
   if (!btn || !currentOpenPostId) return;
   const pressed = Array.isArray(favoritePosts) && favoritePosts.includes(currentOpenPostId);
@@ -773,23 +769,23 @@ function syncLikeButtonState() {
   setLikeVisual(btn, pressed);
 }
 
-// Klick-Handler (optimistisches Toggle)
-modalEl?.addEventListener("click", async (e)=>{
+// Klick-Handler Modal: Favorit
+modalEl?.addEventListener("click", async (e) => {
   const btn = e.target.closest('.pm-btn.pm-fav[data-action="favorite"]');
   if (!btn || !currentOpenPostId) return;
 
   const willBeFav = btn.getAttribute("aria-pressed") !== "true";
-  setFavVisual(btn, willBeFav); // erst UI
+  setFavVisual(btn, willBeFav);
 
   try {
-    await toggleFavorite(currentOpenPostId); // dann Firestore
+    await toggleFavorite(currentOpenPostId);
   } catch (err) {
     console.error("Favorit umschalten fehlgeschlagen:", err);
-    setFavVisual(btn, !willBeFav); // rollback
+    setFavVisual(btn, !willBeFav);
   }
 });
 
-// Melden-Button (delegiert)
+// Klick-Handler Modal: Report
 modalEl?.addEventListener("click", async (e) => {
   const btn = e.target.closest('.pm-btn.pm-report[data-action="report"]');
   if (!btn || !currentOpenPostId) return;
@@ -809,14 +805,14 @@ modalEl?.addEventListener("click", async (e) => {
   }
 });
 
+// Klick-Handler Modal: Like
 modalEl?.addEventListener("click", async (e) => {
   const btn = e.target.closest('.pm-btn.pm-like[data-action="like"]');
   if (!btn || !currentOpenPostId) return;
 
   const willBeLiked = btn.getAttribute("aria-pressed") !== "true";
-  setLikeVisual(btn, willBeLiked); // UI sofort
+  setLikeVisual(btn, willBeLiked);
 
-  // Zähler optimistisch anpassen
   const countEl = modalEl?.querySelector('.pm-btn.pm-like .pm-count');
   const cur = parseInt(countEl?.textContent || "0", 10) || 0;
   if (countEl) countEl.textContent = String(cur + (willBeLiked ? 1 : -1));
@@ -825,7 +821,6 @@ modalEl?.addEventListener("click", async (e) => {
     await toggleLike(currentOpenPostId);
   } catch (err) {
     console.error("Like umschalten fehlgeschlagen:", err);
-    // rollback
     setLikeVisual(btn, !willBeLiked);
     if (countEl) countEl.textContent = String(cur);
   }
@@ -834,26 +829,25 @@ modalEl?.addEventListener("click", async (e) => {
 /* ──────────────────────────────────────────────────────────────────────
    Deep-Link (?post=ID) + History
 ──────────────────────────────────────────────────────────────────────── */
-document.addEventListener("DOMContentLoaded", async ()=>{
+document.addEventListener("DOMContentLoaded", async () => {
   const qId = new URL(location.href).searchParams.get("post");
   if (!qId) return;
 
-  if (prefersPage()){
+  if (prefersPage()) {
     location.replace(HYBRID.pageURL(qId));
     return;
   }
   await showPostInModal(qId, null, false);
 });
 
-window.addEventListener("popstate", async (ev)=>{
+window.addEventListener("popstate", async (ev) => {
   const state = ev.state || {};
-  if (state.view === "modal" && state.id){
-    if (prefersPage()){
+  if (state.view === "modal" && state.id) {
+    if (prefersPage()) {
       location.replace(HYBRID.pageURL(state.id));
       return;
     }
     await showPostInModal(state.id, null, false);
-    currentOpenPostId = id;
   } else {
     if (modalEl?.classList.contains("open")) closeModal(false);
   }
@@ -866,6 +860,7 @@ function getAuthPhotoURL() {
   const u = auth.currentUser;
   return u?.photoURL || null;
 }
+
 async function setComposerAvatar() {
   if (!elReplyAvatar) return;
   const u = auth.currentUser;
@@ -918,7 +913,6 @@ function setupReplyComposer(postId) {
 
 let detachReplies = null;
 
-// === Hilfsfunktion: Zahl am Antworten-Button setzen ===
 function setReplyCount(n) {
   const countEl = modalEl?.querySelector('.pm-btn.pm-reply .pm-count');
   if (countEl) countEl.textContent = String(n);
@@ -966,22 +960,20 @@ function attachRepliesStream(postId) {
 
   const q = query(collection(db, "posts", postId, "replies"), orderBy("createdAt", "asc"));
   detachReplies = onSnapshot(q, async (snap) => {
-    // Liste neu aufbauen
     elReplies.innerHTML = "";
     snap.forEach(docSnap => {
       elReplies.appendChild(renderReplyItem({ id: docSnap.id, ...docSnap.data() }));
     });
 
-    // >>> live Zähler setzen
     const count = snap.size;
     setReplyCount(count);
 
-    // (optional) Aggregat im Post-Dokument synchron halten:
     try {
       await updateDoc(doc(db, "posts", postId), { commentCount: count });
     } catch {}
   }, (err) => console.error("Replies stream error:", err));
 }
+
 /* ──────────────────────────────────────────────────────────────────────
    Code-Erkennung + Preview
 ──────────────────────────────────────────────────────────────────────── */
@@ -1030,6 +1022,7 @@ ${safe}
     </div>
   `;
 }
+
 function decodeHtmlEntities(s) {
   return String(s)
     .replace(/&lt;/g, "<")
@@ -1066,30 +1059,30 @@ function formatDate(ts) {
 /* ──────────────────────────────────────────────────────────────────────
    Scroll-Fix: Feed startet immer oben
 ──────────────────────────────────────────────────────────────────────── */
-if ('scrollRestoration' in history) {
-  history.scrollRestoration = 'manual';
+if ("scrollRestoration" in history) {
+  history.scrollRestoration = "manual";
 }
-window.addEventListener('pageshow', () => {
-  const el = document.getElementById('postFeed');
+window.addEventListener("pageshow", () => {
+  const el = document.getElementById("postFeed");
   if (el) el.scrollTop = 0;
 });
-window.addEventListener('load', () => {
-  const el = document.getElementById('postFeed');
+window.addEventListener("load", () => {
+  const el = document.getElementById("postFeed");
   if (el) el.scrollTop = 0;
 });
 
 function scrollFeedToTop() {
-  const el = document.getElementById('postFeed');
-  if (el && getComputedStyle(el).overflowY !== 'visible') {
+  const el = document.getElementById("postFeed");
+  if (el && getComputedStyle(el).overflowY !== "visible") {
     el.scrollTop = 0;
     requestAnimationFrame(() => el.scrollTop = 0);
   } else {
-    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     requestAnimationFrame(() => window.scrollTo(0, 0));
   }
 }
-window.addEventListener('load', scrollFeedToTop);
-window.addEventListener('pageshow', scrollFeedToTop);
+window.addEventListener("load", scrollFeedToTop);
+window.addEventListener("pageshow", scrollFeedToTop);
 
 let _didInitialTopScroll = false;
 function forceTopOnceAfterRender() {
@@ -1098,11 +1091,5 @@ function forceTopOnceAfterRender() {
   requestAnimationFrame(() => { setTimeout(scrollFeedToTop, 0); });
 }
 
-// 👉 Optional: mach toggleFavorite globlistenToLikes();al erreichbar (für Inline-HTML-Buttons)
-// richtig:
+// 👉 Optional: mach toggleFavorite global erreichbar (für Inline-HTML-Buttons)
 window.toggleFavorite = toggleFavorite;
-
-
-
-
-

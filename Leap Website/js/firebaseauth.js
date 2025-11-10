@@ -83,6 +83,30 @@ function setPicture(el, url) {
   el.style.backgroundRepeat = "no-repeat";
 }
 
+async function ensureUserDoc(uid, fallbackUsername, email) {
+  if (!uid) return;
+
+  const userRef = doc(db, "users", uid);
+  const snap = await getDoc(userRef);
+
+  if (snap.exists()) {
+    // Dokument existiert schon → nichts tun
+    return;
+  }
+
+  const usernameFromEmail =
+    (fallbackUsername && !fallbackUsername.includes("@"))
+      ? fallbackUsername
+      : (email ? email.split("@")[0] : "user");
+
+  await setDoc(userRef, {
+    email: email || null,
+    username: usernameFromEmail,
+    createdAt: serverTimestamp(),
+    photoURL: "/assets/images/newAccount.jpeg"
+  }, { merge: true });
+}
+
 /* Registrierung */
 document.getElementById("submitbuttonregister")?.addEventListener("click", async (e) => {
   e.preventDefault();
@@ -156,6 +180,10 @@ document.querySelector(".loginForm")?.addEventListener("submit", async (e) => {
     // }
 
     const cred = await signInWithEmailAndPassword(auth, emailToUse, pw);
+
+// 🔒 Sicherstellen, dass es ein users/{uid}-Dokument gibt
+await ensureUserDoc(cred.user.uid, usernameOrEmail, emailToUse);
+
 // NACH erfolgreichem Login:
 showMessage("Login erfolgreich!", "signInMessage", "success");
 localStorage.setItem("loggedInUserId", cred.user.uid);

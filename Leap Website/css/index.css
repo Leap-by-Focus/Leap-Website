@@ -938,26 +938,6 @@ input {
     background-color: #c0392b;
   }
 
-.character {
-  position: fixed;
-  width: 50px;
-  height: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50%;
-  background-color: #777;       /* Fallback-Farbe */
-  background-size: cover;       /* WICHTIG */
-  background-position: center; 
-  font-size: 8px;
-  cursor: pointer;              /* Hand-Cursor zeigt Klickbarkeit */
-  transition: transform 0.2s ease;
-}
-.character:hover {
-  transform: scale(1.1);
-  background-color: #555;       /* leicht dunkler beim Hover */
-}
-
   .welcomeNote
   {
     right:182px;
@@ -966,6 +946,73 @@ input {
     font-weight: bold;
     font-size: 12px;
   } 
+
+
+.character {
+  position: fixed;               /* oder relative, je nachdem wo dein Avatar sitzt */
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+
+  /* Avatar-Hintergrund (vom JS gesetzt) */
+  background-color: #777;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+/* leichtes Scale beim Hover */
+.character:hover {
+  transform: scale(1.1);
+  background-color: #555;
+}
+
+/* 🔥 Overlay + größeres Settings-Icon */
+.character::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  /* dunklerer Hintergrund beim Hover */
+  background-color: rgba(0, 0, 0, 0.65);   /* war 0.45 → jetzt dunkler */
+
+  /* Settings-Icon in der Mitte, größer */
+  background-image: url("../assets/images/settings.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 32px 32px;             /* war 22px → jetzt größer */
+
+  opacity: 0;
+  transform: scale(1.1);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Hover-Effekt */
+.character:hover::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+
+.character::after {
+  /* ... */
+  transform: scale(0.8);
+}
+.character:hover::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+
 
   .CharacterName {
     padding-top: 20px;

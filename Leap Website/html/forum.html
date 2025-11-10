@@ -369,6 +369,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       <!-- Nur dieser Bereich scrollt -->
       <div class="post-feed" id="postFeed"></div>
+      
     </div>
    <!-- Modal für Post-Detail -->
     <div id="postModal" class="post-modal" aria-hidden="true">
@@ -490,45 +491,55 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     </div>
 
-    <div class="footer">
-      <div class="create-container">
-        <button class="create-btn" id="createBtn" type="button">Neuer Beitrag</button>
+<div class="footer">
+  <div class="create-container">
+    <button class="create-btn" id="createBtn" type="button">Neuer Beitrag</button>
 
-        <!-- Panel, das über dem Button aufklappt -->
-        <div class="create-panel" id="createPanel">
-          <form class="create-form">
-            <!-- Titel -->
-            <input type="text" class="post-title" placeholder="Titel eingeben…" />
+    <!-- Panel -->
+    <div class="create-panel" id="createPanel">
+      <form class="create-form">
+        <!-- Titel -->
+        <input
+          type="text"
+          class="post-title"
+          id="postTitle"
+          placeholder="Titel eingeben…"
+        />
 
-            <!-- Toolbar -->
-            <div class="toolbar">
-              <button type="button" data-cmd="bold"><b>B</b></button>
-              <button type="button" data-cmd="italic"><i>I</i></button>
-              <button type="button" data-cmd="underline"><u>U</u></button>
-              <button type="button" data-cmd="insertUnorderedList">• Liste</button>
-              <button type="button" data-cmd="formatBlock" data-value="pre">{ }</button>
+        <!-- Toolbar -->
+        <div class="toolbar">
+          <button type="button" data-cmd="bold"><b>B</b></button>
+          <button type="button" data-cmd="italic"><i>I</i></button>
+          <button type="button" data-cmd="underline"><u>U</u></button>
 
-              <!-- Tag-Picker -->
-              <div class="tag-picker">
-                <div class="tag-list" id="tagList"></div>
-                <input id="tagInput" class="tag-input" type="text" placeholder="#Tags hinzufügen…" autocomplete="off" />
-                <div class="tag-suggest" id="tagSuggest" aria-live="polite"></div>
-              </div>
-            </div>
-
-            <!-- Beitragstext -->
-            <div class="post-body" contenteditable="true" data-placeholder="Schreibe hier deinen Beitrag…">
-            
-            </div>
-
-
-
-            <!-- Submit -->
-            <button type="submit" class="submit-post">Beitrag erstellen</button>
-          </form>
+          <!-- Tag-Picker -->
+          <div class="tag-picker">
+            <div class="tag-list" id="tagList"></div>
+            <input
+              id="tagInput"
+              class="tag-input"
+              type="text"
+              placeholder="#Tags hinzufügen…"
+              autocomplete="off"
+            />
+            <div class="tag-suggest" id="tagSuggest" aria-live="polite"></div>
+          </div>
         </div>
-      </div>
+
+        <!-- Beitragstext -->
+        <div
+          class="post-body"
+          id="postBody"
+          contenteditable="true"
+          data-placeholder="Schreibe hier deinen Beitrag…"
+        ></div>
+
+        <!-- Submit -->
+        <button type="submit" class="submit-post">Beitrag erstellen</button>
+      </form>
     </div>
+  </div>
+</div>
 
 <div class="footer-right">
   <!-- ⚙️ Settings (deine bestehende Struktur, unverändert) -->

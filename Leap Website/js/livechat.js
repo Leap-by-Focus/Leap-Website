@@ -13,9 +13,12 @@ import {
   doc,
   getDoc,
   setDoc,
-  writeBatch,
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+import {
+  getFunctions,
+  httpsCallable,
+} from "https://www.gstatic.com/firebasejs/11.6.0/firebase-functions.js";
 
 /* ---------- DOM ---------- */
 const elMessages = document.getElementById("chat-messages");
@@ -25,24 +28,13 @@ const elSend     = document.getElementById("chat-send");
 const elHint     = document.getElementById("chat-hint");
 const elTimer    = document.getElementById("chat-timer");
 
-// Wer darf /clearall ausführen?
-const ADMIN_UIDS = new Set([
-  "P8XmWl4hptNZN8yMKJS5JCJ3MF92",
-]);
-
-async function clearAllMessages() {
-  const snap = await getDocs(messagesRef);
-  if (snap.empty) return;
-
-  const batch = writeBatch(db);
-  snap.forEach(d => batch.delete(d.ref));
-  await batch.commit();
-  console.log("✅ Chat geleert");
-}
-
 if (!elMessages || !elForm || !elInput) {
   console.warn("[livechat] Chat-Elemente nicht gefunden – Script beendet.");
 }
+
+// Cloud Functions (Region europe-west3 wie in functions.js)
+const functions = getFunctions(undefined, "europe-west3");
+const adminSlash = httpsCallable(functions, "adminSlash");
 
 /* ---------- Helpers ---------- */
 const toMillis = (v) =>
@@ -54,6 +46,43 @@ function formatTime(ts) {
     const d = ts?.toDate ? ts.toDate() : (ts ? new Date(ts) : new Date());
     return d.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
   } catch { return ""; }
+}
+
+async function isMutedAndShowReason() {
+  const user = auth.currentUser;
+  if (!user) {
+    alert("Bitte zuerst einloggen.");
+    return true;
+  }
+
+  const userRef = doc(db, "users", user.uid);
+  const snap = await getDoc(userRef);
+  if (!snap.exists()) return false;
+
+  const data = snap.data() || {};
+  const now = Date.now();
+
+  const perma = !!data.mutedPermanent;
+  const until =
+    typeof data.mutedUntil === "number" ? data.mutedUntil : null;
+
+  // Nicht gemutet / Mute abgelaufen
+  if (!perma && (!until || now >= until)) {
+    return false;
+  }
+
+  const by = data.mutedByName || data.mutedBy || "Moderation";
+  const reason = data.muteReason || "Kein Grund angegeben";
+  const durationText = perma
+    ? "permanent"
+    : "bis " + new Date(until).toLocaleString("de-DE");
+
+  alert(
+    `Du wurdest gemutet von ${by}.\n` +
+      `Grund: ${reason}\n` +
+      `Dauer: ${durationText}`
+  );
+  return true;
 }
 
 /* ---------- Username-Handling ---------- */
@@ -112,6 +141,7 @@ function renderMessage(docSnap, myUid) {
   return wrap;
 }
 
+// kleine Helper zum Scrollen
 function isNearBottom(container, threshold = 80) {
   return container.scrollHeight - container.scrollTop - container.clientHeight < threshold;
 }
@@ -127,17 +157,21 @@ function setInputEnabled(enabled) {
 }
 
 /* ---------- Firestore ---------- */
-const messagesRef   = collection(db, "messages");
-const messagesQuery = query(messagesRef, orderBy("createdAt", "asc"), limit(500));
+/**
+ * WICHTIG:
+ * Backend-Funktion clearChat() arbeitet mit Collection "chatMessages".
+ * Deshalb nutzt der Livechat hier jetzt auch "chatMessages".
+ */
+const messagesRef   = collection(db, "chatMessages");
+const messagesQuery = query(messagesRef, orderBy("timestamp", "asc"), limit(500));
 const configRef     = doc(db, "chatConfig", "reset");
 
 /* ---------- Global Reset-Window ---------- */
 const RESET_INTERVAL = 5 * 60; // Sekunden
 
-let unsubMsgs    = null;
-let timerHandle  = null;
-
-let nextResetMs  = 0;
+let unsubMsgs     = null;
+let timerHandle   = null;
+let nextResetMs   = 0;
 let windowStartMs = 0;
 
 function updateTimerUI() {
@@ -171,7 +205,7 @@ async function ensureResetTimestamp() {
     updateTimerUI();
   } catch {
     if (!nextResetMs) {
-      nextResetMs  = Date.now() + RESET_INTERVAL * 1000;
+      nextResetMs   = Date.now() + RESET_INTERVAL * 1000;
       windowStartMs = nextResetMs - RESET_INTERVAL * 1000;
     }
   }
@@ -188,7 +222,7 @@ function startTimerLoop() {
   timerHandle = setInterval(async () => {
     const now = Date.now();
     if (now >= nextResetMs) {
-      nextResetMs  = now + RESET_INTERVAL * 1000;
+      nextResetMs   = now + RESET_INTERVAL * 1000;
       windowStartMs = nextResetMs - RESET_INTERVAL * 1000;
       await trySetGlobal({ nextReset: nextResetMs });
       renderFromCache();
@@ -221,7 +255,7 @@ function renderFromCache() {
   elMessages.innerHTML = "";
   for (const docSnap of lastSnapshotDocs) {
     const data = docSnap.data();
-    const createdMs = toMillis(data.createdAt);
+    const createdMs = toMillis(data.timestamp);
     if (!createdMs || createdMs < windowStartMs) continue;
     elMessages.appendChild(renderMessage(docSnap, currentUid));
   }
@@ -235,7 +269,7 @@ onSnapshot(configRef, (snap) => {
   const ms = toMillis(snap.data()?.nextReset);
   if (!ms) return;
   if (ms !== nextResetMs) {
-    nextResetMs = ms;
+    nextResetMs   = ms;
     windowStartMs = nextResetMs - RESET_INTERVAL * 1000;
     updateTimerUI();
     renderFromCache();
@@ -305,6 +339,7 @@ function canSendNow() {
   return Date.now() - lastSentMs >= COOLDOWN_MS;
 }
 
+/* ---------- Submit: Normaler Chat + Slash-Commands ---------- */
 elForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -312,9 +347,48 @@ elForm?.addEventListener("submit", async (e) => {
   if (!text) return;
 
   const user = auth.currentUser;
-  if (!user) { setInputEnabled(false); return; }
+  if (!user) {
+    setInputEnabled(false);
+    return;
+  }
 
-  
+  // 👉 1. Admin-Slash-Commands
+  if (text.startsWith("/")) {
+    try {
+      const result = await adminSlash({ command: text });
+      const msg = result.data?.message || "OK";
+
+      // Systemnachricht im Chat anzeigen
+      const wrap = document.createElement("div");
+      wrap.className = "chat-msg system";
+
+      const meta = document.createElement("div");
+      meta.className = "meta";
+      meta.textContent = "System";
+
+      const body = document.createElement("div");
+      body.className = "text";
+      body.textContent = msg;
+
+      wrap.appendChild(meta);
+      wrap.appendChild(body);
+      elMessages.appendChild(wrap);
+      scrollToBottom(elMessages);
+    } catch (err) {
+      console.error("[livechat] Admin-Command fehlgeschlagen:", err);
+      alert("Admin-Command fehlgeschlagen: " + (err.message || err));
+    } finally {
+      elInput.value = "";
+    }
+    // kein Cooldown für Admin-Commands
+    return;
+  }
+
+  // 👉 2. Normale Nachricht (Mute-Check + Cooldown)
+  if (await isMutedAndShowReason()) {
+    elInput.value = "";
+    return;
+  }
 
   if (!canSendNow()) {
     elInput.classList.add("deny");
@@ -331,7 +405,7 @@ elForm?.addEventListener("submit", async (e) => {
       text,
       uid: user.uid,
       username: safeName,
-      createdAt: serverTimestamp(),
+      timestamp: serverTimestamp(), // ⚠️ hier "timestamp", weil clearChat/getLastMessages das erwarten
     });
     elInput.value = "";
     scrollToBottom(elMessages);

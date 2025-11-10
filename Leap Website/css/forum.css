@@ -1268,18 +1268,18 @@ html { scroll-behavior: smooth; }
   font:14px monospace;
 }
 
-.tag-suggest{
-  position:absolute;
-  left:8px;
-  right:8px;
-  top:calc(100% + 6px);
-  background:#161616;
-  border:1px solid #333;
-  border-radius:8px;
-  box-shadow:0 8px 20px rgba(0,0,0,.35);
-  display:none;
-  overflow:hidden;
-  z-index:5;
+.tag-suggest {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  top: calc(100% + 6px);
+  background: #161616;
+  border: 1px solid #333;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+  display: none;
+  overflow: hidden;
+  z-index: 9999; /* 🚀 war 5 – jetzt ganz oben */
 }
 .tag-suggest.open{ display:block; }
 
@@ -3008,3 +3008,27 @@ body[data-theme="gradient"] .rules-close:hover {
 .rules-popup strong {
   color: var(--accent, #50e9ba);
 }
+
+
+
+
+/* Kleine Short-ID oben rechts auf der Karte */
+.post-shortid {
+  position: absolute;
+  top: 50px;
+  right: 12px;
+
+  font: 11px monospace;
+  color: #b3b3b3;
+
+  background: rgba(0, 0, 0, 0.45);
+  padding: 2px 6px;
+  border-radius: 6px;
+  border: 1px solid #2a2a2a;
+
+  pointer-events: none;   /* nicht klickbar */
+  user-select: text;      /* aber kopierbar */
+  z-index: 2;             /* über dem Card-Background, unter Buttons */
+}
+
+
