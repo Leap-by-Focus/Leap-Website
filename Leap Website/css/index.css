@@ -837,7 +837,10 @@ input {
     background-color: #d32f2f; /* Etwas dunklerer Rotton beim Hover */
 }
 
-
+.userinfo #username {
+  font-size: 18px;   /* oder was du willst */
+  font-weight: 600;  /* damit’s kräftiger aussieht */
+}
 
 .userinfo {
     position: fixed;
@@ -1014,23 +1017,28 @@ input {
 
 
 
-  .CharacterName {
-    padding-top: 20px;
-    color: white;
-    font-weight: bolder;
-    font-size: 20px;
-    z-index: 1000000;
-    margin-left: 50px;
-    margin-right: 85px;
-    text-align: center;
-    font-family: monospace;
-    letter-spacing: 3px;
-    animation: colorRotate 2s linear 0s infinite;
-    
-    overflow: hidden;        /* Verhindert das Überlaufen */
-    white-space: nowrap;     /* Verhindert den Zeilenumbruch */
-    text-overflow: ellipsis; /* Zeigt '...' am Ende an, wenn der Text nicht passt */
-  }
+.CharacterName {
+  padding-top: 20px;
+  color: white;
+  font-weight: bolder;
+  font-size: 20px;
+  z-index: 1000000;
+
+  /* Zentriert, aber leicht nach links versetzt */
+  position: relative;
+  right: -0px;
+  margin: 0 auto;
+  max-width: 100%;
+
+  text-align: center;
+  font-family: monospace;
+  letter-spacing: 3px;
+  animation: colorRotate 2s linear infinite;
+
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 
 
 

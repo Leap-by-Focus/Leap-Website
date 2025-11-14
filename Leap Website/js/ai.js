@@ -17,7 +17,11 @@
   // ======================================================
   // Config
   // ======================================================
-  const API_BASE = "http://127.0.0.1:8000";
+  const API_BASE   = "http://127.0.0.1:8000";
+  const SESSION_ID =
+    (typeof crypto !== "undefined" && crypto.randomUUID)
+      ? crypto.randomUUID()
+      : "web-" + Math.random().toString(36).slice(2);
 
   // ======================================================
   // Utils
@@ -247,7 +251,15 @@
       if (text) form.append("text", text);
       if (file) form.append("image", file, file.name);
 
-      const resp = await fetch(`${API_BASE}/api/chat`, { method: "POST", body: form });
+      // >>> WICHTIG: Leap-RAG einschalten + Session mitschicken <<<
+      form.append("useLeapContext", "true");
+      form.append("sessionId", SESSION_ID);
+
+      const resp = await fetch(`${API_BASE}/api/chat`, {
+        method: "POST",
+        body: form
+      });
+
       if (!resp.ok) {
         const err = await resp.text().catch(() => String(resp.status));
         addBubble({ html: `<b>Fehler:</b> ${esc(err)}`, who: "ai" });
@@ -257,6 +269,11 @@
       }
 
       const data = await resp.json();
+
+      // Debug: RAG-Status in der Konsole
+      if (data.meta) {
+        console.log("Leap AI meta:", data.meta);
+      }
 
       // Antwort anzeigen
       const html = renderAnswerHTML(String(data.answer || ""));
