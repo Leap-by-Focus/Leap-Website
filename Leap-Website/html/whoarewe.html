@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Leap – Who Are We?</title>
+  <link rel="stylesheet" href="../css/whoarewe.css" />
+  <link rel="stylesheet" href="../css/index.css">
+  <script src="../js/particlesMenu.js" defer></script>
+  <script type="module" src="../js/firebaseauth.js" defer></script>
+  <script src="../js/loginFormularDiv.js" defer></script>
+  <script src="../js/openLogin.js" defer></script>
+  <script src="../js/whoareweAnimation.js" defer></script>
+<script src="./js/whoareweButtonExpansion.js"></script>
+<script src="../js/appearance-apply.js" defer></script>
+
+</head>
+<body>
+  <div class="hauptMenu">
+    <canvas id="particleCanvas"></canvas>
+    <div class="backToMainLogo">
+      <a href="index.html">
+        <img src="../assets/images/Leap.png" alt="">
+      </a>
+    </div>
+  </div>
+
+  <div class="loginDiv">
+            <div class="loginButton" id="loginButton">Login</div>
+            <div class="registerButton" id="registerButton">Register</div>
+
+ <div class="loginFormularDiv" id="loginFormular">
+  <form class="loginForm">
+    <label for="logUsername">Benutzername:</label>
+    <input type="text" id="logUsername" required>
+    <label for="logPassword">Passwort:</label>
+    <input type="password" id="logPassword" required>
+   <button type="submit" class="submitButton" id="submitbuttonlogin">Anmelden</button>
+    <div id="signInMessage" class="alert"></div>
+  </form>
+  <div class="reset-password-link">
+    <a href="#" id="forgotLink">Passwort vergessen?</a>
+  </div>
+</div>
+
+<div class="resetFormularDiv" id="resetFormular">
+  <form class="loginForm" id="resetForm">
+    <!-- Phase A -->
+    <div id="phase-request">
+      <label for="resetEmail">E-Mail-Adresse:</label>
+        <input type="email" id="resetEmail" name="resetEmail" placeholder="dein@mail.tld" required />
+      <button type="submit" class="submitButton" id="btnSendReset">Link zum Zurücksetzen senden</button>
+    </div>
+
+    <!-- Phase B (über E-Mail-Link sichtbar) -->
+    <div id="phase-set" style="display:none">
+      <p id="emailLine" class="muted"></p>
+
+      <label for="pw1">Neues Passwort:</label>
+     <input type="password" id="pw1" name="newPassword" minlength="6" autocomplete="new-password" required />
+
+      <label for="pw2">Neues Passwort wiederholen:</label>
+      <input type="password" id="pw2" name="newPasswordRepeat" minlength="6" autocomplete="new-password" required />
+
+      <button type="submit" class="submitButton" id="btnConfirmReset">Passwort speichern</button>
+    </div>
+
+    <div id="resetMessage" class="alert"></div>
+
+    <div class="reset-actions">
+      <button type="button" class="textButton" id="backToLogin">← Zurück zum Login</button>
+    </div>
+  </form>
+</div>
+
+            <div class="registerFormularDiv">
+                <form class="registerForm" id="registerForm">
+                    <label for="regUsername">Benutzername:</label>
+                    <input type="text" id="regUsername" name="username" placeholder="Benutzername" required>
+                    <label for="regEmail">Email:</label>
+                    <input type="email" id="regEmail" name="email" placeholder="Email" required>
+                    <label for="regPassword">Passwort:</label>
+                    <input type="password" id="regPassword" placeholder="Passwort" required />
+                    <button type="submit" class="submitButton" id="submitbuttonregister">Registrieren</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="userinfo">
+            <div class="character" id="avatarLink"> </div>
+            <div class="welcomeNote"> Willkommen</div>
+            <div class="CharacterName"></div>
+            <div id="submitlogout" class="logoutButton" style="display: none;">⎋ Logout</div>
+        </div>
+        <!-- Willkommen-Text, wird nur angezeigt, wenn der Benutzer eingeloggt ist -->
+        <div id="welcomeMessage" class="welcomeMessage" style="display: none;">
+            <p>Willkommen, <span id="usernameDisplay"></span>!</p>
+        </div>
+  
+  <div class="gradient-transition"></div>
+  <div class="start">
+    <h1 span class="gradient-text">Die Entwickler von Leap</h1>
+    
+<!-- Who-are-we: Expand Button + Content -->
+<button class="next" id="expandButton" type="button" aria-expanded="false" aria-controls="expandedContent">
+  <span class="buttonLabel">Weiter</span>
+</button>
+
+<section id="expandedContent" class="expandedContent" hidden>
+  <div class="drittel">
+    <div class="texth1">Das Herz des Projekts</div>
+    <div class="text">
+      Leap ist die Antwort auf ein häufiges Problem: Programmieren lernen ist oft zu kompliziert und unübersichtlich.
+      Mit Leap schaffen wir eine einfache, intuitive Programmiersprache, die speziell für Einsteiger entwickelt wurde.
+      So können alle – vom Schüler bis zum Quereinsteiger – schnell Erfolgserlebnisse erleben und ihre eigenen Ideen zum Leben erwecken.
+    </div>
+    <video class="video" src="../assets/videos/vorlage.mp4" muted preload="metadata" poster="../assets/images/video-pre-picture.jpg"></video>
+  </div>
+
+  <div class="drittel reverse">
+    <video class="video" src="../assets/videos/vorlage.mp4" muted preload="metadata" poster="../assets/images/video-pre-picture.jpg"></video>
+    <div class="texth1">Die Lösung für ein häufiges Problem</div>
+    <div class="text">
+      Jeder von uns hatte seine ganz persönliche Motivation, Leap zu entwickeln. In diesem Video erzählen wir offen und
+      ehrlich, welche Herausforderungen wir als Anfänger erlebt haben und wie Leap genau diese Lücken schließen soll.
+      Es ist die Geschichte von echten Programmieranfängern – für echte Programmieranfänger.
+    </div>
+  </div>
+
+  <div class="drittel" style="background-color:#888;border-radius:20px;">
+    <div class="text">
+      <h2>Unterstütze uns mit einem Kaffee</h2>
+      <p>Wenn dir Leap gefällt, freuen wir uns über eine kleine Spende.</p>
+      <p>
+        <a href="https://www.paypal.com/donate/DEINE_PAYPAL_LINK" target="_blank" rel="noopener noreferrer"
+           style="color:#50e9ba;text-decoration:underline;">
+          Hier kannst du uns ganz einfach einen Kaffee spendieren ☕
+        </a>
+      </p>
+    </div>
+  </div>
+</section>
+
+    <div class="gallery-container" aria-label="Automatisch scrollende Bildergalerie" role="region">
+      <div class="gallery-track">
+        <!-- Bilder (2x, um Endlosschleife zu erzeugen) -->
+        <div class="gallery-item"><img src="../assets/images/IMG_2177.jpg" alt="Bild 1" /></div>
+        <div class="gallery-item"><img src="../assets/images/IMG_2180.jpg" alt="Bild 2" /></div>
+        <div class="gallery-item"><img src="../assets/images/IMG_2188.jpg" alt="Bild 3" /></div>
+        <div class="gallery-item"><img src="https://picsum.photos/id/1021/200/130" alt="Bild 4" /></div>
+        <div class="gallery-item"><img src="https://picsum.photos/id/1024/200/130" alt="Bild 5" /></div>
+        <div class="gallery-item"><img src="https://picsum.photos/id/1015/200/130" alt="Bild 1" /></div>
+        <div class="gallery-item"><img src="https://picsum.photos/id/1016/200/130" alt="Bild 2" /></div>
+        <div class="gallery-item"><img src="https://picsum.photos/id/1018/200/130" alt="Bild 3" /></div>
+        <div class="gallery-item"><img src="https://picsum.photos/id/1021/200/130" alt="Bild 4" /></div>
+        <div class="gallery-item"><img src="https://picsum.photos/id/1024/200/130" alt="Bild 5" /></div>
+      </div>
+    </div>
+    
+
+  </div>
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,478 @@
+#topPage {
+  width: 100%;
+  height: 200px;
+  margin-top: 200px;
+  position: absolute;
+  z-index: 1;
+
+  display: flex;
+  align-items: center;        
+  justify-content: flex-start;
+  gap: 20px;                  
+  padding-left: 20px;
+  color: white;               
+
+  /* ✅ Gradient */
+  background: linear-gradient(to bottom, #222, #111111);
+}
+
+#picture {
+  width: 190px;
+  height: 190px;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+  flex: 0 0 auto;
+
+  /* Styles fürs Bild */
+  background: url("/assets/images/newAccount.jpeg") center/cover no-repeat;
+  transition: background-image 0.3s ease;
+
+  /* optional: Rahmen */
+  border: 2px solid black;
+}
+
+/* Hover-Effekt */
+#picture:hover {
+  background-image: url("/assets/images/newAccount-hover.jpeg");
+}
+
+/* Ergänzung/Änderung */
+.nicknameshower{
+  width: 400px;
+  height: auto;
+  padding-bottom: 50px;
+  display: flex;               /* neu */
+  align-items: center;         /* neu: vertikal mittig */
+  gap: 12px;                   /* neu: Abstand zw. Name & Button */
+}
+
+#NicknameShower .nickname {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 800;
+}
+
+#NicknameShower .underline {
+  width: 100%;
+  height: 2px;
+  background-color: white;
+  margin: 4px 0; /* Abstand zwischen Name und Strich */
+}
+
+#NicknameShower .memberSince {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 400;
+  color: #ccc;
+}
+
+
+
+
+/* Fallback-Initialen im Kreis (falls kein Bild) */
+.avatar-initials {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: 900; font-size: 44px; letter-spacing: .5px;
+  pointer-events: none;
+}
+
+
+
+.character {
+  position: fixed;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  background-color: #777;       /* Fallback-Farbe */
+  background-size: cover;       /* WICHTIG */
+  background-position: center; 
+  font-size: 8px;
+  cursor: pointer;              /* Hand-Cursor zeigt Klickbarkeit */
+  transition: transform 0.2s ease;
+}
+.character:hover {
+  transform: scale(1.1);
+  background-color: #555;       /* leicht dunkler beim Hover */
+}
+
+
+
+.achievements-wrapper {
+  margin-top: 12px;
+}
+
+.achievements-title {
+  margin: 0 0 6px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.achievements-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.achievements {
+  display: flex;
+  gap: 8px;
+}
+
+.badge {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+#manageAchievements {
+  background: #444;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+}
+
+#manageAchievements:hover {
+  background: #666;
+}
+
+
+/* Overlay + Modal */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.achievements-modal {
+  background: #1f1f1f;
+  color: #fff;
+  width: 720px;
+  max-width: 92vw;
+  padding: 18px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.5);
+}
+
+.achievements-modal h2 {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* Grid: kleine Icons */
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+  gap: 10px;
+  max-height: 40vh;
+  overflow: auto;
+  padding: 6px;
+  border: 1px solid #333;
+  border-radius: 8px;
+  background: #141414;
+}
+
+.achievement-option {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 10px;
+  background: #2a2a2a;
+  cursor: grab;
+  transition: transform .15s ease, box-shadow .15s ease;
+  box-shadow: 0 0 0 1px #333 inset;
+}
+
+.achievement-option:active { cursor: grabbing; }
+.achievement-option:hover  { transform: scale(1.06); box-shadow: 0 0 0 1px #777 inset; }
+.grid-item { /* nur optische Unterscheidung im Grid */ }
+
+/* Untere Slots (3 Haupt-Icons) */
+.slots-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin: 14px 0 10px;
+}
+
+.drop-slot {
+  height: 68px;
+  border-radius: 12px;
+  background: #121212;
+  border: 2px dashed #3a3a3a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color .15s ease, background .15s ease;
+}
+
+.drop-slot.over {
+  border-color: #58c96a;
+  background: #162418;
+}
+
+.drop-slot img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 0 0 1px #444 inset;
+}
+
+/* Modal-Buttons */
+.actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.actions button {
+  padding: 8px 14px;
+  background: #2c2c2c;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background .15s ease;
+}
+
+.actions button:hover { background: #3a3a3a; }
+
+.badge-tooltip {
+  position: fixed;
+  z-index: 99999;
+  max-width: 280px;
+  background: rgba(20,20,20,.95);
+  color: #fff;
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding: 10px 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.35);
+  pointer-events: none; /* stört Hover nicht */
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+
+.badge-tooltip .tt-title {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.badge-tooltip .tt-desc {
+  font-size: 12px;
+  line-height: 1.35;
+  color: #cfcfcf;
+}
+
+.main
+{
+  width:100%;
+  height:50%;
+  top:450px;
+  position: absolute; 
+  background: linear-gradient(to bottom, #111, #191919) !important;
+}
+
+.nicknameshower
+{
+  width:400px;
+  height:auto;
+  padding-bottom:50px;
+}
+
+.usernameDisplay
+{
+  font-size: 30px;
+  align-items: center;
+  font-weight: bold;
+  margin-left: 30px;
+}
+
+.edit-username-btn {
+  font-size: 14px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #444;
+  color: white;
+  transition: background 0.2s ease;
+  margin-left: 40px;
+}
+
+.edit-username-btn:hover {
+  background: #666;
+}
+
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+/* Modal Box */
+.modal-content {
+  background: #1f1f1f;
+  color: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 350px;
+  max-width: 90vw;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+  text-align: center;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  font-size: 18px;
+}
+
+.modal-content input {
+  width: 90%;
+  padding: 8px;
+  margin: 15px 0;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background: #2a2a2a;
+  color: white;
+  text-align: center;
+}
+
+/* Buttons */
+.modal-actions {
+  display: flex;
+  justify-content: space-around;
+}
+
+.modal-actions button {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #444;
+  color: white;
+  transition: background 0.2s ease;
+}
+
+.modal-actions button:hover {
+  background: #666;
+}
+
+
+/* === Appearance Settings === */
+.appearance-card {
+  width: min(760px, 92vw);
+  margin: 24px 20px;
+  padding: 18px 18px 16px;
+  border-radius: 12px;
+  background: #1f1f1f;
+  color: #fff;
+  border: 1px solid #2d2f35;
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+  backdrop-filter: blur(4px);
+  animation: fadeSlideIn .3s ease forwards;
+}
+.appearance-card h2 {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: .2px;
+  color: #50e9ba;
+}
+.appearance-card .row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 10px 0;
+}
+.appearance-card .row.switch { justify-content: space-between; }
+.appearance-card label { width: 240px; color: #e9eef3; }
+.appearance-card input[type="color"] {
+  width: 48px; height: 28px;
+  border: none; border-radius: 6px;
+  background: #2a2a2a;
+  cursor: pointer;
+}
+.appearance-card select {
+  background: #2a2a2a;
+  color: #fff;
+  border: 1px solid #3a3a3a;
+  border-radius: 8px;
+  padding: 6px 10px;
+}
+.appearance-card input[type="checkbox"] {
+  width: 22px; height: 22px;
+  accent-color: #00e3b6;
+  cursor: pointer;
+}
+.appearance-card .hint {
+  margin-top: 8px;
+  font-size: 12px;
+  opacity: .8;
+  color: #aaa;
+}
+
+/* Light / Gradient Theme Overrides */
+body[data-theme="light"] .appearance-card {
+  background: #fff;
+  color: #111;
+  border-color: #e5e7eb;
+  box-shadow: 0 10px 24px rgba(0,0,0,.12);
+}
+body[data-theme="light"] .appearance-card label { color: #111; }
+body[data-theme="light"] .appearance-card select {
+  background: #fff;
+  color: #111;
+  border-color: #d1d5db;
+}
+body[data-theme="gradient"] .appearance-card {
+  background: #ffffff;
+  color: #111;
+  border-color: #e5e7eb;
+  box-shadow: 0 10px 24px rgba(0,0,0,.15);
+}
+
+/* Smooth Fade-In */
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+
+/* === Safety Defaults (falls root-Variablen fehlen) === */
+:root {
+  --name-color: #50e9ba;
+  --hover-border-color: #148fac;
+  --particle-color: #00e3b6;
+  --grad-top: #14272A;
+  --grad-bottom: #0c181a;
+}
+
+/* Gradient-Bar (falls du sie auf settings.html nutzt) */
+.gradient-transition {
+  height: 120px;
+  width: 100%;
+  background: linear-gradient(var(--grad-top), var(--grad-bottom));
+  transition: background .25s ease;
+}
+

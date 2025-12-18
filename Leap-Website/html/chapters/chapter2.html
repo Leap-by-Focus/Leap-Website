@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leap – Kapitel 2</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="../../css/index.css">
+    <link rel="stylesheet" href="../../css/forum.css">
+    <link rel="stylesheet" href="../../css/whoarewe.css">
+    <link rel="stylesheet" href="../../css/chapter.css">
+
+    <!-- Monaco Editor Loader -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
+
+    <!-- Monaco Editor -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
+
+<!-- Editor + Checker (RICHTIGE REIHENFOLGE!) -->
+<script type="module" src="../../js/editor-init.js" defer></script>
+<script type="module" src="../../js/chapter2-logic.js" defer></script>
+ <script type="module" src="../js/firebaseauth.js" defer></script>
+    <script src="../js/loginFormularDiv.js" defer></script>
+    <script src="../js/openLogin.js" defer></script>
+
+
+
+<!-- NICHT LADEN:
+<script type="module" src="../../js/checker2-check.js"></script>
+-->
+
+    <!-- Darkmode -->
+    <script src="../../js/appearance-apply.js" defer></script>
+
+    <!-- Menü -->
+    <script src="../../js/particlesMenu.js" defer></script>
+</head>
+<body>
+
+
+    
+ <div class="hauptMenu">
+      <canvas id="particleCanvas"></canvas>
+      <div class="backToMainLogo">
+  <a href="index.html" onclick="window.location.href='../index.html'; return true;">
+    <img src="../../assets/images/Leap.png" alt="Leap Logo" />
+  </a>
+</div>
+    </div>
+
+    <div class="loginDiv">
+      <div class="loginButton" id="loginButton">Login</div>
+      <div class="registerButton" id="registerButton">Register</div>
+
+      <div class="loginFormularDiv" id="loginFormular">
+        <form class="loginForm">
+          <label for="logUsername">Benutzername:</label>
+          <input type="text" id="logUsername" required />
+          <label for="logPassword">Passwort:</label>
+          <input type="password" id="logPassword" required />
+          <button type="submit" class="submitButton" id="submitbuttonlogin">
+            Anmelden
+          </button>
+          <div id="signInMessage" class="alert"></div>
+        </form>
+        <div class="reset-password-link">
+          <a href="#" id="forgotLink">Passwort vergessen?</a>
+        </div>
+      </div>
+
+      <div class="resetFormularDiv" id="resetFormular">
+        <form class="loginForm" id="resetForm">
+          <!-- Phase A -->
+          <div id="phase-request">
+            <label for="resetEmail">E-Mail-Adresse:</label>
+            <input
+              type="email"
+              id="resetEmail"
+              name="resetEmail"
+              placeholder="dein@mail.tld"
+              required
+            />
+            <button type="submit" class="submitButton" id="btnSendReset">
+              Link zum Zurücksetzen senden
+            </button>
+          </div>
+
+          <!-- Phase B (über E-Mail-Link sichtbar) -->
+          <div id="phase-set" style="display: none">
+            <p id="emailLine" class="muted"></p>
+
+            <label for="pw1">Neues Passwort:</label>
+            <input
+              type="password"
+              id="pw1"
+              name="newPassword"
+              minlength="6"
+              autocomplete="new-password"
+              required
+            />
+
+            <label for="pw2">Neues Passwort wiederholen:</label>
+            <input
+              type="password"
+              id="pw2"
+              name="newPasswordRepeat"
+              minlength="6"
+              autocomplete="new-password"
+              required
+            />
+
+            <button type="submit" class="submitButton" id="btnConfirmReset">
+              Passwort speichern
+            </button>
+          </div>
+
+          <div id="resetMessage" class="alert"></div>
+
+          <div class="reset-actions">
+            <button type="button" class="textButton" id="backToLogin">
+              ← Zurück zum Login
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="registerFormularDiv">
+        <form class="registerForm" id="registerForm">
+          <label for="regUsername">Benutzername:</label>
+          <input
+            type="text"
+            id="regUsername"
+            name="username"
+            placeholder="Benutzername"
+            required
+          />
+          <label for="regEmail">Email:</label>
+          <input
+            type="email"
+            id="regEmail"
+            name="email"
+            placeholder="Email"
+            required
+          />
+          <label for="regPassword">Passwort:</label>
+          <input
+            type="password"
+            id="regPassword"
+            placeholder="Passwort"
+            required
+          />
+          <button type="submit" class="submitButton" id="submitbuttonregister">
+            Registrieren
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="userinfo">
+      <div class="character" id="avatarLink"></div>
+      <div class="welcomeNote">Willkommen</div>
+      <div class="CharacterName"></div>
+      <div id="submitlogout" class="logoutButton" style="display: none">
+        ⎋ Logout
+      </div>
+    </div>
+
+    <!-- Willkommen-Text, wird nur angezeigt, wenn der Benutzer eingeloggt ist -->
+    <div id="welcomeMessage" class="welcomeMessage" style="display: none">
+      <p>Willkommen, <span id="usernameDisplay"></span>!</p>
+    </div>
+
+
+
+
+<div class="gradient-transition"></div>
+
+    <div class="menu">
+    <div class="Menu-menu-text"> Menü</div>
+    <a href="../docs.html">Home</a>
+    <a href="#">Kapitel 1</a>
+    <a href="#">Kapitel 2</a>
+    <a href="#">Kapitel 3</a>
+</div>
+
+<div class="container">
+    <div class="links">
+    <h2>Variablen – Dein erster Schritt ins Programmieren</h2>
+
+    <p>
+        In Leap sind Variablen wie kleine Boxen, in denen du Werte speichern kannst.
+        Eine Variable kann eine Zahl enthalten, einen Text oder später sogar Listen
+        und Berechnungen. Du benutzt Variablen, um Daten zu speichern, zu verändern
+        und wieder auszugeben.
+    </p>
+
+    <h3>🔹 Was ist eine Variable?</h3>
+    <p>
+        Eine Variable hat zwei Dinge:
+    </p>
+    <ul>
+        <li><b>einen Namen</b> – so sprichst du sie im Code an</li>
+        <li><b>einen Wert</b> – das, was in der Variable gespeichert ist</li>
+    </ul>
+
+    <p>
+        Der Name muss mit einem Buchstaben beginnen und darf aus Buchstaben,
+        Zahlen und dem Unterstrich <code>_</code> bestehen.
+    </p>
+
+    <h3>🔹 Eine Variable erstellen</h3>
+    <p>
+        In Leap erstellst du eine Variable, indem du ihr einfach einen Wert zuweist.
+        Die Syntax ist super einfach:
+    </p>
+
+    <pre><code class="language-leap">x = 10
+name = "Luka"</code></pre>
+
+    <p>
+        Links steht der Name, rechts der Wert. Kein <code>let</code>, kein
+        <code>var</code> – Leap soll für Anfänger so einfach wie möglich sein.
+    </p>
+
+    <h3>🔹 Variablen ausgeben</h3>
+    <p>
+        Um etwas in Leap auszugeben, verwendest du den Befehl
+        <code>ausgeben(...)</code>. Er zeigt dir den Wert einer Variable im
+        Terminal an.
+    </p>
+
+    <pre><code class="language-leap">x = 5
+ausgeben(x)</code></pre>
+
+    <p>
+        Ausgabe:
+    </p>
+    <pre><code>5</code></pre>
+
+    <h3>🔹 Rechnen mit Variablen</h3>
+    <p>
+        Du kannst Variablen wie Zahlen verwenden – addieren, subtrahieren,
+        multiplizieren oder dividieren.
+    </p>
+
+    <pre><code class="language-leap">a = 10
+b = 4
+ergebnis = a + b
+ausgeben(ergebnis)</code></pre>
+
+    <p>
+        Ausgabe:
+    </p>
+    <pre><code>14</code></pre>
+
+    <p>
+        Leap unterstützt einfache mathematische Operationen:
+    </p>
+
+    <ul>
+        <li><code>+</code>  → Addition</li>
+        <li><code>-</code>  → Subtraktion</li>
+        <li><code>*</code>  → Multiplikation</li>
+        <li><code>/</code>  → Division</li>
+    </ul>
+
+    <h3>🔹 Texte verketten (Strings)</h3>
+    <p>
+        Variablen können Texte enthalten. Diese Texte heißen „Strings“.
+        Du schreibst sie in Anführungszeichen.
+    </p>
+
+    <pre><code class="language-leap">vorname = "Luka"
+nachname = "Veselinovic"
+voll = vorname + " " + nachname
+ausgeben(voll)</code></pre>
+
+    <p>
+        Ausgabe:
+    </p>
+    <pre><code>Luka Veselinovic</code></pre>
+
+    <h3>🔹 Fehler, die oft passieren</h3>
+    <p>Hier ein paar typische Anfängerfehler und wie du sie vermeidest:</p>
+
+    <ul>
+        <li>
+            <b>Fehler:</b> Rechts und links gemischt<br>
+            <code>x = = 5</code> → ❌ falsch  
+        </li>
+        <li>
+            <b>Fehler:</b> Anführungszeichen vergessen<br>
+            <code>name = Luka</code> → ❌ falsch  
+        </li>
+        <li>
+            <b>Fehler:</b> Variable wird benutzt, bevor sie erstellt wurde<br>
+            <code>ausgeben(score)</code> ohne score davor → ❌ Fehler
+        </li>
+    </ul>
+
+    <h3>🔹 Mini-Test: Verstehst du Variablen?</h3>
+    <p>Versuche diese Aufgabe im Editor rechts:</p>
+
+    <pre><code class="language-leap">preis = 20
+anzahl = 3
+gesamt = preis * anzahl
+ausgeben(gesamt)</code></pre>
+
+    <p>
+        Wenn du <b>60</b> bekommst, hast du alles richtig gemacht!
+    </p>
+
+    <h3>🎉 Fazit</h3>
+    <p>
+        Du hast nun gelernt, wie Variablen funktionieren, wie du Werte speicherst,
+        wie du rechnest und wie du Ausgaben machst. Das ist die Grundlage für alles,
+        was in Leap – und allgemein beim Programmieren – passiert.
+    </p>
+
+    <p>
+        Im nächsten Kapitel schauen wir uns <b>Bedingungen (if)</b> an und bringen
+        deinem Code bei, Entscheidungen zu treffen!
+    </p>
+</div>
+
+<div class="rechts">
+    <div class="task-panel">
+        <div class="task-header">🎯 MISSION: VARIABLEN-MASTER</div>
+        <div class="task-body">
+            Erstelle x und y, addiere sie in einer neuen Variable und nutze <code>ausgeben()</code>.
+        </div>
+    </div>
+
+    <div class="vscode-container">
+        <div class="vscode-toolbar">
+            <span class="file-title">chapter2.lp</span>
+            <div class="vsc-buttons">
+                <button id="runBtn" class="vsc-btn run">▶ Run</button>
+                <button id="stopBtn" class="vsc-btn stop">⏹ Stop</button>
+            </div>
+        </div>
+
+        <div id="leapEditor" class="vscode-editor-frame"></div>
+
+        <div class="vscode-terminal">
+            <div class="terminal-header-bar">OUTPUT</div>
+            <div id="editorOutput" class="terminal-content">> Warte auf Eingabe...</div>
+        </div>
+
+        <div class="vscode-footer">
+            <span>Ready</span>
+            <span>Leap Language</span>
+        </div>
+    </div>
+
+    <div class="chapter-statusbar">
+        <div class="chapter-status-fill" id="chapterStatusFill"></div>
+        <span id="chapterStatusText">Aufgabe noch nicht gelöst</span>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    
+    
+
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const bodyEl = document.querySelector(".post-body[contenteditable='true']");
+  if (!bodyEl) return;
+
+  const updatePlaceholder = () => {
+    const txt = (bodyEl.textContent || "").trim();
+    // Wenn wirklich leer, in echten Leerzustand bringen
+    if (!txt && bodyEl.innerHTML !== "") {
+      bodyEl.innerHTML = "";
+    }
+  };
+
+  // beim Laden einmal prüfen
+  updatePlaceholder();
+
+  // während der Eingabe pflegen
+  bodyEl.addEventListener("input", updatePlaceholder);
+  bodyEl.addEventListener("blur", updatePlaceholder);
+});
+</script>
+
+
+
+
+
+
+
+
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Leap – Forum</title>
+
+    <link rel="stylesheet" href="../css/whoarewe.css" />
+    <link rel="stylesheet" href="../css/index.css" />
+    <link rel="stylesheet" href="../css/forum.css" />
+<script src="../js/appearance-apply.js" defer></script>
+    <script src="../js/particlesMenu.js" defer></script>
+      <script src="../js/adminCommands.js" defer></script>
+      <script src="../js/rulesPopover.js" defer></script>
+    <script type="module" src="../js/firebaseauth.js" defer></script>
+    <script src="../js/loginFormularDiv.js" defer></script>
+    <script src="../js/openLogin.js" defer></script>
+    <script src="../js/forumtoolbar.js" defer></script>
+    <script src="../js/whoareweAnimation.js" defer></script>
+    <script src="../js/expandButton.js" defer></script>
+        <script src="../js/forumButtonSettings.js" defer></script>
+    <script src="../js/forumuploadimage.js" defer></script>
+    <script type="module" src="../js/livechat.js" defer></script>
+    <script type="module" src="../js/tagPicker.js" defer></script>
+    <script type="module" src="../js/createPost.js" defer></script>
+    <script type="module" src="../js/postFeed.js" defer></script>
+  </head>
+
+  <body>
+    <div class="hauptMenu">
+      <canvas id="particleCanvas"></canvas>
+      <div class="backToMainLogo">
+  <a href="index.html" onclick="window.location.href='index.html'; return true;">
+    <img src="../assets/images/Leap.png" alt="Leap Logo" />
+  </a>
+</div>
+    </div>
+
+    <div class="loginDiv">
+      <div class="loginButton" id="loginButton">Login</div>
+      <div class="registerButton" id="registerButton">Register</div>
+
+      <div class="loginFormularDiv" id="loginFormular">
+        <form class="loginForm">
+          <label for="logUsername">Benutzername:</label>
+          <input type="text" id="logUsername" required />
+          <label for="logPassword">Passwort:</label>
+          <input type="password" id="logPassword" required />
+          <button type="submit" class="submitButton" id="submitbuttonlogin">
+            Anmelden
+          </button>
+          <div id="signInMessage" class="alert"></div>
+        </form>
+        <div class="reset-password-link">
+          <a href="#" id="forgotLink">Passwort vergessen?</a>
+        </div>
+      </div>
+
+      <div class="resetFormularDiv" id="resetFormular">
+        <form class="loginForm" id="resetForm">
+          <!-- Phase A -->
+          <div id="phase-request">
+            <label for="resetEmail">E-Mail-Adresse:</label>
+            <input
+              type="email"
+              id="resetEmail"
+              name="resetEmail"
+              placeholder="dein@mail.tld"
+              required
+            />
+            <button type="submit" class="submitButton" id="btnSendReset">
+              Link zum Zurücksetzen senden
+            </button>
+          </div>
+
+          <!-- Phase B (über E-Mail-Link sichtbar) -->
+          <div id="phase-set" style="display: none">
+            <p id="emailLine" class="muted"></p>
+
+            <label for="pw1">Neues Passwort:</label>
+            <input
+              type="password"
+              id="pw1"
+              name="newPassword"
+              minlength="6"
+              autocomplete="new-password"
+              required
+            />
+
+            <label for="pw2">Neues Passwort wiederholen:</label>
+            <input
+              type="password"
+              id="pw2"
+              name="newPasswordRepeat"
+              minlength="6"
+              autocomplete="new-password"
+              required
+            />
+
+            <button type="submit" class="submitButton" id="btnConfirmReset">
+              Passwort speichern
+            </button>
+          </div>
+
+          <div id="resetMessage" class="alert"></div>
+
+          <div class="reset-actions">
+            <button type="button" class="textButton" id="backToLogin">
+              ← Zurück zum Login
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="registerFormularDiv">
+        <form class="registerForm" id="registerForm">
+          <label for="regUsername">Benutzername:</label>
+          <input
+            type="text"
+            id="regUsername"
+            name="username"
+            placeholder="Benutzername"
+            required
+          />
+          <label for="regEmail">Email:</label>
+          <input
+            type="email"
+            id="regEmail"
+            name="email"
+            placeholder="Email"
+            required
+          />
+          <label for="regPassword">Passwort:</label>
+          <input
+            type="password"
+            id="regPassword"
+            placeholder="Passwort"
+            required
+          />
+          <button type="submit" class="submitButton" id="submitbuttonregister">
+            Registrieren
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="userinfo">
+      <div class="character" id="avatarLink"></div>
+      <div class="welcomeNote">Willkommen</div>
+      <div class="CharacterName"></div>
+      <div id="submitlogout" class="logoutButton" style="display: none">
+        ⎋ Logout
+      </div>
+    </div>
+
+    <!-- Willkommen-Text, wird nur angezeigt, wenn der Benutzer eingeloggt ist -->
+    <div id="welcomeMessage" class="welcomeMessage" style="display: none">
+      <p>Willkommen, <span id="usernameDisplay"></span>!</p>
+    </div>
+
+    <div class="gradient-transition"></div>
+
+    <div class="sideMenu">
+      <div class="sideMenu">
+        <!-- Oberkategorie -->
+        <button class="buttonBeliebt" data-tag="beliebt">
+          <img
+            src="../assets/images/beliebt.png"
+            alt="Beliebt Icon"
+            class="button-icon"
+          />
+          <span>Beliebt</span>
+        </button>
+
+        <button data-tag="gemerkte">
+          <img
+            src="../assets/images/merken.png"
+            alt="SQL Icon"
+            class="button-icon"
+          />
+          <span>Gemerkte</span>
+        </button>
+
+        <div class="divider"></div>
+
+        <div class="untertitel">Leap</div>
+
+        <button data-tag="fragen">
+          <img
+            src="../assets/images/fragen.png"
+            alt="Fragen Icon"
+            class="button-icon"
+          />
+          <span>Fragen & Hilfe</span>
+        </button>
+
+        <button data-tag="leap-projekte">
+          <img
+            src="../assets/images/leap-projekte.png"
+            alt="Projekte Icon"
+            class="button-icon"
+          />
+          <span>Leap-Projekte</span>
+        </button>
+
+        <div class="divider"></div>
+
+        <div class="untertitel">Community</div>
+
+        <button data-tag="diskussion">
+          <img
+            src="../assets/images/diskussion.png"
+            alt="Diskussion Icon"
+            class="button-icon"
+          />
+          <span>Diskussion</span>
+        </button>
+
+        <button data-tag="bugs">
+          <img
+            src="../assets/images/bugs.png"
+            alt="Bugs Icon"
+            class="button-icon"
+          />
+          <span>Fehler & Bugs</span>
+        </button>
+
+        <button data-tag="feedback">
+          <img
+            src="../assets/images/feedback.png"
+            alt="Feedback Icon"
+            class="button-icon"
+          />
+          <span>Feedback</span>
+        </button>
+
+        <button data-tag="memes">
+          <img
+            src="../assets/images/memes.png"
+            alt="Memes Icon"
+            class="button-icon"
+          />
+          <span>Memes & Spaß</span>
+        </button>
+
+        <div class="divider"></div>
+
+        <div class="untertitel">Programmieren</div>
+
+        <button data-tag="java">
+          <img
+            src="../assets/images/java.png"
+            alt="Java Icon"
+            class="button-icon"
+          />
+          <span>Java</span>
+        </button>
+
+        <button data-tag="csharp">
+          <img
+            src="../assets/images/csharp.png"
+            alt="C# Icon"
+            class="button-icon"
+          />
+          <span>C#</span>
+        </button>
+
+        <button data-tag="python">
+          <img
+            src="../assets/images/python.png"
+            alt="Python Icon"
+            class="button-icon"
+          />
+          <span>Python</span>
+        </button>
+
+        <!-- „Web“ mapped auf Tag "html" -->
+        <button data-tag="html">
+          <img
+            src="../assets/images/html.png"
+            alt="Web Icon"
+            class="button-icon"
+          />
+          <span>Web</span>
+        </button>
+
+        <button data-tag="sql">
+          <img
+            src="../assets/images/sql.png"
+            alt="SQL Icon"
+            class="button-icon"
+          />
+          <span>SQL</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ============= Hauptbereich ============= -->
+    <div class="main">
+      <!-- bleibt oben kleben, scrollt NICHT -->
+      <div class="search-container">
+        <input type="text" placeholder="Suchen..." class="search-input" />
+        <button class="search-btn">🔍</button>
+      </div>
+      
+    <!-- Filter & Sort -->
+<div class="controls-bar" id="controlsBar">
+  <div class="controls-row">
+    <label>
+      Sortieren:
+      <select id="sortBy">
+        <option value="newest">Neueste zuerst</option>
+        <option value="oldest">Älteste zuerst</option>
+        <option value="likes">Meiste Likes</option>
+        <option value="comments">Meiste Kommentare</option>
+      </select>
+    </label>
+
+    <label>
+      Zeitraum:
+      <select id="timeRange">
+        <option value="all">Alle</option>
+        <option value="24h">Letzte 24h</option>
+        <option value="7d">Letzte 7 Tage</option>
+        <option value="30d">Letzte 30 Tage</option>
+      </select>
+    </label>
+
+<label class="checkbox-inline">
+  <input type="checkbox" id="withCode" />
+  Nur mit Code-Snippet
+</label>
+  </div>
+</div>
+
+      <!-- Nur dieser Bereich scrollt -->
+      <div class="post-feed" id="postFeed"></div>
+      
+    </div>
+   <!-- Modal für Post-Detail -->
+    <div id="postModal" class="post-modal" aria-hidden="true">
+      <div class="post-modal__backdrop" data-close></div>
+      <article class="post-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="postModalTitle">
+        <button class="post-modal__close" type="button" data-close>×</button>
+        <header class="post-modal__head">
+          <h2 id="postModalTitle" class="post-modal__title"></h2>
+          <div class="post-modal__meta"></div>
+          <div class="post-modal__tags"></div>
+        </header>
+        <section class="post-modal__body"></section>
+        <!-- Actions / Toolbar unter dem Inhalt -->
+<footer class="post-modal__actions" role="group" aria-label="Thread Aktionen">
+  <button class="pm-btn pm-like" data-action="like" aria-pressed="false">
+    <span class="pm-ico">♥</span><span class="pm-label">Like</span>
+    <span class="pm-count" id="pm-like-count">0</span>
+  </button>
+
+<button type="button" class="pm-btn pm-fav" data-action="favorite" aria-pressed="false">
+  <span class="pm-ico" aria-hidden="true">★</span>
+  <span class="pm-label">Merken</span>
+</button>
+
+
+<button class="pm-btn pm-reply" type="button">
+  <span class="pm-ico">💬</span>
+  <span class="pm-label">Antworten</span>
+  <span class="pm-count">0</span> <!-- ← WICHTIG: dieser Counter wird aktualisiert -->
+</button>
+
+  <div class="pm-split"></div>
+
+  <button class="pm-btn pm-share" data-action="share">
+    <span class="pm-ico">⤴</span><span class="pm-label">Teilen</span>
+  </button>
+
+  <button class="pm-btn pm-report" data-action="report" title="Beitrag melden">
+  <span class="pm-ico">⚑</span>
+  <span class="pm-label">Melden</span>
+</button>
+
+  <div class="pm-menu">
+    <button class="pm-btn pm-more" data-action="more" aria-expanded="false" aria-haspopup="true">
+      ⋯
+    </button>
+    <div class="pm-menu__list" role="menu">
+      <button class="pm-menu__item" role="menuitem" data-action="copy-link">Link kopieren</button>
+      <button class="pm-menu__item" role="menuitem" data-action="report">Melden</button>
+      
+    </div>
+  </div>
+</footer>
+
+<!-- Antworten-Composer -->
+<section class="pm-reply-composer" id="pm-reply-composer">
+  <div class="pm-reply-avatar" id="pm-reply-avatar">👤</div>
+  <div class="pm-reply-box">
+    <div class="pm-reply-editor" id="pm-reply-editor"
+         contenteditable="true"
+         data-placeholder="Schreibe eine Antwort…"></div>
+    <div class="pm-reply-tools">
+      <div>
+        <button class="pm-mini" type="button">B</button>
+        <button class="pm-mini" type="button">{ }</button>
+      </div>
+      <div>
+        <button class="pm-mini pm-cancel" type="button" id="pm-reply-cancel">Abbrechen</button>
+        <button class="pm-submit" type="button" id="pm-reply-submit">Antwort posten</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Antworten-Liste -->
+<section class="pm-replies" id="pm-replies"></section>
+
+<!-- Antwortenliste -->
+<section class="pm-replies" id="pm-replies" aria-label="Antworten">
+  <!-- Beispiel-Item (wird später dynamisch erzeugt) -->
+  <!--
+  <article class="pm-reply">
+    <div class="pm-reply-avatar">🧑‍💻</div>
+    <div class="pm-reply-body">
+      <div class="pm-reply-head">
+        <span class="pm-reply-author">User123</span>
+        <span class="pm-reply-dot">•</span>
+        <time class="pm-reply-time">12.03., 14:21</time>
+      </div>
+      <div class="pm-reply-text">So würde ich das lösen…</div>
+      <div class="pm-reply-actions">
+        <button class="pm-mini" data-action="reply-like">♥ 3</button>
+        <button class="pm-mini" data-action="reply-report">Melden</button>
+      </div>
+    </div>
+  </article>
+  -->
+</section>
+      </article>
+    </div>
+
+    
+
+    <!-- Livechat ist fix rechts; unabhängig vom Feed-Scroll -->
+    <div class="livechat">
+      <div class="livechat-header">
+        Livechat <span id="chat-timer" style="float:right;opacity:.7">—</span>
+      </div>
+
+      <div id="chat-messages" class="chat-messages"></div>
+
+      <form id="chat-form" class="chat-form">
+        <input id="chat-input" type="text" placeholder="Nachricht…" />
+        <button id="chat-send" type="submit">➤</button>
+      </form>
+
+      <div id="chat-hint" class="chat-hint" style="display:none;">
+        Bitte einloggen, um zu schreiben.
+      </div>
+    </div>
+
+<div class="footer">
+  <div class="create-container">
+    <button class="create-btn" id="createBtn" type="button">Neuer Beitrag</button>
+
+    <!-- Panel -->
+    <div class="create-panel" id="createPanel">
+      <form class="create-form">
+        <!-- Titel -->
+        <input
+          type="text"
+          class="post-title"
+          id="postTitle"
+          placeholder="Titel eingeben…"
+        />
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+          <button type="button" data-cmd="bold"><b>B</b></button>
+          <button type="button" data-cmd="italic"><i>I</i></button>
+          <button type="button" data-cmd="underline"><u>U</u></button>
+
+          <!-- Tag-Picker -->
+          <div class="tag-picker">
+            <div class="tag-list" id="tagList"></div>
+            <input
+              id="tagInput"
+              class="tag-input"
+              type="text"
+              placeholder="#Tags hinzufügen…"
+              autocomplete="off"
+            />
+            <div class="tag-suggest" id="tagSuggest" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <!-- Beitragstext -->
+        <div
+          class="post-body"
+          id="postBody"
+          contenteditable="true"
+          data-placeholder="Schreibe hier deinen Beitrag…"
+        ></div>
+
+        <!-- Submit -->
+        <button type="submit" class="submit-post">Beitrag erstellen</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="footer-right">
+  <!-- ⚙️ Settings (deine bestehende Struktur, unverändert) -->
+  <div class="settings-button">
+    <button class="footer-btn gear-btn" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="settingsPopup">⚙️</button>
+
+    <div id="settingsPopup" class="settings-popup" role="dialog" aria-modal="false" tabindex="-1">
+      <h3>🎨 Erscheinungsbild</h3>
+
+      <label for="nameColor">Namensfarbe:</label>
+      <input type="color" id="nameColor" value="#50e9ba">
+
+      <label for="borderGradient">Rahmenfarbe:</label>
+      <input type="color" id="borderGradient" value="#148fac">
+
+      <label for="particleColor">Partikel-Farbe:</label>
+      <input type="color" id="particleColor" value="#00e3b6">
+
+      <label for="backgroundSelect">Hintergrund:</label>
+      <select id="backgroundSelect">
+        <option value="dark">Dunkel</option>
+        <option value="light">Hell</option>
+        <option value="gradient">Gradient</option>
+        <option value="stars">Sterne</option>
+      </select>
+
+      <label class="glow-option">
+        <input type="checkbox" id="enableGlow" checked>
+        Glüh-Effekt aktivieren
+      </label>
+    </div>
+  </div>
+
+  <!-- 📜 Regeln -->
+<div class="rules-button">
+  <button class="footer-btn rules-btn" type="button"
+          aria-haspopup="dialog" aria-expanded="false" aria-controls="rulesPopup">📜</button>
+
+  <div id="rulesPopup" class="rules-popup" role="dialog" aria-modal="false" tabindex="-1">
+  <h3>📜 Leap Community-Regeln</h3>
+
+  <p>Willkommen in der <strong>Leap Community</strong>!  
+  Damit alle Spaß haben, freundlich bleiben und produktiv lernen können, bitten wir dich, diese Regeln zu respektieren.  
+  Unsere integrierte <strong>Leap AI</strong> achtet mit auf die Einhaltung und hilft, wenn du unsicher bist.</p>
+
+  <section class="rules-section">
+    <h4>🤝 Verhalten</h4>
+    <ul>
+      <li><strong>Respekt & Freundlichkeit:</strong> Behandle andere so, wie du selbst behandelt werden möchtest – keine Beleidigungen, kein toxisches Verhalten, keine Diskriminierung.</li>
+      <li><strong>Hilfsbereitschaft:</strong> Unterstütze andere, besonders neue Mitglieder. Leap ist ein Lernraum.</li>
+      <li><strong>Privatsphäre:</strong> Teile keine persönlichen Daten – weder deine noch die anderer.</li>
+    </ul>
+  </section>
+
+  <section class="rules-section">
+    <h4>💬 Inhalte & Beiträge</h4>
+    <ul>
+      <li><strong>Kein Spam:</strong> Bitte kein Flooding, keine Werbung und keine leeren Posts.</li>
+      <li><strong>Richtige Themenwahl:</strong> Poste in die passende Kategorie und verwende sinnvolle <code>#Tags</code>.</li>
+      <li><strong>Code & Quellen:</strong> Markiere Codeblöcke mit <code>&lt;pre&gt;</code> oder <code>&lt;code&gt;</code> und nenne deine Quellen, falls du etwas übernimmst.</li>
+      <li><strong>Urheberrecht:</strong> Nur eigene oder lizenzfreie Inhalte posten.</li>
+    </ul>
+  </section>
+
+  <section class="rules-section">
+    <h4>🧠 Leap AI-Moderation</h4>
+    <ul>
+      <li>Unsere <strong>Leap AI</strong> prüft öffentliche Beiträge automatisch auf beleidigende oder gefährliche Inhalte.  
+      Das passiert transparent, um die Community sicher und angenehm zu halten.</li>
+      <li>Wenn du einen Beitrag meldest (<span aria-hidden="true">⚑</span>), hilft die AI der Moderation bei der Einschätzung.</li>
+      <li>Du kannst auch direkt mit ihr interagieren:  
+      Erwähne sie mit <strong>@Leap</strong> oder <strong>@leapt</strong>, um Fragen zu stellen oder Hilfe bei Problemen zu bekommen.</li>
+      <li>Die AI reagiert nur auf inhaltliche oder technische Fragen – nicht auf persönliche oder private Themen.</li>
+    </ul>
+  </section>
+
+  <section class="rules-section">
+    <h4>⚖️ Moderation & Konsequenzen</h4>
+    <ul>
+      <li>Die Moderation kann Inhalte bearbeiten, sperren oder entfernen, wenn sie gegen die Regeln verstoßen.</li>
+      <li>Wiederholte Verstöße führen zu Verwarnungen oder Account-Einschränkungen.</li>
+      <li>Bei Unsicherheiten frag zuerst <strong>@Leap</strong> – sie erklärt dir, was erlaubt ist.</li>
+    </ul>
+  </section>
+
+  <section class="rules-section">
+    <h4>💡 Tipps für gute Posts</h4>
+    <ul>
+      <li>Füge Beispielcode hinzu, wenn du Fragen stellst.</li>
+      <li>Verwende klare Überschriften und beschreibe dein Problem kurz und präzise.</li>
+      <li>Bedanke dich bei Leuten, die dir helfen ❤️</li>
+    </ul>
+  </section>
+
+  <footer class="rules-footer">
+    <p class="rules-ai-note">Diese Community wird durch <strong>Leap AI</strong> unterstützt – dein digitaler Helfer für respektvolles und produktives Lernen.</p>
+    <button class="rules-close" type="button" aria-label="Schließen">Verstanden</button>
+  </footer>
+</div>
+</div>
+
+    
+  </body>
+</html>

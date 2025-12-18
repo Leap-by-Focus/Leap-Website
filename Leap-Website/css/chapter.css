@@ -1,0 +1,327 @@
+/* =========================================================
+   1. GLOBAL STYLES & VARIABLES
+========================================================= */
+:root {
+  --accent: #50e9ba;
+  --accent2: #148fac;
+  --bg: #0f1416;
+  --panel: #151515;
+  --text: #e6f7f4;
+  --border: #2a2a2a;
+  
+  /* VS Code Palette */
+  --vsc-bg: #1e1e1e;
+  --vsc-sidebar: #252526;
+  --vsc-border: #3c3c3c;
+  --vsc-accent: #007acc;
+  --vsc-text: #cccccc;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+}
+
+/* =========================================================
+   2. LAYOUT (SIDEBAR & HEADER)
+========================================================= */
+.hauptMenu {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100px;
+  background-color: #14272A;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.gradient-transition {
+  margin-top: 100px;
+  height: 150px;
+  background: linear-gradient(#14272A, #0f1416);
+}
+
+.menu {
+  position: fixed;
+  top: 100px; left: 0;
+  width: 240px; height: calc(100vh - 100px);
+  background: var(--panel);
+  border-right: 1px solid var(--border);
+  padding-top: 20px;
+  display: flex; flex-direction: column; gap: 10px;
+  z-index: 10;
+}
+
+.Menu-menu-text {
+  position: absolute; top: 20px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 25px; color: white;
+}
+
+.menu a {
+  display: block; width: 85%; margin: 0 auto;
+  padding: 12px 18px; text-decoration: none;
+  color: var(--text); background: #1a1a1a;
+  border: 1px solid #222; border-radius: 10px;
+  font-family: monospace; transition: 0.25s ease;
+}
+
+/* =========================================================
+   3. CONTAINER (50/50 SPLIT)
+========================================================= */
+.container {
+  margin-left: 260px;
+  padding: 40px;
+  display: flex;
+  gap: 30px;
+  height: calc(100vh - 150px);
+  align-items: stretch;
+}
+
+/* Dokumentation Links */
+.links {
+  flex: 1;
+  background: #111;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 30px;
+  overflow-y: auto;
+  display: block; 
+}
+
+.links h2, .links h3, .links p, .links ul {
+    margin-bottom: 1.2rem;
+    line-height: 1.6;
+}
+
+.links pre {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 20px 0;
+    overflow-x: auto;
+}
+
+.links code {
+    font-family: 'Fira Code', monospace;
+    color: #ffca28;
+}
+
+/* Editor Bereich Rechts */
+.rechts {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  /* WICHTIG: Erzeugt den Abstand zum Header/Gradient */
+  padding-top: 20px; 
+  /* Begrenzt die Gesamthöhe auf das Sichtfeld */
+  height: calc(100vh - 500px); 
+  overflow: hidden;
+}
+
+/* =========================================================
+   4. COMPONENTS (TASK & VS CODE)
+========================================================= */
+.task-panel {
+  background: linear-gradient(135deg, #1a1a1a 0%, #111 100%);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.task-header {
+  background: var(--accent);
+  color: #0f1416;
+  padding: 8px 15px;
+  font-size: 12px; font-weight: 800;
+  text-transform: uppercase;
+}
+
+.task-body { padding: 15px; font-size: 14px; line-height: 1.6; }
+
+/* VS CODE IDE BLOCK */
+.vscode-container {
+    display: flex;
+    flex-direction: column;
+    background: var(--vsc-bg);
+    border: 1px solid var(--vsc-border);
+    border-radius: 8px;
+    overflow: hidden;
+    flex: 1; /* Füllt den Platz in der .rechts Spalte aus */
+    min-height: 0; 
+}
+#leapEditor {
+    flex: 1; /* Nimmt allen Platz ein und schiebt das Terminal nach unten */
+    min-height: 200px;
+}
+
+.vscode-editor-frame .monaco-editor {
+    position: absolute !important;
+}
+
+.vscode-toolbar {
+    background: #252526;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 15px;
+    border-bottom: 1px solid #111;
+}
+
+.vscode-editor-frame {
+    flex: 2;
+    min-height: 250px;
+}
+
+.vscode-terminal {
+    flex-shrink: 0; /* Verhindert, dass es zusammengedrückt wird */
+    height: 140px;  /* Feste Höhe für den Output-Bereich */
+    background: #1a1a1a;
+    border-top: 1px solid #333;
+    display: flex;
+    flex-direction: column;
+}
+
+.terminal-content {
+    padding: 10px 15px;
+    font-family: 'Consolas', monospace;
+    font-size: 13px;
+    color: #00ff90;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.terminal-header-bar {
+    padding: 5px 15px;
+    background: #252526;
+    font-size: 11px; color: #858585;
+}
+
+
+
+.vscode-footer {
+    background: var(--vsc-accent);
+    color: #fff; font-size: 11px;
+    padding: 4px 12px;
+    display: flex; justify-content: space-between;
+}
+
+.vsc-btn {
+  padding: 5px 15px; border: none; border-radius: 4px;
+  cursor: pointer; font-size: 12px; font-weight: bold;
+}
+.run { background: #28a745; color: white; }
+.stop { background: #dc3545; color: white; }
+
+/* =========================================================
+   5. HIGH-END GLASS STATUSBAR
+========================================================= */
+.chapter-statusbar {
+    flex-shrink: 0;
+    width: 100%;
+    height: 32px; /* Schmaler & Edler */
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+.chapter-status-fill {
+    position: absolute;
+    left: 0; top: 0;
+    width: 0%; height: 100%;
+    background: var(--vsc-accent);
+    box-shadow: 0 0 20px rgba(0, 122, 204, 0.5);
+    z-index: 1;
+}
+
+/* Glanz-Licht auf der Bar */
+.chapter-status-fill::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(transparent, rgba(255,255,255,0.15), transparent);
+}
+
+#chapterStatusText {
+    position: relative;
+    z-index: 10;
+    padding-left: 20px;
+    font-weight: 800;
+    font-size: 11px;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+/* =========================================================
+   6. UTILS & CANVAS
+========================================================= */
+#confettiCanvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100vh !important;
+  pointer-events: none !important;
+  display: none;
+  z-index: 999999;
+}
+
+
+
+
+
+
+
+
+
+/* Animation: Heftiges Schütteln (Fehler) */
+@keyframes extremeShake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-12px) rotate(-1deg); }
+  40% { transform: translateX(12px) rotate(1deg); }
+  60% { transform: translateX(-8px) rotate(-0.5deg); }
+  80% { transform: translateX(8px) rotate(0.5deg); }
+}
+
+/* Animation: Pulsierendes Glühen (Erfolg) */
+@keyframes successGlow {
+  0% { box-shadow: 0 0 5px rgba(80, 233, 186, 0.4); }
+  50% { box-shadow: 0 0 25px rgba(80, 233, 186, 0.9); }
+  100% { box-shadow: 0 0 5px rgba(80, 233, 186, 0.4); }
+}
+
+/* Animation: Regenbogen-Lichtlauf */
+@keyframes rainbowFlow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* Diese Klassen werden per JS hinzugefügt */
+.chapter-statusbar.failed {
+  animation: extremeShake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+  border-color: #ff4b2b !important;
+}
+
+.chapter-statusbar.success {
+  animation: successGlow 1.5s ease-in-out infinite;
+  border-color: var(--accent) !important;
+}
+
+.chapter-statusbar.success .chapter-status-fill {
+  background: linear-gradient(90deg, #148fac, #50e9ba, #baffeb, #148fac);
+  background-size: 200% auto;
+  animation: rainbowFlow 2s linear infinite;
+}
