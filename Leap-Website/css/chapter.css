@@ -47,40 +47,185 @@ body {
 
 .menu {
   position: fixed;
-  top: 100px; left: 0;
-  width: 240px; height: calc(100vh - 100px);
+  top: 100px; 
+  left: 0;
+  width: 60px; 
+  height: calc(100vh - 100px);
   background: var(--panel);
   border-right: 1px solid var(--border);
+  
+  display: flex; 
+  flex-direction: column; 
+  align-items: center;    
   padding-top: 20px;
-  display: flex; flex-direction: column; gap: 10px;
+  gap: 12px;
+  
+  z-index: 100;
+  overflow: hidden;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Öffnen beim Hover */
+.menu:hover {
+  width: 260px;
+  padding-top: 80px; /* Platz für den Titel, wenn er oben steht */
+}
+
+/* Der Text "MENÜ" */
+.Menu-menu-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-90deg);
+  white-space: nowrap;
+  font-size: 22px;
+  font-weight: bold;
+  color: var(--accent);
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  pointer-events: none;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 10;
 }
 
-.Menu-menu-text {
-  position: absolute; top: 20px; left: 50%;
-  transform: translateX(-50%);
-  font-size: 25px; color: white;
+/* Verstecke "MENÜ", wenn die Sidebar offen ist (Optional) */
+/* Falls du ihn oben als Titel behalten willst, lass opacity auf 1 */
+.menu:hover .Menu-menu-text {
+  opacity: 0; 
+  transform: translate(-50%, -100%) rotate(-90deg); /* Gleitet nach oben raus */
 }
 
+/* Die Kapitel-Links & Home-Button */
 .menu a {
-  display: block; width: 85%; margin: 0 auto;
-  padding: 12px 18px; text-decoration: none;
-  color: var(--text); background: #1a1a1a;
-  border: 1px solid #222; border-radius: 10px;
-  font-family: monospace; transition: 0.25s ease;
+  display: block; 
+  width: 85%; 
+  min-width: 200px;
+  margin: 0 auto;
+  padding: 12px 18px; 
+  text-decoration: none;
+  color: white; 
+  background: #1a1a1a;
+  border: 1px solid #222; 
+  border-radius: 10px;
+  font-family: monospace; 
+  white-space: nowrap;
+  
+  /* ABSOLUT UNSICHTBAR WENN ZU */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-20px);
+  transition: all 0.4s ease;
+}
+
+/* Alles einblenden wenn offen */
+.menu:hover a {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+}
+
+/* Hover-Effekt auf die Buttons */
+.menu a:hover {
+  border-color: var(--accent);
+  background: #252525;
+  color: var(--accent);
+  transform: scale(1.02);
+}
+
+/* Das aktive Kapitel (trotzdem unsichtbar wenn zu) */
+.menu a.active-chapter {
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-weight: bold;
+  background: rgba(80, 233, 186, 0.05);
+  animation: activeGlow 2s infinite ease-in-out;
+}
+
+@keyframes activeGlow {
+  0%, 100% { box-shadow: 0 0 5px rgba(80, 233, 186, 0.2); }
+  50% { box-shadow: 0 0 15px rgba(80, 233, 186, 0.5); }
 }
 
 /* =========================================================
-   3. CONTAINER (50/50 SPLIT)
+   3. CONTAINER (DYNAMISCH)
 ========================================================= */
 .container {
-  margin-left: 260px;
+  /* Margin vom Container entfernen, wir steuern das jetzt dynamisch */
+  margin-left: 60px; 
   padding: 40px;
   display: flex;
   gap: 30px;
-  height: calc(100vh - 150px);
+  height: calc(100vh - 180px);
   align-items: stretch;
+  
+  /* Sanfter Übergang für den gesamten Inhalt */
+  transition: margin-left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+/* Wenn das Menü gehovert wird, schiebt sich der GANZE Container nach rechts */
+.menu:hover ~ .container {
+  margin-left: 260px;
+}
+
+
+
+
+/* Sicherstellen, dass die Tutorial-Inhalte flexibel fließen */
+.links * {
+    box-sizing: border-box; /* Verhindert, dass Padding die Breite sprengt */
+}
+
+/* Fix für Code-Blöcke */
+.links pre {
+    display: block;
+    width: 100%;
+    background: #0d0d0d;
+    border: 1px solid #222;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 25px 0; /* Erzwingt vertikalen Abstand nach oben und unten */
+    overflow-x: auto; /* Erlaubt horizontales Scrollen bei langem Code */
+    white-space: pre; /* Behält Formatierung bei */
+    line-height: 1.5;
+}
+
+/* Fix für die Mathe-Liste (Plus, Minus, etc.) */
+.math-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 20px 0;
+}
+
+.math-item {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 10px 15px;
+}
+
+/* Code-Tags innerhalb von Sätzen */
+.links code {
+    display: inline-block; /* Verhindert hässliche Zeilenumbrüche im Wort */
+    background: #222;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Fira Code', monospace;
+    color: #ffca28;
+    margin: 0 2px;
+}
+
+/* Abstände für Listen-Elemente */
+.links li {
+    margin-bottom: 15px; /* Verhindert das "Kleben" von Listenpunkten */
+    line-height: 1.6;
+}
+
+
+
+
 
 /* Dokumentation Links */
 .links {
@@ -90,26 +235,16 @@ body {
   border-radius: 16px;
   padding: 30px;
   overflow-y: auto;
-  display: block; 
+  display: block;
+  
+  /* Transition für Opacity/Blur falls gewünscht */
+  transition: opacity 0.5s ease, filter 0.5s ease;
 }
 
-.links h2, .links h3, .links p, .links ul {
-    margin-bottom: 1.2rem;
-    line-height: 1.6;
-}
-
-.links pre {
-    background: #1a1a1a;
-    border: 1px solid #333;
-    border-radius: 8px;
-    padding: 15px;
-    margin: 20px 0;
-    overflow-x: auto;
-}
-
-.links code {
-    font-family: 'Fira Code', monospace;
-    color: #ffca28;
+/* Optional: Inhalt leicht ausblenden wenn Menü offen ist */
+.menu:hover ~ .container .links {
+  opacity: 0.5;
+  filter: blur(1px);
 }
 
 /* Editor Bereich Rechts */
@@ -118,10 +253,9 @@ body {
   display: flex;
   flex-direction: column;
   gap: 15px;
-  /* WICHTIG: Erzeugt den Abstand zum Header/Gradient */
   padding-top: 20px; 
-  /* Begrenzt die Gesamthöhe auf das Sichtfeld */
-  height: calc(100vh - 500px); 
+  /* Höhe bleibt bestehen oder auf flex: 1 setzen für volle Höhe */
+  height: 100%; 
   overflow: hidden;
 }
 
@@ -129,22 +263,38 @@ body {
    4. COMPONENTS (TASK & VS CODE)
 ========================================================= */
 .task-panel {
-  background: linear-gradient(135deg, #1a1a1a 0%, #111 100%);
-  border: 1px solid var(--accent);
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    background: #151515;
+    border: 1px solid var(--accent);
+    border-radius: 10px;
+    margin-top: 20px;
 }
 
 .task-header {
-  background: var(--accent);
-  color: #0f1416;
-  padding: 8px 15px;
-  font-size: 12px; font-weight: 800;
-  text-transform: uppercase;
+    background: var(--accent);
+    color: #000;
+    padding: 8px 12px;
+    font-weight: bold;
+    font-size: 0.85rem;
+    border-radius: 8px 8px 0 0;
 }
 
-.task-body { padding: 15px; font-size: 14px; line-height: 1.6; }
+.task-body {
+    padding: 15px;
+}
+
+.task-body p {
+    margin: 8px 0;
+    font-size: 0.95rem;
+}
+
+.task-check {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid #333;
+    color: var(--accent);
+    font-size: 0.85rem;
+    font-style: italic;
+}
 
 /* VS CODE IDE BLOCK */
 .vscode-container {

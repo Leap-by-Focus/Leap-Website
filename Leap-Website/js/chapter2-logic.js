@@ -1,107 +1,158 @@
+/* =========================================================
+   LEAP CHAPTER 2 LOGIC - REPARIERTE VERSION
+   ========================================================= */
+
 import { LeapInterpreter } from "./leap-interpreter.js";
 
-let editorInstance = null; // Verhindert das "Doppel-Löschen" Problem
+if (window.leapLogicInitialized) {
+    console.warn("Leap-Logic bereits aktiv. Verhindere doppeltes Laden.");
+} else {
+    window.leapLogicInitialized = true;
 
-// 1. MONACO INITIALISIERUNG
-require.config({
-    paths: { vs: "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs" }
-});
-
-require(["vs/editor/editor.main"], function () {
-    // Falls schon ein Editor da ist, zerstören wir ihn (Sicherheit für Reloads)
-    if (editorInstance) {
-        editorInstance.dispose();
+    if (!window.leapEditorInstance) {
+        window.leapEditorInstance = null;
     }
 
-    editorInstance = monaco.editor.create(document.getElementById("leapEditor"), {
-        value: `x = 5;\ny = 10;\nergebnis = x + y;\nausgeben(ergebnis);`,
-        language: "javascript",
-        theme: "vs-dark",
-        fontSize: 15,
-        automaticLayout: true,
-        minimap: { enabled: false }
+    require.config({
+        paths: { vs: "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs" }
     });
-    
-    // UI-Elemente erst binden, wenn der Editor bereit ist
-    initApp();
-});
 
-// 2. HAUPT-LOGIK & ANIMATIONEN
-function initApp() {
-    const runBtn = document.getElementById("runBtn");
-    const stopBtn = document.getElementById("stopBtn");
-    const outputDiv = document.getElementById("editorOutput");
-    const bar = document.querySelector(".chapter-statusbar");
-    const fill = document.getElementById("chapterStatusFill");
-    const text = document.getElementById("chapterStatusText");
+    require(["vs/editor/editor.main"], function () {
+        const container = document.getElementById("leapEditor");
+        if (!container) return;
 
-    runBtn.onclick = function() {
-        const code = editorInstance.getValue();
-        const interpreter = new LeapInterpreter();
+        // --- 1. SPRACHE 'LEAP' FÜR MONACO REGISTRIEREN (Fix für Farben) ---
+        monaco.languages.register({ id: 'leap' });
 
-        // UI Reset vor jedem Run
-        bar.classList.remove("success", "failed");
-        void bar.offsetWidth; // Magic-Reset für CSS Animationen
-
-        try {
-            // A. INTERPRETER AUSFÜHREN
-            const result = interpreter.run(code);
-            
-            // Output anzeigen
-            outputDiv.innerHTML = result ? `> ${result.replace(/\n/g, '<br>> ')}` : "> Code ausgeführt.";
-            outputDiv.style.color = "#00ff90";
-
-            // B. MISSION-CHECK (Logik-Prüfung)
-            const clean = code.replace(/\s+/g, "").toLowerCase();
-            
-            // Kriterien: Variablen erstellt, Addition vorhanden, Ausgabe genutzt
-            const hasVariables = (clean.match(/[a-z0-9]+=\d+;/g) || []).length >= 2;
-            const hasAddition = /[a-z0-9]+=[a-z0-9]+\+[a-z0-9]+;/.test(clean);
-            const hasOutput = /(ausgeben|print)\([a-z0-9]+\);/.test(clean);
-
-            if (hasVariables && hasAddition && hasOutput) {
-                triggerSuccess();
-            } else {
-                // Code läuft technisch, aber Mission-Ziele fehlen
-                let missing = !hasVariables ? "Variablen fehlen" : !hasAddition ? "Addition fehlt" : "Ausgabe fehlt";
-                triggerFailure(`❌ Fast geschafft! ${missing}.`);
+        monaco.languages.setMonarchTokensProvider('leap', {
+            tokenizer: {
+                root: [
+                    [/\d+/, "number"],
+                    [/"[^"]*"/, "string"],
+                    [/ausgeben/, "keyword"],
+                    [/[=+\-*/()]/, "operator"],
+                    [/[a-zA-Z_]\w*/, "identifier"],
+                ]
             }
+        });
 
-        } catch (err) {
-            // C. FEHLER-FALL (Wird bei JEDEM Interpreter-Fehler getriggert)
-            outputDiv.innerHTML = `<span style="color: #ff4b2b;">> Fehler: ${err.message}</span>`;
-            outputDiv.style.color = "#ff4b2b";
-            triggerFailure(`❌ Fehler: ${err.message}`);
+        monaco.editor.defineTheme('leapTheme', {
+            base: 'vs-dark',
+            inherit: true,
+            rules: [
+                { token: 'keyword', foreground: '50e9ba', fontStyle: 'bold' },
+                { token: 'number', foreground: 'ffca28' },
+                { token: 'string', foreground: '80cbc4' },
+                { token: 'operator', foreground: 'ffffff' }
+            ],
+            colors: { 'editor.background': '#111111' }
+        });
+
+        // --- 2. AUTO-TAB PROVIDER (Vervollständigung ohne Fenster) ---
+        monaco.languages.registerCompletionItemProvider('leap', {
+            provideCompletionItems: () => ({
+                suggestions: [
+                    {
+                        label: 'ausgeben',
+                        kind: monaco.languages.CompletionItemKind.Function,
+                        insertText: 'ausgeben(${1:z});',
+                        insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet
+                    }
+                ]
+            })
+        });
+
+        if (window.leapEditorInstance) {
+            window.leapEditorInstance.dispose();
         }
-    };
 
-    function triggerSuccess() {
-        fill.style.width = "100%";
-        fill.style.background = "linear-gradient(90deg, #148fac, #50e9ba)";
-        text.textContent = "🚀 MISSION ERFOLGREICH! ✨";
-        bar.classList.add("success");
+        container.innerHTML = "";
+
+        // --- 3. EDITOR ERSTELLEN ---
+        window.leapEditorInstance = monaco.editor.create(container, {
+            value: "",
+            language: "leap",
+            theme: "leapTheme",
+            fontSize: 16,
+            automaticLayout: true,
+            minimap: { enabled: false },
+            quickSuggestions: false,          // Kein automatisches Aufpoppen
+            suggestOnTriggerCharacters: false,
+            tabCompletion: "on",              // Tab vervollständigt
+            wordBasedSuggestions: false
+        });
         
+        initApp();
+    });
+
+    function initApp() {
+        const runBtn = document.getElementById("runBtn");
+        const stopBtn = document.getElementById("stopBtn");
+        const outputDiv = document.getElementById("editorOutput");
+        const bar = document.querySelector(".chapter-statusbar");
+        const fill = document.getElementById("chapterStatusFill");
+        const textElement = document.getElementById("chapterStatusText"); // Umbenannt von 'text' zu 'textElement' (Fix für den Fehler im Screen!)
+
+        if (!runBtn) return;
+
+        runBtn.onclick = function() {
+            const code = window.leapEditorInstance.getValue();
+            const interpreter = new LeapInterpreter();
+
+            bar.classList.remove("success", "failed");
+            void bar.offsetWidth; 
+
+            try {
+                const result = interpreter.run(code);
+                outputDiv.innerHTML = result ? `> ${result.replace(/\n/g, '<br>> ')}` : "> Code ausgeführt.";
+                outputDiv.style.color = "#00ff90";
+
+                const clean = code.replace(/\s+/g, "").toLowerCase();
+                
+                // Strengere Prüfung für Kapitel 2 Mission
+                const hasX = /x=10;/.test(clean);
+                const hasY = /y=20;/.test(clean);
+                const hasZ = /z=x\+y;/.test(clean);
+                const hasOutput = /ausgeben\(z\);/.test(clean);
+
+                if (hasX && hasY && hasZ && hasOutput) {
+                    triggerSuccess(fill, textElement, bar);
+                } else {
+                    let missing = !hasX ? "x = 10; fehlt" : !hasY ? "y = 20; fehlt" : !hasZ ? "z = x + y; fehlt" : "ausgeben(z); fehlt";
+                    triggerFailure(fill, textElement, bar, `❌ Fast geschafft! ${missing}.`);
+                }
+
+            } catch (err) {
+                outputDiv.innerHTML = `<span style="color: #ff4b2b;">> Fehler: ${err.message}</span>`;
+                outputDiv.style.color = "#ff4b2b";
+                triggerFailure(fill, textElement, bar, `❌ Fehler: ${err.message}`);
+            }
+        };
+
+        stopBtn.onclick = function() {
+            outputDiv.innerHTML = "<span style='color:orange'>> Programm gestoppt.</span>";
+            fill.style.width = "0%";
+            bar.classList.remove("success", "failed");
+            textElement.textContent = "Aufgabe noch nicht gelöst";
+        };
+    }
+
+    // --- HELPER FUNKTIONEN ---
+    function triggerSuccess(f, t, b) {
+        f.style.width = "100%";
+        f.style.background = "linear-gradient(90deg, #148fac, #50e9ba)";
+        t.textContent = "🚀 MISSION ERFOLGREICH! ✨";
+        b.classList.add("success");
+
         if (typeof confetti !== 'undefined') {
-            confetti({
-                particleCount: 150,
-                spread: 100,
-                origin: { y: 0.6 },
-                colors: ['#50e9ba', '#148fac', '#ffffff']
-            });
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#50e9ba', '#148fac'] });
         }
     }
 
-    function triggerFailure(msg) {
-        fill.style.width = "35%";
-        fill.style.background = "#ff4b2b";
-        text.textContent = msg || "❌ DA STIMMT WAS NICHT!";
-        bar.classList.add("failed");
+    function triggerFailure(f, t, b, msg) {
+        f.style.width = "35%";
+        f.style.background = "#ff4b2b";
+        t.textContent = msg;
+        b.classList.add("failed");
     }
-
-    stopBtn.onclick = function() {
-        outputDiv.innerHTML = "<span style='color:orange'>> Program gestoppt.</span>";
-        fill.style.width = "0%";
-        bar.classList.remove("success", "failed");
-        text.textContent = "Aufgabe noch nicht gelöst";
-    };
 }
