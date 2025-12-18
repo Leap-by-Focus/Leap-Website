@@ -185,82 +185,77 @@
 
     <a href="chapter1.html">Kapitel 1: Einstieg</a>
     <a href="chapter2.html" class="active-chapter">Kapitel 2: Variablen</a>
-    <a href="chapter3.html">Kapitel 3: Datentypen</a>
-    <a href="chapter4.html">Kapitel 4: Rechnen</a>
-    <a href="chapter5.html">Kapitel 5: Bedingungen (If)</a>
-    <a href="chapter6.html">Kapitel 6: Logik-Gatter</a>
-    <a href="chapter7.html">Kapitel 7: Schleifen (Loops)</a>
-    <a href="chapter8.html">Kapitel 8: Listen</a>
-    <a href="chapter9.html">Kapitel 9: Funktionen</a>
-    <a href="chapter10.html">Kapitel 10: Objekte</a>
-    <a href="chapter11.html">Kapitel 11: Finale Projekt</a>
+    <a href="chapter3.html">Kapitel 3: Mathematische Operatoren</a>
+    <a href="chapter4.html">Kapitel 4: Statements</a>
+    <a href="chapter5.html">Kapitel 5: Schleifen</a>
+    <a href="chapter6.html">Kapitel 6: Methoden</a>
+    <a href="chapter7.html">Kapitel 7: Files (Read, Write)</a>
+    <a href="chapter8.html">Kapitel 8: Collections</a>
+    <a href="chapter9.html">Kapitel 9: Debugging</a>
+    <a href="chapter10.html">Kapitel 10: Arbeiten mit Leap-AI</a>
+    <a href="chapter11.html">Kapitel 11: Documents.exe</a>
 </div>
 
 <div class="container">
-    <div class="links">
+<div class="links">
     <div class="chapter-header">
         <span class="chapter-number">Kapitel 02</span>
-        <h2>Die Macht der Variablen 📦</h2>
-        <div class="progress-info">Lesezeit: 3 Min. | Schwierigkeit: Einsteiger</div>
+        <h2 class="accent-title">Variablen-Deklaration & Syntax 📦</h2>
     </div>
 
-    <p class="intro-text">
-        Stell dir eine Variable wie eine **beschriftete Box** vor. Du legst einen Wert hinein (z. B. eine Zahl oder einen Namen), schließt den Deckel und kannst diesen Wert später im Programm jederzeit wieder herausholen, indem du einfach den Namen der Box benutzt.
-    </p>
-
-    <div class="info-box">
-        <h4>🔹 Anatomie einer Variable</h4>
-        <p>Jede Variable in Leap besteht aus zwei entscheidenden Teilen:</p>
-        <ul>
-            <li><b class="highlight-cyan">Name:</b> Das Etikett auf der Box (z. B. <code>punkte</code>).</li>
-            <li><b class="highlight-cyan">Wert:</b> Der Inhalt der Box (z. B. <code>100</code>).</li>
-        </ul>
+    <h3 class="accent-title">1. Die Zuweisungs-Anweisung</h3>
+    <p>Programmieren ist das Verarbeiten von Daten. Mit einer <b>Zuweisung</b> speicherst du Informationen unter einem eindeutigen Namen (Identifier).</p>
+    
+    <div class="info-box compact">
+        <div class="anatomy-grid">
+            <div class="anatomy-part"><code>x</code><br><small>Identifier</small></div>
+            <div class="anatomy-part"><code>=</code><br><small>Operator</small></div>
+            <div class="anatomy-part"><code>10</code><br><small>Literal</small></div>
+            <div class="anatomy-part"><code>;</code><br><small>Terminator</small></div>
+        </div>
     </div>
 
-    <h3>1. Deine erste Variable erstellen</h3>
+    
+
+    <h3 class="accent-title">2. Das Semikolon (;) – Der Terminator</h3>
     <p>
-        In Leap musst du keine komplizierten Befehle wie <code>let</code> oder <code>var</code> lernen. Du schreibst einfach den Namen, ein Gleichheitszeichen und den Wert:
+        In Leap ist das Semikolon der <b>Statement-Terminator</b>. Er sagt dem Interpreter: „Diese Anweisung ist hier zu Ende.“ 
     </p>
-
-    <div class="code-example">
-        <div class="code-label">Leap Syntax</div>
-        <pre><code class="language-leap">gold = 50
-spielerName = "Daniela"</code></pre>
-    </div>
-
     <div class="pro-tip">
-        <strong>Pro-Tipp:</strong> Namen dürfen keine Leerzeichen haben. Nutze stattdessen "CamelCase" (<code>meineVariable</code>) oder Unterstriche (<code>meine_variable</code>).
+        <strong>Warum ist das wichtig?</strong> Ohne das <code>;</code> würde der Computer versuchen, die nächste Zeile einfach an die aktuelle dranzuhängen. Das führt zu Syntax-Fehlern. Stell es dir wie den Punkt am Ende eines Satzes vor, nur dass der Computer ohne ihn völlig verwirrt ist.
     </div>
 
-    <h3>2. Daten ans Licht bringen (Output)</h3>
-    <p>
-        Damit du siehst, was in deinen "Boxen" gespeichert ist, nutzt du das Terminal-Kommando <code>ausgeben(...)</code>:
-    </p>
-
-    <pre><code class="language-leap">alter = 18
-ausgeben(alter) // Zeigt 18 im Terminal</code></pre>
-
-    <h3>3. Mit Variablen rechnen</h3>
-    <p>
-        Das Beste an Variablen? Du kannst mit ihnen rechnen wie mit echten Zahlen. Das Programm ersetzt den Namen beim Rechnen automatisch durch den gespeicherten Wert.
-    </p>
-
-    <div class="math-grid">
-        <div class="math-item"><code>+</code> Plus</div>
-        <div class="math-item"><code>-</code> Minus</div>
-        <div class="math-item"><code>*</code> Mal</div>
-        <div class="math-item"><code>/</code> Geteilt</div>
+    <h3 class="accent-title">3. Primitive Datentypen</h3>
+    <p>Der Interpreter unterscheidet strikt zwischen numerischen Werten und Zeichenketten:</p>
+    <div class="rules-grid">
+        <div class="rule-item">
+            <b>Integer (Ganzzahl)</b>
+            <code>gold = 100;</code>
+            <span>Numerische Werte für mathematische Operationen.</span>
+        </div>
+        <div class="rule-item">
+            <b>String (Zeichenkette)</b>
+            <code>name = "Luka";</code>
+            <span>Texte müssen immer in <b>Anführungszeichen ("")</b> stehen.</span>
+        </div>
     </div>
 
-    <pre><code class="language-leap">level = 1
-neuesLevel = level + 1
-ausgeben(neuesLevel) // Ergibt 2</code></pre>
+    <h3 class="accent-title">4. Identifier-Regeln</h3>
+    <ul class="compact-list">
+        <li>✅ <b>Gültig:</b> <code>score_1</code>, <code>xp</code>, <code>currentLevel</code></li>
+        <li>❌ <b>Ungültig:</b> <code>mein score</code> (Whitespace/Leerzeichen verboten)</li>
+        <li>❌ <b>Ungültig:</b> <code>1platz</code> (Identifier dürfen nicht mit Ziffern beginnen)</li>
+        <li>⚠️ <b>Case-Sensitivity:</b> <code>punkte</code> und <code>Punkte</code> sind zwei völlig verschiedene Variablen!</li>
+    </ul>
+
+    <h3 class="accent-title">5. Standard-Ausgabe (Output)</h3>
+    <p>Variablen existieren im Arbeitsspeicher. Um ihren Wert im Terminal sichtbar zu machen, nutzt du die Funktion <code>ausgeben()</code> oder <code>print()</code>.</p>
+    <div class="code-example compact">
+        <pre><code class="language-leap">wert = 500;
+ausgeben(wert); // Gibt den Inhalt des Identifiers aus (500)</code></pre>
+    </div>
 
     <hr class="divider">
-
-    <div class="next-step">
-         <p class="sub-text">Im nächsten Kapitel: <b>Bedingungen (if)</b> – Wir geben deinem Code ein Gehirn!</p>
-    </div>
 </div>
 
 <div class="rechts">
@@ -271,9 +266,7 @@ ausgeben(neuesLevel) // Ergibt 2</code></pre>
         <p>2. Erstelle <b>z</b> und rechne <b>x + y</b> zusammen</p>
         <p>3. Nutze <code>ausgeben(z)</code> für das Ergebnis</p>
         
-        <div class="task-check">
-            Ziel: Im Terminal muss die <b>30</b> stehen.
-        </div>
+        <div class="task-check">Ziel: Erzeuge einen numerischen Output von <b>30</b>. Vergiss die Terminatoren (;) nicht!</div>
     </div>
 </div>
 

@@ -137,17 +137,56 @@ if (window.leapLogicInitialized) {
         };
     }
 
-    // --- HELPER FUNKTIONEN ---
-    function triggerSuccess(f, t, b) {
-        f.style.width = "100%";
-        f.style.background = "linear-gradient(90deg, #148fac, #50e9ba)";
-        t.textContent = "🚀 MISSION ERFOLGREICH! ✨";
-        b.classList.add("success");
+function triggerSuccess(f, t, b) {
+    f.style.width = "100%";
+    f.style.background = "linear-gradient(90deg, #148fac, #50e9ba)";
+    t.textContent = "🚀 ABSOLUTER WAHNSINN!!! ✨";
+    b.classList.add("success");
 
-        if (typeof confetti !== 'undefined') {
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#50e9ba', '#148fac'] });
-        }
+    if (typeof confetti !== 'undefined') {
+        const duration = 3 * 1000; // 5 Sekunden lang totales Chaos
+        const end = Date.now() + duration;
+
+        (function frame() {
+            // Salve von links (Explosions-Stil)
+            confetti({
+                particleCount: 3,
+                angle: 60,
+                spread: 120,
+                origin: { x: 0, y: 0.6 },
+                colors: ['#50e9ba', '#148fac', '#ffffff', '#ff0000', '#ffff00'],
+                ticks: 200,
+                gravity: 1,
+                scalar: 1.2
+            });
+
+            // Salve von rechts (Explosions-Stil)
+            confetti({
+                particleCount: 3,
+                angle: 120,
+                spread: 120,
+                origin: { x: 1, y: 0.6 },
+                colors: ['#50e9ba', '#148fac', '#ffffff', '#00ff00', '#ff00ff'],
+                ticks: 200,
+                gravity: 1,
+                scalar: 1.2
+            });
+
+            // Zufällige "Blitze" überall auf dem Bildschirm
+            confetti({
+                particleCount: 3,
+                startVelocity: 45,
+                spread: 360,
+                origin: { x: Math.random(), y: Math.random() - 0.2 },
+                colors: ['#ffffff', '#50e9ba']
+            });
+
+            if (Date.now() < end) {
+                requestAnimationFrame(frame);
+            }
+        }());
     }
+}
 
     function triggerFailure(f, t, b, msg) {
         f.style.width = "35%";
