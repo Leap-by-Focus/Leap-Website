@@ -521,17 +521,18 @@ function synthesizeSuggestions(text = "", answer = "") {
 }
 
 function sanitizeAnswer(text = "") {
+  if (!text) return "";
   let s = String(text);
 
-  // komische Steuerzeichen raus
-  s = s.replace(/[\u0000-\u001F]/g, "");
+  // Wir entfernen KEINE Steuerzeichen mehr per Regex, 
+  // um sicherzugehen, dass wir nicht versehentlich Enter (\n) löschen.
+  // Das überlassen wir jetzt dem Frontend.
 
-  // alte LaTeX-/Fake-Code-Umgebungen auf echte Markdown-Codeblöcke mappen
+  // Alte LaTeX-/Fake-Code-Umgebungen auf echte Markdown-Codeblöcke mappen
   s = s.replace(/begin{code}\s*leap/gi, "```leap");
   s = s.replace(/begin{code}/gi, "```");
   s = s.replace(/end{code}/gi, "```");
 
-  // Falls er irgendwo Name = Wert als „Formel“ mit begin{code} geschrieben hat, ist es danach normaler Text/Code
   return s;
 }
 
@@ -842,4 +843,22 @@ app.post("/api/runLeap", async (req, res) => {
       error: String(err.stderr || err.message)
     });
   }
+});
+
+// =======================================================================
+// SERVER STARTEN (Füge das ganz unten ein!)
+// =======================================================================
+
+// 1. Beim Start einmalig Git pullen und Index neu bauen (falls nötig)
+// Hinweis: syncRepoAndRebuildIndex() ist oben im Code definiert.
+syncRepoAndRebuildIndex();
+
+// 2. Den Port öffnen und lauschen
+app.listen(PORT, "0.0.0.0", () => {
+  console.log("----------------------------------------------------------");
+  console.log(`🚀 LEAP AI SERVER läuft auf: http://localhost:${PORT}`);
+  console.log(`📡 Health-Check:           http://localhost:${PORT}/health`);
+  console.log(`🧠 Modelle:                ${JSON.stringify(MODELS, null, 2)}`);
+  console.log(`⚙️  Config:                Threads=${NUM_THREADS}, Ctx=${NUM_CTX}`);
+  console.log("----------------------------------------------------------");
 });

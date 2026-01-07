@@ -1,8 +1,82 @@
 /* =========================================================
-   AI – Scoped Styles (erbt voll von forum.css)
+   AI – Scoped Styles
 ========================================================= */
 
-/* Token-Variablen NUR für AI-Seite */
+/* --- Markdown Styling für den Chat --- */
+
+/* 1. Code-Blöcke (Die dunkle Box) */
+pre {
+  background-color: #1e1e1e; /* VS Code Dunkelgrau */
+  color: #d4d4d4;             /* Helle Schrift */
+  border-radius: 6px;
+  padding: 12px;
+  margin: 10px 0;
+  overflow-x: auto;           /* Scrollen bei langen Zeilen */
+  border: 1px solid #333;
+  font-family: 'Consolas', 'Monaco', monospace;
+  white-space: pre;           /* WICHTIG: Behält Formatierung bei! */
+}
+
+/* 2. Inline Code (einzelne Wörter wie `x`) */
+code {
+  font-family: 'Consolas', 'Monaco', monospace;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+/* Der Code innerhalb der Pre-Box soll keinen extra Hintergrund haben */
+pre code {
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+}
+
+/* 3. Überschriften */
+.message h3 {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-top: 15px;
+  margin-bottom: 5px;
+  color: #fff;
+  border-bottom: 2px solid #444;
+  padding-bottom: 5px;
+  display: inline-block;
+}
+
+/* 4. Fettgedrucktes */
+/* 4. Fettgedrucktes (Jetzt mit deinem schicken Gradient!) */
+.message strong {
+  font-weight: bold;
+  
+  /* 1. Den Gradient als Hintergrund setzen */
+  background: linear-gradient(
+    270deg,
+    #50e9ba,
+    #148fac,
+    #e6f0f4,
+    #50e9ba
+  );
+  
+  /* Optional: Den Gradient etwas strecken, damit er weicher wirkt */
+  background-size: 200% auto;
+
+  /* 2. MAGIE: Den Hintergrund genau auf die Buchstaben zuschneiden */
+  -webkit-background-clip: text;
+  background-clip: text;
+
+  /* 3. Die eigentliche Textfarbe transparent machen, damit der Hintergrund durchscheint */
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* 5. Listen */
+.message li {
+  margin-left: 1.5rem;
+}
+
+/* --- Layout & Variablen --- */
 .ai-page {
   --bg: #111;
   --panel: #1e1e1e;
@@ -11,10 +85,6 @@
   --border: #333;
   --text: #f2f2f2;
   --muted: #ccc;
-}
-
-/* Hintergrund + Layout */
-.ai-page {
   background: var(--bg);
   min-height: 100vh;
   position: relative;
@@ -37,97 +107,10 @@
   z-index: 1;
 }
 
-.main
-{width: 100%;
-height: 100%;
-}
-
 .ai-page .backToMainLogo img {
   height: 60px;
   padding: 20px;
   cursor: pointer;
-}
-
-/* Login/Register Container */
-.ai-page .loginDiv {
-  position: absolute;
-  top: 130px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 400px;
-  padding: 20px;
-  background: var(--panel);
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  display: none;
-  z-index: 10;
-}
-
-.ai-page .loginButton,
-.ai-page .registerButton {
-  width: 100%;
-  padding: 10px;
-  background: var(--accent);
-  border-radius: 8px;
-  text-align: center;
-  cursor: pointer;
-  margin-bottom: 12px;
-}
-
-/* Formulare */
-.ai-page .loginFormularDiv,
-.ai-page .resetFormularDiv,
-.ai-page .registerFormularDiv {
-  width: 100%;
-}
-
-.ai-page .loginForm label,
-.ai-page .registerForm label {
-  margin-top: 10px;
-  display: block;
-}
-
-.ai-page input {
-  background: var(--input-bg);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  color: var(--text);
-  padding: 8px;
-  width: 100%;
-  margin-top: 4px;
-}
-
-/* Buttons */
-.ai-page .submitButton {
-  margin-top: 16px;
-  background: #3cb44a;
-  border: none;
-  border-radius: 8px;
-  padding: 12px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: all .25s ease-in-out;
-}
-
-.ai-page .submitButton:hover {
-  background-color: #2f7d36;
-  transform: scale(1.03);
-}
-
-/* Reset Link */
-.ai-page .reset-password-link {
-  width: 100%;
-  margin-top: 8px;
-  text-align: center;
-}
-
-/* Userinfo */
-.ai-page .userinfo {
-  position: absolute;
-  top: 160px;
-  left: 20px;
-  z-index: 20;
-  display: none;
 }
 
 /* Willkommen Text */
@@ -138,16 +121,8 @@ height: 100%;
   font-size: 1.6rem;
 }
 
-
-
-
-
-
-
-
-
 /* =========================================================
-   CHAT UI – nur Chat Container, alles andere bleibt unverändert
+   CHAT UI – Container
 ========================================================= */
 
 /* Container nutzt vollen Viewport unterhalb der Haupt-Navigation */
@@ -155,10 +130,9 @@ height: 100%;
   width: 90%;
   margin: 0 auto;
   padding: 0 16px;
-
   display: grid;
   grid-template-rows: auto 1fr auto auto;
-  /* 120px = Höhe .hauptMenu (Logo + Partikel) */
+  /* 120px = Höhe .hauptMenu */
   height: calc(100vh - 120px);
 }
 
@@ -172,7 +146,7 @@ height: 100%;
   margin-bottom: 10px;
 }
 .chat-header .title { display: flex; align-items: center; gap: 10px; }
-.chat-header h1 { font-size: 1.15rem; margin: 0 }
+.chat-header h1 { font-size: 1.15rem; margin: 0; color: #fff; }
 
 /* Statuspunkt */
 .status-dot {
@@ -195,37 +169,60 @@ height: 100%;
   border-radius: 10px;
 }
 
-/* Messages (Bubbles) */
+/* Messages (Bubbles) - Basis */
 .msg {
   display: flex;
   flex-direction: column;
   margin: 10px 0;
   gap: 6px;
 }
+
+
+
 .msg .bubble {
   background: #1e1e1e;
   border-radius: 12px;
   padding: 12px 14px;
-  line-height: 1.45;
+  line-height: 1.5;
   border: 1px solid #333;
+  position: relative;
+  z-index: 0;
+  
+  /* WICHTIG: Das !important erzwingt, dass CSS Regeln greifen */
+  white-space: pre-wrap !important;       
+  word-wrap: break-word !important; 
+  font-family: system-ui, -apple-system, sans-serif;
 }
+
+/* Gradient Rahmen Animation für Bubbles */
+.msg .bubble::before {
+  content: "";
+  position: absolute;
+  inset: -1.5px;
+  border-radius: inherit;
+  background: linear-gradient(
+    140deg,
+    rgba(20,143,172, 0.38),
+    rgba(50,90,110, 0.35),
+    rgba(230,244,246, 0.28),
+    rgba(20,143,172, 0.38)
+  );
+  background-size: 220% 220%;
+  animation: rotateBorder 16s ease-in-out infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: -1;
+}
+
 .msg.user .bubble {
-  background: #4caf50;
+  background: #3ca447;
   color: #fff;
   align-self: flex-end;
 }
 .msg.ai .bubble {
-  background: #2c2c2c;
-}
-
-/* Code im Chat */
-.msg pre code {
-  display: block;
-  padding: 10px;
-  background: #0e0e0e;
-  border-radius: 8px;
-  border: 1px solid #333;
-  overflow-x: auto;
+  background: #1a1a1a;
+  color: #e9e9e9;
 }
 
 /* Zeit / Metatext */
@@ -234,20 +231,18 @@ height: 100%;
   color: #aaa;
 }
 
-/* ============== Suggestions: immer sichtbar + Thinking-Animation ============== */
+/* ============== Suggestions ============== */
 
-/* Container bleibt sichtbar, auch wenn getippt wird */
 .suggestions {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   padding: 4px 0 30px;
-  min-height: 46px;            /* verhindert Layout-Springen */
-  position: relative;          /* Basis für Shimmer-Overlay */
+  min-height: 46px;
+  position: relative;
   height: auto;
 }
 
-/* einzelne Chips */
 .suggestion {
   background: transparent;
   border: 1px solid #333;
@@ -263,10 +258,8 @@ height: 100%;
 .suggestion:hover { background: rgba(255,255,255,.08); }
 .suggestion:active { transform: translateY(1px); }
 
-/* Ladezustand: Text ausblenden, 3 animierte Punkte zeigen */
-.suggestion.loading {
-  color: transparent;
-}
+/* Suggestion Loading Styles */
+.suggestion.loading { color: transparent; }
 .suggestion.loading::after {
   content: "";
   position: absolute;
@@ -281,78 +274,57 @@ height: 100%;
   background: #cfcfcf;
   opacity: .8;
   animation: dotPulse 1s ease-in-out infinite;
-  /* zwei weitere Punkte links/rechts */
-  box-shadow:
-    14px 0 0 0 #cfcfcf,
-    -14px 0 0 0 #cfcfcf;
+  box-shadow: 14px 0 0 0 #cfcfcf, -14px 0 0 0 #cfcfcf;
 }
-
 @keyframes dotPulse {
   0%, 80%, 100% { transform: translateY(0); opacity: .6; }
   40%          { transform: translateY(-3px); opacity: 1; }
 }
 
-/* Thinking-State für den gesamten Block */
-.suggestions.thinking {
-  animation: suggPulse 1.2s ease-in-out infinite alternate;
-}
+.suggestions.thinking { animation: suggPulse 1.2s ease-in-out infinite alternate; }
 @keyframes suggPulse {
   0%   { transform: translateY(0);     filter: brightness(1); }
   100% { transform: translateY(-1px);  filter: brightness(1.02); }
 }
 
-/* Shimmer-Band über den kompletten Suggestions-Block */
-.suggestions.thinking::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255,255,255,.06) 45%,
-    rgba(255,255,255,.10) 50%,
-    rgba(255,255,255,.06) 55%,
-    transparent 100%
-  );
-  transform: translateX(-150%);
-  animation: shimmer 1.25s linear infinite;
-  pointer-events: none;
+/* --- Code-Block Wrapper (.lp Support) --- */
+
+.code-wrapper {
+  margin: 15px 0;
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  border: 1px solid #333;
+  overflow: hidden;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
 }
 
-/* dezente animierte Ränder an den Buttons (wie Chat-Bubbles) */
-.suggestions.thinking .suggestion::before {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  border-radius: 999px;
-  background: linear-gradient(
-    140deg,
-    rgba(20,143,172,.30),
-    rgba(50,90,110,.28),
-    rgba(230,244,246,.22),
-    rgba(20,143,172,.30)
-  );
-  background-size: 220% 220%;
-  animation: rotateBorder 16s ease-in-out infinite;
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-          mask-composite: exclude;
-  z-index: -1;
+.code-header {
+  background-color: #2d2d2d;
+  color: #e0e0e0;
+  padding: 5px 12px;
+  font-size: 0.75rem;
+  text-align: right;
+  border-bottom: 1px solid #333;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  user-select: none;
 }
 
-/* Falls noch nicht global vorhanden, Keyframes mitnehmen */
-@keyframes shimmer {
-  to { transform: translateX(150%); }
-}
-@keyframes rotateBorder {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+.code-wrapper pre {
+  margin: 0;
+  padding: 15px;
+  overflow-x: auto;
+  color: #d4d4d4;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  white-space: pre; 
 }
 
-/* Composer (animierter Gradient-Rand wie AI Bubble) */
+/* =========================================================
+   COMPOSER (Eingabefeld)
+========================================================= */
+
 .composer {
   position: sticky;
   bottom: 16px;
@@ -360,7 +332,7 @@ height: 100%;
   flex-direction: column;
   gap: 10px;
   padding: 12px;
-  padding-top: 14px; /* Rand Platz */
+  padding-top: 14px;
   backdrop-filter: blur(6px);
   background: rgba(0,0,0,.20);
   border-radius: 14px;
@@ -368,154 +340,53 @@ height: 100%;
   z-index: 10;
 }
 
-/* Der animierte Rand */
+/* Animierter Rand für Composer */
 .composer::before {
   content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
-
-  /* exakt die gleichen Farben wie AI Bubble */
-  background: linear-gradient(
-    270deg,
-    #50e9ba,
-    #148fac,
-    #e6f0f4,
-    #50e9ba
-  );
+  background: linear-gradient(270deg, #50e9ba, #148fac, #e6f0f4, #50e9ba);
   background-size: 300% 300%;
   animation: rotateComposer 8s linear infinite;
-
-  /* Border ausschneiden */
   padding: 2px;
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
-          mask-composite: exclude;
-
+  mask-composite: exclude;
   z-index: -1;
 }
 
-/* Animation ident wie bei AI Bubbles */
 @keyframes rotateComposer {
   0%   { background-position: 0% 50%; }
   50%  { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
 
-/* Beim Tippen: etwas leuchtender + schneller */
-.composer:focus-within::before {
-  filter: brightness(1.06);
-  animation-duration: 5s;
-}
-
-/* Composer (animierter Gradient-Rand wie AI Bubble) */
-.composer {
-  position: sticky;
-  bottom: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 12px;
-  padding-top: 14px; /* Rand Platz */
-  backdrop-filter: blur(6px);
-  background: rgba(0,0,0,.20);
-  border-radius: 14px;
-  isolation: isolate;
-  z-index: 10;
-}
-
-/* Der animierte Rand */
-.composer::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-
-  /* exakt die gleichen Farben wie AI Bubble */
-  background: linear-gradient(
-    270deg,
-    #50e9ba,
-    #148fac,
-    #e6f0f4,
-    #50e9ba
-  );
-  background-size: 300% 300%;
-  animation: rotateComposer 8s linear infinite;
-
-  /* Border ausschneiden */
-  padding: 2px;
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-          mask-composite: exclude;
-
-  z-index: -1;
-}
-
-/* Animation ident wie bei AI Bubbles */
-@keyframes rotateComposer {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-/* Beim Tippen: etwas leuchtender + schneller */
-.composer:focus-within::before {
-  filter: brightness(1.06);
-  animation-duration: 5s;
-}
-
-/* Layout: Text links, Dropzone rechts */
 .composer-top {
   display: grid;
-  grid-template-columns: 1fr auto;  /* Textarea | Dropzone */
+  grid-template-columns: 1fr auto;
   gap: 10px;
   width: 100%;
 }
 
-/* Composer-Rand bleibt animiert (dein bestehender Code kann bleiben) */
-
-/* Dropzone: kompakter Button rechts, ohne Animation */
+/* Dropzone */
 .dropzone {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 46px;
-  height: 46px;
-  min-width: 46px;
-  min-height: 46px;
+  width: 46px; height: 46px;
+  min-width: 46px; min-height: 46px;
   background: #202020;
   border-radius: 10px;
   border: 1px solid #333;
   cursor: pointer;
   transition: background .15s ease, border-color .15s ease;
 }
-
-.dropzone:hover {
-  background: #2b2b2b;
-  border-color: var(--accent);
-}
-
-.dropzone.dragover {
-  background: rgba(20,143,172,.20);
-  border-color: var(--accent);
-}
-
-/* Icon innen */
-.dropzone .icon {
-  font-size: 20px;
-  line-height: 1;
-  opacity: .85;
-  user-select: none;
-}
-
-/* File input verstecken */
+.dropzone:hover { background: #2b2b2b; border-color: var(--accent); }
+.dropzone .icon { font-size: 20px; opacity: .85; }
 .file-label input { display: none; }
 
-/* Vorschau-Chip in der unteren Leiste */
+/* File Preview */
 .file-preview[hidden] { display: none !important; }
 .file-preview {
   display: inline-flex;
@@ -527,16 +398,9 @@ height: 100%;
   border-radius: 999px;
   color: #ddd;
 }
-.file-preview .file-chip button {
-  margin-left: 8px;
-  background: transparent;
-  border: none;
-  color: #bbb;
-  cursor: pointer;
-}
+.file-preview .file-chip button { margin-left: 8px; background: transparent; border: none; color: #bbb; cursor: pointer; }
 
-
-/* === Dynamische Schrift für User Input === */
+/* Input Field */
 #userInput {
   width: 97%;
   min-height: 44px;
@@ -549,33 +413,21 @@ height: 100%;
   resize: none;
   outline: none;
   line-height: 1.4;
-  font-size: 22px;       /* ✅ Start: groß */
+  font-size: 22px;
   transition: font-size .12s;
   overflow-y: auto;
 }
-
-#userInput.l2 { font-size: 18px; } /* mittlerer Textumfang */
-#userInput.l3 { font-size: 15px; } /* sehr viel Text */
-#userInput:focus {
-  border-color: #148fac;
-  box-shadow: 0 0 0 3px rgba(20,143,172,.25);
-}
-
-.composer-bottom {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+#userInput.l2 { font-size: 18px; }
+#userInput.l3 { font-size: 15px; }
+#userInput:focus { border-color: #148fac; box-shadow: 0 0 0 3px rgba(20,143,172,.25); }
 
 .composer-right {
-  margin-left: auto; /* schiebt den ganzen Block nach rechts */
+  margin-left: auto;
   display: flex;
   align-items: center;
   gap: 10px;
 }
 .counter { color: #ccc; }
-
-
 
 .send-btn {
   background: #148fac;
@@ -587,181 +439,19 @@ height: 100%;
   transition: .15s;
 }
 .send-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
-.send-btn:active { transform: translateY(0); }
 .send-btn:disabled { opacity: .4; cursor: not-allowed; }
 
-/* Mobile Anpassungen */
+/* === Bild in Chat === */
+.image-message img {
+  max-width: 500px;
+  max-height: 500px;
+  width: auto; height: auto;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid rgba(255,255,255,.08);
+  box-shadow: 0 2px 6px rgba(0,0,0,.4);
+}
+
 @media (max-width: 640px) {
   .composer-top { grid-template-columns: 1fr; }
-}
-
-
-
-/* === Thinking Animation für AI-Bubble === */
-.msg.ai.typing .bubble,
-.message.ai-message.typing .bubble {
-  position: relative;
-  overflow: hidden;
-  background: #262626;                 /* dezent dunkler als normale AI-Bubble */
-  border: 1px solid #3a3a3a;
-  animation: bubblePulse 1.2s ease-in-out infinite alternate;
-}
-
-/* sanftes „Atmen“ */
-@keyframes bubblePulse {
-  0%   { transform: translateY(0);     box-shadow: 0 2px 10px rgba(0,0,0,.25); }
-  100% { transform: translateY(-1px);  box-shadow: 0 4px 16px rgba(0,0,0,.35); }
-}
-
-/* Shimmer-Highlight, das über die Bubble wischt */
-.msg.ai.typing .bubble::after,
-.message.ai-message.typing .bubble::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255,255,255,.06) 45%,
-    rgba(255,255,255,.10) 50%,
-    rgba(255,255,255,.06) 55%,
-    transparent 100%
-  );
-  transform: translateX(-150%);
-  animation: shimmer 1.25s linear infinite;
-  pointer-events: none;
-}
-@keyframes shimmer {
-  to { transform: translateX(150%); }
-}
-
-/* Dots: leicht pulsierend (du hast bereits .dot – hier „hübscher“) */
-.msg.ai.typing .dot,
-.message.ai-message.typing .dot {
-  width: 8px; height: 8px; border-radius: 50%;
-  background: #cfcfcf;
-  opacity: .8;
-  animation: dotBounce 1s infinite ease-in-out;
-  display: inline-block;
-}
-.msg.ai.typing .dot:nth-child(2),
-.message.ai-message.typing .dot:nth-child(2) { animation-delay: .12s; }
-.msg.ai.typing .dot:nth-child(3),
-.message.ai-message.typing .dot:nth-child(3) { animation-delay: .24s; }
-
-@keyframes dotBounce {
-  0%, 80%, 100% { transform: translateY(0);   opacity: .6; }
-  40%          { transform: translateY(-4px); opacity: 1;  }
-}
-
-/* Kleiner Equalizer unter den Dots (rein visuell) */
-.msg.ai.typing .eq,
-.message.ai-message.typing .eq {
-  display: flex; gap: 3px; align-items: flex-end;
-  height: 12px; margin-top: 8px;
-}
-.msg.ai.typing .bar,
-.message.ai-message.typing .bar {
-  width: 3px; height: 6px; border-radius: 2px;
-  background: #bdbdbd;
-  animation: barWave 900ms ease-in-out infinite;
-}
-.message.ai-message.typing .bar:nth-child(1),
-.msg.ai.typing .bar:nth-child(1) { animation-delay: 0ms;   }
-.message.ai-message.typing .bar:nth-child(2),
-.msg.ai.typing .bar:nth-child(2) { animation-delay: 100ms; }
-.message.ai-message.typing .bar:nth-child(3),
-.msg.ai.typing .bar:nth-child(3) { animation-delay: 200ms; }
-.message.ai-message.typing .bar:nth-child(4),
-.msg.ai.typing .bar:nth-child(4) { animation-delay: 300ms; }
-.message.ai-message.typing .bar:nth-child(5),
-.msg.ai.typing .bar:nth-child(5) { animation-delay: 400ms; }
-
-@keyframes barWave {
-  0%, 100% { height: 6px;  opacity: .6; }
-  50%      { height: 12px; opacity: 1;  }
-}
-
-
-
-/* =============================================
-   ✨ Minimal-Premium Animated Border
-============================================= */
-.msg .bubble {
-  position: relative;
-  border: none;
-  z-index: 0;
-}
-
-/* Gradient Rahmen */
-.msg .bubble::before {
-  content: "";
-  position: absolute;
-  inset: -1.5px;
-  border-radius: inherit;
-  
-  background: linear-gradient(
-    140deg,
-    rgba(20,143,172, 0.38),
-    rgba(50,90,110, 0.35),
-    rgba(230,244,246, 0.28),
-    rgba(20,143,172, 0.38)
-  );
-
-  background-size: 220% 220%;
-  animation: rotateBorder 16s ease-in-out infinite;
-
-  -webkit-mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-          mask-composite: exclude;
-  z-index: -1;
-}
-
-/* sanfte Bewegung */
-@keyframes rotateBorder {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-/* Farben innen modernisieren */
-.msg.ai .bubble {
-  background: #1a1a1a;
-  color: #e9e9e9;
-}
-
-.msg.user .bubble {
-  background: #3ca447;
-  color: #fff;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .suggestions.thinking,
-  .suggestions.thinking::after,
-  .suggestions.thinking .suggestion::before {
-    animation: none !important;
-  }
-}
-
-
-
-/* Bild-Blase in Chatnachrichten */
-.image-message {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.image-message img {
-  max-width: 500px;    /* ✅ Bildgröße begrenzen */
-  max-height: 500px;   /* ✅ quadratischer max. Rahmen */
-  width: auto;
-  height: auto;
-  border-radius: 12px; /* ✅ gleiche Bubble-Optik */
-  object-fit: cover;
-  cursor: zoom-in;     /* optional */
-  border: 1px solid rgba(255,255,255,.08); /* dezenter Rand */
-  box-shadow: 0 2px 6px rgba(0,0,0,.4);    /* leichtes Shadow */
 }

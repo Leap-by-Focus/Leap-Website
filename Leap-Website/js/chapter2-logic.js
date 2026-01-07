@@ -96,38 +96,47 @@ if (window.leapLogicInitialized) {
         if (!runBtn) return;
 
         runBtn.onclick = function() {
-            const code = window.leapEditorInstance.getValue();
-            const interpreter = new LeapInterpreter();
+    const code = window.leapEditorInstance.getValue();
+    const interpreter = new LeapInterpreter();
 
-            bar.classList.remove("success", "failed");
-            void bar.offsetWidth; 
+    bar.classList.remove("success", "failed");
+    void bar.offsetWidth; 
 
-            try {
-                const result = interpreter.run(code);
-                outputDiv.innerHTML = result ? `> ${result.replace(/\n/g, '<br>> ')}` : "> Code ausgeführt.";
-                outputDiv.style.color = "#00ff90";
+    try {
+        const result = interpreter.run(code);
+        
+        // Ergebnis anzeigen
+        outputDiv.innerHTML = result ? `> ${result.replace(/\n/g, '<br>> ')}` : "> Code ausgeführt.";
+        outputDiv.style.color = "#00ff90";
 
-                const clean = code.replace(/\s+/g, "").toLowerCase();
-                
-                // Strengere Prüfung für Kapitel 2 Mission
-                const hasX = /x=10;/.test(clean);
-                const hasY = /y=20;/.test(clean);
-                const hasZ = /z=x\+y;/.test(clean);
-                const hasOutput = /ausgeben\(z\);/.test(clean);
+        // --- NEU: AUTO-SCROLL NACH UNTEN ---
+        outputDiv.scrollTop = outputDiv.scrollHeight;
 
-                if (hasX && hasY && hasZ && hasOutput) {
-                    triggerSuccess(fill, textElement, bar);
-                } else {
-                    let missing = !hasX ? "x = 10; fehlt" : !hasY ? "y = 20; fehlt" : !hasZ ? "z = x + y; fehlt" : "ausgeben(z); fehlt";
-                    triggerFailure(fill, textElement, bar, `❌ Fast geschafft! ${missing}.`);
-                }
+        const clean = code.replace(/\s+/g, "").toLowerCase();
+        
+        // Strengere Prüfung für Kapitel 2 Mission
+        const hasX = /x=10;/.test(clean);
+        const hasY = /y=20;/.test(clean);
+        const hasZ = /z=x\+y;/.test(clean);
+        const hasOutput = /ausgeben\(z\);/.test(clean);
 
-            } catch (err) {
-                outputDiv.innerHTML = `<span style="color: #ff4b2b;">> Fehler: ${err.message}</span>`;
-                outputDiv.style.color = "#ff4b2b";
-                triggerFailure(fill, textElement, bar, `❌ Fehler: ${err.message}`);
-            }
-        };
+        if (hasX && hasY && hasZ && hasOutput) {
+            triggerSuccess(fill, textElement, bar);
+        } else {
+            let missing = !hasX ? "x = 10; fehlt" : !hasY ? "y = 20; fehlt" : !hasZ ? "z = x + y; fehlt" : "ausgeben(z); fehlt";
+            triggerFailure(fill, textElement, bar, `❌ Fast geschafft! ${missing}.`);
+        }
+
+    } catch (err) {
+        outputDiv.innerHTML = `<span style="color: #ff4b2b;">> Fehler: ${err.message}</span>`;
+        outputDiv.style.color = "#ff4b2b";
+        
+        // --- AUCH BEI FEHLERN SCROLLEN ---
+        outputDiv.scrollTop = outputDiv.scrollHeight;
+        
+        triggerFailure(fill, textElement, bar, `❌ Fehler: ${err.message}`);
+    }
+};
 
         stopBtn.onclick = function() {
             outputDiv.innerHTML = "<span style='color:orange'>> Programm gestoppt.</span>";

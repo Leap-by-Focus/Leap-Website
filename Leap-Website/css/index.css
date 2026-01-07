@@ -1486,3 +1486,29 @@ body.zoom-through .Main {
   position: fixed;
   top:0px;
 }
+
+
+/* css/auth-style.css */
+.auth-panel {
+    display: none; /* Standardmäßig aus */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #1a1a1a;
+    padding: 2rem;
+    border: 2px solid #00ffcc; /* Leap-Grün */
+    z-index: 10000;
+    width: 350px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.8);
+}
+
+.auth-panel.open {
+    display: block; /* Wird durch JS getriggert */
+}
+
+.message-box {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    min-height: 1.2rem;
+}

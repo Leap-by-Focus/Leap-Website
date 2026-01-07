@@ -12,7 +12,7 @@
   const filePreview = document.getElementById("filePreview");
   const clearBtn    = document.getElementById("clearChat");
   const exportBtn   = document.getElementById("exportChat");
-  const suggWrap    = document.querySelector(".suggestions"); // <— nur EINMAL!
+  const suggWrap    = document.querySelector(".suggestions"); 
 
   // ======================================================
   // Config
@@ -30,38 +30,73 @@
     s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
   const escAttr = (s = "") => String(s).replace(/"/g, "&quot;");
 
-  // Markdown-Links sicher rendern
-  function renderTextWithLinksSafe(text = "") {
-    const re = /\[([^\]]+)\]\(([^)]+)\)/g; // [text](url)
-    let out = "";
-    let last = 0;
-    let m;
-    while ((m = re.exec(text)) !== null) {
-      out += esc(text.slice(last, m.index));
-      const linkText = esc(m[1]);
-      const href = escAttr(m[2]);
-      out += `<a href="${href}" target="_self" rel="noopener">${linkText}</a>`;
-      last = m.index + m[0].length;
-    }
-    out += esc(text.slice(last));
-    return out;
-  }
+  // ======================================================
+  // FIX: "Brechstangen"-Parser (Repariert kaputtes Markdown)
+  // ======================================================
+  function renderAnswerHTML(raw) {
+    if (!raw) return "";
 
-  // Antwort in Text-/Codeblöcke zerlegen
-  function renderAnswerHTML(raw = "") {
-    const reFence = /```([\s\S]*?)```/g;
+    // 1. SANITIZER: Repariert kaputten AI-Output VOR dem Parsen
+    // Wenn die AI "```leapx" schreibt (ohne Leerzeichen/Enter), machen wir "```leap\nx" daraus.
+    let cleanRaw = raw.replace(/```leap(?=[^\s])/gi, "```leap\n");
+    
+    // Repariert auch Fälle, wo nach ``` gar nichts kommt außer direkt Code
+    cleanRaw = cleanRaw.replace(/```(?=[^a-z\n\s])/gi, "```\n");
+
+    // 2. Splitten am Backtick
+    const parts = cleanRaw.split("```");
     let html = "";
-    let last = 0;
-    let m;
 
-    while ((m = reFence.exec(raw)) !== null) {
-      const before = raw.slice(last, m.index);
-      html += renderTextWithLinksSafe(before);
-      const code = esc(m[1]);
-      html += `<pre><code>${code}</code></pre>`;
-      last = m.index + m[0].length;
+    for (let i = 0; i < parts.length; i++) {
+      let part = parts[i];
+
+      // Gerade Zahl (0, 2...) = Normaler Text
+      if (i % 2 === 0) {
+        // HTML Safe machen
+        part = part.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+
+        // Markdown Styles
+        part = part.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>"); // Fett
+        part = part.replace(/^###\s*(.*$)/gm, "<h3>$1</h3>");       // Überschrift
+        part = part.replace(/^[\*\-]\s+(.*$)/gm, "<li>$1</li>");    // Listen
+        
+        // ZWANGS-UMBRÜCHE: Jedes \n wird sofort ein <br>, egal was CSS sagt
+        part = part.replace(/\n/g, "<br>");
+        
+        html += part;
+      } 
+      // Ungerade Zahl (1, 3...) = Code Block
+      else {
+        // Wir trennen die erste Zeile (Sprache) vom Rest
+        let firstBreak = part.search(/[\n\s]/);
+        
+        let lang = "CODE";
+        let codeContent = part;
+
+        if (firstBreak > -1 && firstBreak < 20) {
+           const potentialLang = part.substring(0, firstBreak).trim();
+           // Plausibilitätscheck
+           if (!potentialLang.includes("=") && !potentialLang.includes("[")) {
+             lang = potentialLang;
+             codeContent = part.substring(firstBreak + 1);
+           }
+        }
+
+        // Leap Label verschönern
+        if (lang.toLowerCase().includes("leap")) lang = ".lp";
+        
+        // Code Escapen
+        codeContent = codeContent.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+        
+        // Leere Zeilen trimmen
+        codeContent = codeContent.trim();
+
+        html += `<div class="code-wrapper">
+                   <div class="code-header">${lang.toUpperCase()}</div>
+                   <pre><code>${codeContent}</code></pre>
+                 </div>`;
+      }
     }
-    html += renderTextWithLinksSafe(raw.slice(last));
     return html;
   }
 
@@ -111,7 +146,6 @@
     input.style.height = Math.min(180, input.scrollHeight) + "px";
   }
 
-  // dynamische Schriftgröße (CSS-Klassen .l2/.l3 vorhanden)
   function adjustInputFont() {
     if (!input) return;
     const len = input.value.length;
@@ -121,6 +155,9 @@
 
   function updateCounterAndSendState() {
     if (!sendBtn || !input) return;
+    // Wenn gesperrt, Status nicht ändern
+    if (input.disabled) return;
+
     const len = input.value.trim().length;
     const hasFile = !!(imageInput && imageInput.files && imageInput.files.length);
     if (charCounter) charCounter.textContent = String(len);
@@ -169,7 +206,7 @@
 
   function renderSuggestions(list = []) {
     if (!suggWrap) return;
-    if (!Array.isArray(list) || list.length === 0) return; // alte stehen lassen
+    if (!Array.isArray(list) || list.length === 0) return; 
 
     suggWrap.innerHTML = "";
     list.slice(0, 3).forEach((label) => {
@@ -194,7 +231,6 @@
     suggWrap.classList.toggle("thinking", !!on);
   }
 
-  // setzt/entfernt die Loading-Dots auf vorhandenen Suggestion-Buttons
   function setSuggestionsLoading(on) {
     if (!suggWrap) return;
     const btns = [...suggWrap.querySelectorAll(".suggestion")];
@@ -213,7 +249,7 @@
   }
 
   // ======================================================
-  // Sendelogik
+  // HAUPTFUNKTION: Senden
   // ======================================================
   async function send() {
     if (!input || !sendBtn) return;
@@ -221,6 +257,11 @@
     const text = input.value.trim();
     const file = imageInput?.files?.[0] || null;
     if (!text && !file) return;
+
+    // --- 1. UI SPERREN (Damit du nicht tippen kannst) ---
+    input.disabled = true;         // <--- DAS WAR WICHTIG
+    sendBtn.disabled = true;
+    if (imageInput) imageInput.disabled = true;
 
     // User Echo
     const userTextHTML = text ? esc(text).replace(/\n/g, "<br>") : "";
@@ -232,26 +273,23 @@
       imageUrl: objectUrl,
     });
 
-    // Reset Composer
+    // Reset Input (visuell)
     input.value = "";
     autosize();
     adjustInputFont();
     if (imageInput) imageInput.value = "";
     renderPreview(null);
-    updateCounterAndSendState();
 
-    // API Call
+    // API Call Setup
     setTyping(true);
-    setSuggestionsThinking(true);   // gleiche Thinking-Animation wie AI
-    setSuggestionsLoading(true);    // Buttons zeigen 3 Dots
-    sendBtn.disabled = true;
+    setSuggestionsThinking(true);
+    setSuggestionsLoading(true);
 
     try {
       const form = new FormData();
       if (text) form.append("text", text);
       if (file) form.append("image", file, file.name);
 
-      // >>> WICHTIG: Leap-RAG einschalten + Session mitschicken <<<
       form.append("useLeapContext", "true");
       form.append("sessionId", SESSION_ID);
 
@@ -263,23 +301,17 @@
       if (!resp.ok) {
         const err = await resp.text().catch(() => String(resp.status));
         addBubble({ html: `<b>Fehler:</b> ${esc(err)}`, who: "ai" });
-        // Fallback-Suggestions trotz Fehler
         renderSuggestions(fallbackSuggestions(text, ""));
         return;
       }
 
       const data = await resp.json();
 
-      // Debug: RAG-Status in der Konsole
-      if (data.meta) {
-        console.log("Leap AI meta:", data.meta);
-      }
-
       // Antwort anzeigen
       const html = renderAnswerHTML(String(data.answer || ""));
       addBubble({ html, who: "ai" });
 
-      // Suggestions vom Server oder Fallback
+      // Suggestions
       const sugg = (Array.isArray(data.suggestions) && data.suggestions.length)
         ? data.suggestions
         : fallbackSuggestions(text, data.answer);
@@ -289,15 +321,26 @@
       addBubble({ html: `<b>Netzwerkfehler:</b> ${esc(String(e))}`, who: "ai" });
       renderSuggestions(fallbackSuggestions(text, ""));
     } finally {
+      // --- 2. UI FREIGEBEN (Jetzt darfst du wieder tippen) ---
       setTyping(false);
       setSuggestionsThinking(false);
       setSuggestionsLoading(false);
+      
+      input.disabled = false;         // <--- WIEDER FREIGEBEN
       sendBtn.disabled = false;
+      if (imageInput) imageInput.disabled = false;
+
+      // Fokus zurückgeben
+      setTimeout(() => {
+        input.focus();
+        autosize();
+        updateCounterAndSendState();
+      }, 50);
     }
   }
 
   // ======================================================
-  // Events / Wiring
+  // Events
   // ======================================================
   if (sendBtn) sendBtn.addEventListener("click", send);
 
@@ -314,13 +357,11 @@
         autosize();
         adjustInputFont();
         updateCounterAndSendState();
-        // Während Tippens: Suggestions NICHT ausblenden, nur sanft animieren
         const hasText = input.value.trim().length > 0;
         setSuggestionsThinking(hasText);
       })
     );
 
-    // Initial sizing/state
     setTimeout(() => {
       autosize();
       adjustInputFont();
@@ -328,7 +369,6 @@
     }, 0);
   }
 
-  // File Handling
   if (imageInput) {
     imageInput.addEventListener("change", () => {
       renderPreview(imageInput.files?.[0] || null);
@@ -336,7 +376,6 @@
     });
   }
 
-  // Drag & Drop
   if (dropzone) {
     ["dragenter", "dragover"].forEach((evt) =>
       dropzone.addEventListener(evt, (e) => {
@@ -364,7 +403,6 @@
     });
   }
 
-  // Clear & Export
   if (clearBtn) clearBtn.addEventListener("click", () => (box ? (box.innerHTML = "") : null));
   if (exportBtn)
     exportBtn.addEventListener("click", () => {
@@ -383,9 +421,7 @@
       URL.revokeObjectURL(url);
     });
 
-  // ======================================================
-  // Initial Greeting + Start-Suggestions
-  // ======================================================
+  // Begrüßung
   addBubble({
     html: "Hi! Ich bin <b>Leap&nbsp;AI</b>. Frag mich was — z. B. „Wo finde ich die Dokumentation?“",
     who: "ai",

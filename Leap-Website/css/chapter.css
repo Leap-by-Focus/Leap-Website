@@ -475,3 +475,10 @@ body {
   background-size: 200% auto;
   animation: rainbowFlow 2s linear infinite;
 }
+
+
+#editorOutput {
+    overflow-y: auto;       /* Scrollbalken nur wenn nötig */
+    scroll-behavior: smooth; /* Sanftes Gleiten nach unten */
+    max-height: 300px;       /* Achte darauf, dass eine Höhe gesetzt ist! */
+}
