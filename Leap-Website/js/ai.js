@@ -31,68 +31,69 @@
   const escAttr = (s = "") => String(s).replace(/"/g, "&quot;");
 
   // ======================================================
-  // FIX: "Brechstangen"-Parser (Repariert kaputtes Markdown)
+  // HTML GENERATOR (Mit Mac-Style Terminals)
   // ======================================================
   function renderAnswerHTML(raw) {
     if (!raw) return "";
 
-    // 1. SANITIZER: Repariert kaputten AI-Output VOR dem Parsen
-    // Wenn die AI "```leapx" schreibt (ohne Leerzeichen/Enter), machen wir "```leap\nx" daraus.
+    // 1. SANITIZER: Repariert kaputten AI-Output
     let cleanRaw = raw.replace(/```leap(?=[^\s])/gi, "```leap\n");
-    
-    // Repariert auch Fälle, wo nach ``` gar nichts kommt außer direkt Code
     cleanRaw = cleanRaw.replace(/```(?=[^a-z\n\s])/gi, "```\n");
 
-    // 2. Splitten am Backtick
+    // 2. Splitten
     const parts = cleanRaw.split("```");
     let html = "";
 
     for (let i = 0; i < parts.length; i++) {
       let part = parts[i];
 
-      // Gerade Zahl (0, 2...) = Normaler Text
+      // --- TEXT ---
       if (i % 2 === 0) {
-        // HTML Safe machen
         part = part.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
-
-        // Markdown Styles
-        part = part.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>"); // Fett
-        part = part.replace(/^###\s*(.*$)/gm, "<h3>$1</h3>");       // Überschrift
-        part = part.replace(/^[\*\-]\s+(.*$)/gm, "<li>$1</li>");    // Listen
-        
-        // ZWANGS-UMBRÜCHE: Jedes \n wird sofort ein <br>, egal was CSS sagt
+        part = part.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+        part = part.replace(/^###\s*(.*$)/gm, "<h3>$1</h3>");
+        part = part.replace(/^[\*\-]\s+(.*$)/gm, "<li>$1</li>");
         part = part.replace(/\n/g, "<br>");
-        
         html += part;
       } 
-      // Ungerade Zahl (1, 3...) = Code Block
+      // --- CODE ---
       else {
-        // Wir trennen die erste Zeile (Sprache) vom Rest
         let firstBreak = part.search(/[\n\s]/);
-        
         let lang = "CODE";
         let codeContent = part;
 
         if (firstBreak > -1 && firstBreak < 20) {
            const potentialLang = part.substring(0, firstBreak).trim();
-           // Plausibilitätscheck
            if (!potentialLang.includes("=") && !potentialLang.includes("[")) {
              lang = potentialLang;
              codeContent = part.substring(firstBreak + 1);
            }
         }
 
-        // Leap Label verschönern
-        if (lang.toLowerCase().includes("leap")) lang = ".lp";
-        
-        // Code Escapen
+        // Label Logik
+        let isLeap = false;
+        if (lang.toLowerCase().includes("leap")) {
+            lang = "LEAP";
+            isLeap = true; // Flag für CSS Farbe
+        } else if (lang === ".lp") {
+            lang = "LEAP";
+            isLeap = true;
+        }
+
+        // Code Escapen & Trimmen
         codeContent = codeContent.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
-        
-        // Leere Zeilen trimmen
         codeContent = codeContent.trim();
 
+        // ✨ HIER IST DAS NEUE DESIGN: Mac Dots + Label
         html += `<div class="code-wrapper">
-                   <div class="code-header">${lang.toUpperCase()}</div>
+                   <div class="code-header">
+                     <div class="window-controls">
+                       <span class="dot red"></span>
+                       <span class="dot yellow"></span>
+                       <span class="dot green"></span>
+                     </div>
+                     <span class="lang-label ${isLeap ? 'leap' : ''}">${lang.toUpperCase()}</span>
+                   </div>
                    <pre><code>${codeContent}</code></pre>
                  </div>`;
       }
@@ -155,7 +156,6 @@
 
   function updateCounterAndSendState() {
     if (!sendBtn || !input) return;
-    // Wenn gesperrt, Status nicht ändern
     if (input.disabled) return;
 
     const len = input.value.trim().length;
@@ -258,8 +258,8 @@
     const file = imageInput?.files?.[0] || null;
     if (!text && !file) return;
 
-    // --- 1. UI SPERREN (Damit du nicht tippen kannst) ---
-    input.disabled = true;         // <--- DAS WAR WICHTIG
+    // UI SPERREN
+    input.disabled = true;
     sendBtn.disabled = true;
     if (imageInput) imageInput.disabled = true;
 
@@ -273,7 +273,7 @@
       imageUrl: objectUrl,
     });
 
-    // Reset Input (visuell)
+    // Reset Input
     input.value = "";
     autosize();
     adjustInputFont();
@@ -321,16 +321,15 @@
       addBubble({ html: `<b>Netzwerkfehler:</b> ${esc(String(e))}`, who: "ai" });
       renderSuggestions(fallbackSuggestions(text, ""));
     } finally {
-      // --- 2. UI FREIGEBEN (Jetzt darfst du wieder tippen) ---
+      // UI FREIGEBEN
       setTyping(false);
       setSuggestionsThinking(false);
       setSuggestionsLoading(false);
       
-      input.disabled = false;         // <--- WIEDER FREIGEBEN
+      input.disabled = false;
       sendBtn.disabled = false;
       if (imageInput) imageInput.disabled = false;
 
-      // Fokus zurückgeben
       setTimeout(() => {
         input.focus();
         autosize();

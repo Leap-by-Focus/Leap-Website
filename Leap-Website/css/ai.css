@@ -289,37 +289,78 @@ pre code {
 
 /* --- Code-Block Wrapper (.lp Support) --- */
 
+/* --- Code-Block Design (Modern Mac-Terminal Style) --- */
+
 .code-wrapper {
-  margin: 15px 0;
-  background-color: #1e1e1e;
-  border-radius: 8px;
-  border: 1px solid #333;
+  margin: 16px 0;
+  background-color: #0d0d0d; /* Sehr dunkel, fast schwarz */
+  border-radius: 12px;       /* Schön abgerundet */
+  border: 1px solid #333;    /* Dezenter Rand */
   overflow: hidden;
-  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace; /* Moderne Fonts */
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5); /* Satter Schatten für Tiefe */
+  position: relative;
 }
 
+/* Der Header (Fensterleiste) */
 .code-header {
-  background-color: #2d2d2d;
-  color: #e0e0e0;
-  padding: 5px 12px;
-  font-size: 0.75rem;
-  text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Punkte links, Sprache rechts */
+  background-color: #1a1a1a;
+  padding: 8px 16px;
   border-bottom: 1px solid #333;
-  font-weight: bold;
-  letter-spacing: 0.5px;
   user-select: none;
 }
 
+/* Container für die 3 Mac-Punkte */
+.window-controls {
+  display: flex;
+  gap: 6px;
+}
+
+/* Die Punkte selbst */
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.red    { background-color: #ff5f56; }
+.yellow { background-color: #ffbd2e; }
+.green  { background-color: #27c93f; }
+
+/* Das Sprach-Label rechts */
+.lang-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+/* Wenn es Leap ist, färben wir es ein! */
+.lang-label.leap {
+  color: #50e9ba; /* Deine Accent Farbe */
+  text-shadow: 0 0 10px rgba(80, 233, 186, 0.4);
+}
+
+/* Der Code Inhalt */
 .code-wrapper pre {
   margin: 0;
-  padding: 15px;
+  padding: 16px;
   overflow-x: auto;
-  color: #d4d4d4;
+  color: #e0e0e0;     /* Helles Grau, angenehmer als reines Weiß */
   font-size: 0.9rem;
-  line-height: 1.5;
-  white-space: pre; 
+  line-height: 1.6;   /* Etwas mehr Zeilenabstand für Lesbarkeit */
+  white-space: pre;   
 }
+
+/* Scrollbar im Code hübsch machen */
+.code-wrapper pre::-webkit-scrollbar { height: 8px; }
+.code-wrapper pre::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 4px;
+}
+.code-wrapper pre::-webkit-scrollbar-track { background: transparent; }
 
 /* =========================================================
    COMPOSER (Eingabefeld)
