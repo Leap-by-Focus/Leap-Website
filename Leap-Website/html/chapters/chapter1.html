@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Leap - Kapitel 1</title>
+
+		<!-- CSS -->
+		<link rel="stylesheet" href="../../css/index.css">
+		<link rel="stylesheet" href="../../css/forum.css">
+		<link rel="stylesheet" href="../../css/whoarewe.css">
+		<link rel="stylesheet" href="../../css/chapter.css">
+
+		<!-- Monaco Editor Loader -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
+
+		<!-- Monaco Editor + Effekte -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+		<!-- Auth & UI -->
+		<script type="module" src="../../js/firebaseauth.js" defer></script>
+		<script src="../../js/loginFormularDiv.js" defer></script>
+		<script src="../../js/openLogin.js" defer></script>
+
+		<!-- Darkmode & Menü -->
+		<script src="../../js/appearance-apply.js" defer></script>
+		<script src="../../js/particlesMenu.js" defer></script>
+</head>
+<body>
+<div class="hauptMenu">
+	<canvas id="particleCanvas"></canvas>
+	<div class="backToMainLogo">
+		<a href="../index.html">
+			<img src="../../assets/images/Leap.png" alt="Leap Logo" />
+		</a>
+	</div>
+</div>
+
+		<div class="loginDiv">
+			<div class="loginButton" id="loginButton">Login</div>
+			<div class="registerButton" id="registerButton">Register</div>
+
+			<div class="loginFormularDiv" id="loginFormular">
+				<form class="loginForm">
+					<label for="logUsername">Benutzername:</label>
+					<input type="text" id="logUsername" required />
+					<label for="logPassword">Passwort:</label>
+					<input type="password" id="logPassword" required />
+					<button type="submit" class="submitButton" id="submitbuttonlogin">
+						Anmelden
+					</button>
+					<div id="signInMessage" class="alert"></div>
+				</form>
+				<div class="reset-password-link">
+					<a href="#" id="forgotLink">Passwort vergessen?</a>
+				</div>
+			</div>
+
+			<div class="resetFormularDiv" id="resetFormular">
+				<form class="loginForm" id="resetForm">
+					<!-- Phase A -->
+					<div id="phase-request">
+						<label for="resetEmail">E-Mail-Adresse:</label>
+						<input
+							type="email"
+							id="resetEmail"
+							name="resetEmail"
+							placeholder="dein@mail.tld"
+							required
+						/>
+						<button type="submit" class="submitButton" id="btnSendReset">
+							Link zum Zurücksetzen senden
+						</button>
+					</div>
+
+					<!-- Phase B (über E-Mail-Link sichtbar) -->
+					<div id="phase-set" style="display: none">
+						<p id="emailLine" class="muted"></p>
+
+						<label for="pw1">Neues Passwort:</label>
+						<input
+							type="password"
+							id="pw1"
+							name="newPassword"
+							minlength="6"
+							autocomplete="new-password"
+							required
+						/>
+
+						<label for="pw2">Neues Passwort wiederholen:</label>
+						<input
+							type="password"
+							id="pw2"
+							name="newPasswordRepeat"
+							minlength="6"
+							autocomplete="new-password"
+							required
+						/>
+
+						<button type="submit" class="submitButton" id="btnConfirmReset">
+							Passwort speichern
+						</button>
+					</div>
+
+					<div id="resetMessage" class="alert"></div>
+
+					<div class="reset-actions">
+						<button type="button" class="textButton" id="backToLogin">
+							← Zurück zum Login
+						</button>
+					</div>
+				</form>
+			</div>
+
+			<div class="registerFormularDiv">
+				<form class="registerForm" id="registerForm">
+					<label for="regUsername">Benutzername:</label>
+					<input
+						type="text"
+						id="regUsername"
+						name="username"
+						placeholder="Benutzername"
+						required
+					/>
+					<label for="regEmail">Email:</label>
+					<input
+						type="email"
+						id="regEmail"
+						name="email"
+						placeholder="Email"
+						required
+					/>
+					<label for="regPassword">Passwort:</label>
+					<input
+						type="password"
+						id="regPassword"
+						placeholder="Passwort"
+						required
+					/>
+					<button type="submit" class="submitButton" id="submitbuttonregister">
+						Registrieren
+					</button>
+				</form>
+			</div>
+		</div>
+
+		<div class="userinfo">
+			<div class="character" id="avatarLink"></div>
+			<div class="welcomeNote">Willkommen</div>
+			<div class="CharacterName"></div>
+			<div id="submitlogout" class="logoutButton" style="display: none">
+				⎋ Logout
+			</div>
+		</div>
+
+		<!-- Willkommen-Text, wird nur angezeigt, wenn der Benutzer eingeloggt ist -->
+		<div id="welcomeMessage" class="welcomeMessage" style="display: none">
+			<p>Willkommen, <span id="usernameDisplay"></span>!</p>
+		</div>
+
+
+
+
+<div class="gradient-transition"></div>
+
+<div class="menu">
+		<div class="Menu-menu-text">Menü</div>
+    
+		<a href="../docs.html">Home</a>
+    
+		<hr style="border: 0.5px solid var(--border); width: 80%; margin: 10px auto; opacity: 0.3;">
+
+		<a href="chapter1.html" class="active-chapter">Kapitel 1: Einstieg</a>
+		<a href="chapter2.html">Kapitel 2: Variablen</a>
+		<a href="chapter3.html">Kapitel 3: Mathematische Operatoren</a>
+		<a href="chapter4.html">Kapitel 4: Statements</a>
+		<a href="chapter5.html">Kapitel 5: Schleifen</a>
+		<a href="chapter6.html">Kapitel 6: Methoden</a>
+		<a href="chapter7.html">Kapitel 7: Files (Read, Write)</a>
+		<a href="chapter8.html">Kapitel 8: Collections</a>
+		<a href="chapter9.html">Kapitel 9: Debugging</a>
+		<a href="chapter10.html">Kapitel 10: Arbeiten mit Leap-AI</a>
+		<a href="chapter11.html">Kapitel 11: Documents.exe</a>
+</div>
+
+<div class="container">
+<div class="links">
+		<div class="chapter-header">
+				<span class="chapter-number">Kapitel 01</span>
+				<h2 class="accent-title">Installation & Einrichtung 🚀</h2>
+		</div>
+
+		<p>Bevor du auch nur eine Zeile Leap-Code schreibst, sorgen wir für ein stabiles Setup. Dieses Kapitel führt dich Schritt für Schritt durch die Installation von Visual Studio Code und der Leap-Interpreter-Extension.</p>
+
+		<div class="info-box compact">
+				<strong>Ziel:</strong> Nach diesem Kapitel stehen dir Editor, Interpreter und Debugging-Tools lokal zur Verfügung.
+		</div>
+
+		<h3 class="accent-title">Checkliste</h3>
+		<div class="info-box compact">
+				<ul class="compact-list">
+						<li>☐ Visual Studio Code installiert</li>
+						<li>☐ Leap Extension installiert</li>
+				</ul>
+		</div>
+
+		<h3 class="accent-title">1. Visual Studio Code installieren</h3>
+		<p>Visual Studio Code (VSC) ist die Basis für alle weiteren Kapitel. Folge einfach diesen drei Schritten:</p>
+
+		<ol class="compact-list">
+				<li><strong>Download:</strong> Hole dir den Installer von <a href="https://code.visualstudio.com" target="_blank" rel="noreferrer">code.visualstudio.com</a>.</li>
+				<li><strong>Installation:</strong> Starte die Setup-Datei und folge dem Assistenten. Optionale Häkchen wie „<em>Zu PATH hinzufügen</em>“ sind empfehlenswert.</li>
+				<li><strong>Erster Start:</strong> Öffne VSC und lerne kurz die Willkommensseite kennen.</li>
+		</ol>
+
+		<div class="pro-tip">
+				<strong>Pro Tipp:</strong> Wenn du Leap-Dateien direkt über das Terminal öffnen möchtest, aktiviere unbedingt die Option „VSC zum PATH hinzufügen“.
+		</div>
+
+		<div class="info-box compact">
+				<p><strong>Optional:</strong> Verknüpfe .lp-Dateien mit Visual Studio Code. Ein Doppelklick öffnet dann sofort deinen Editor.</p>
+		</div>
+
+		<h3 class="accent-title">2. Leap Extension installieren</h3>
+		<p>Die Leap-Interpreter-Extension bringt Sprache, Syntax-Highlighting und integrierten Runner direkt in deinen Editor.</p>
+
+		<ol class="compact-list">
+				<li><strong>Marketplace öffnen:</strong> Besuche den <a href="https://marketplace.visualstudio.com/" target="_blank" rel="noreferrer">Visual Studio Marketplace</a> oder öffne den Extensions-Tab (Icon mit vier Quadraten).</li>
+				<li><strong>Suchen & installieren:</strong> Tippe „Leap Interpreter“ in die Suche und klicke auf <em>Install</em>. Falls du den Browser verwendest, öffnet VSC automatisch die Extension-Ansicht.</li>
+				<li><strong>Aktivierung:</strong> Nach der Installation ist die Erweiterung sofort einsatzbereit. Öffne eine <code>.lp</code>-Datei und drücke auf <em>Run</em>.</li>
+		</ol>
+
+		<div class="info-box compact">
+				<p><strong>Browser-Installationen:</strong> Der Install-Button im Marketplace leitet direkt in deinen Editor weiter.</p>
+				<p><strong>In-Editor-Suche:</strong> Extensions-Tab öffnen → „Leap Interpreter“ → Install.</p>
+		</div>
+
+		<hr class="divider">
+
+		<div class="code-example">
+				<pre><code class="language-bash"># Optional: Install via CLI (macOS)
+code --install-extension leap-interpreter
+
+# Leap-Datei mit VS Code öffnen
+code kapitel_1_setup.lp</code></pre>
+		</div>
+
+		<p>Sobald beide Häkchen gesetzt sind, kannst du Leap-Dateien bearbeiten, ausführen und debuggen. Weiter geht es mit Variablen in Kapitel 2!</p>
+</div>
+
+<div class="rechts">
+<div class="task-panel">
+		<div class="task-header">✅ Setup-Auftrag</div>
+		<div class="task-body">
+				<p>1. Lade Visual Studio Code herunter und installiere ihn.</p>
+				<p>2. Suche nach der „Leap Interpreter“-Extension (Browser oder Extensions-Tab).</p>
+				<p>3. Öffne `<span>.lp</span>`-Dateien und prüfe, ob der Run-Button sichtbar ist.</p>
+				<div class="task-check">Ziel: Beide Checklisten-Punkte abhaken - Editor + Extension aktiv.</div>
+		</div>
+</div>
+
+		<div class="vscode-container">
+				<div class="vscode-toolbar">
+						<span class="file-title">setup-guide.md</span>
+						<div class="vsc-buttons">
+								<button id="runBtn" class="vsc-btn run">▶ Run</button>
+								<button id="stopBtn" class="vsc-btn stop">⏹ Stop</button>
+						</div>
+				</div>
+
+				<div id="leapEditor" class="vscode-editor-frame">
+<pre>// Öffne die Kommandozeile und prüfe deine Installation.
+
+code --version
+code --list-extensions | grep leap
+
+// Wenn alles sitzt, kannst du die nächsten Kapitel direkt hier bearbeiten.</pre>
+				</div>
+
+				<div class="vscode-terminal">
+						<div class="terminal-header-bar">OUTPUT</div>
+						<div id="editorOutput" class="terminal-content">> Warte auf deine erste Leap-Datei...</div>
+				</div>
+
+				<div class="vscode-footer">
+						<span>Ready</span>
+						<span>Leap Setup</span>
+				</div>
+		</div>
+
+		<div class="chapter-statusbar">
+				<div class="chapter-status-fill" id="chapterStatusFill"></div>
+				<span id="chapterStatusText">Setup noch nicht bestätigt</span>
+		</div>
+</div>
+</div>
+</body>
+</html>
