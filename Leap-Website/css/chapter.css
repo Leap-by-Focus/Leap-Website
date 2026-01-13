@@ -217,6 +217,19 @@ body {
     margin: 0 2px;
 }
 
+/* Inline-Code im Aufgabenpaneel nicht vom globalen Forum-Style überlappen lassen */
+.task-panel code {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #1f1f1f;
+  border: 1px solid #333;
+  color: #ffca28;
+  font-family: 'Fira Code', monospace;
+  white-space: normal;
+  line-height: 1.4;
+}
+
 /* Abstände für Listen-Elemente */
 .links li {
     margin-bottom: 15px; /* Verhindert das "Kleben" von Listenpunkten */
@@ -386,6 +399,8 @@ body {
     align-items: center;
     backdrop-filter: blur(12px);
     box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    margin-top: 15px;
+    align-self: stretch;
 }
 
 .chapter-status-fill {

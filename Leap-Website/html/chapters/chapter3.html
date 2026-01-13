@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leap – Kapitel 2</title>
+    <title>Leap – Kapitel 3</title>
 
     <!-- CSS -->
     <link rel="stylesheet" href="../../css/index.css">
@@ -19,7 +19,7 @@
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <!-- Editor + Checker (RICHTIGE REIHENFOLGE!) -->
-<script type="module" src="../../js/chapter2-logic.js" defer></script>
+<script type="module" src="../../js/chapter3-logic.js" defer></script>
  <script type="module" src="../js/firebaseauth.js" defer></script>
     <script src="../js/loginFormularDiv.js" defer></script>
     <script src="../js/openLogin.js" defer></script>
@@ -37,17 +37,14 @@
     <script src="../../js/particlesMenu.js" defer></script>
 </head>
 <body>
-
-
-    
- <div class="hauptMenu">
-      <canvas id="particleCanvas"></canvas>
-      <div class="backToMainLogo">
-  <a href="index.html" onclick="window.location.href='../index.html'; return true;">
-    <img src="../../assets/images/Leap.png" alt="Leap Logo" />
-  </a>
+<div class="hauptMenu">
+  <canvas id="particleCanvas"></canvas>
+  <div class="backToMainLogo">
+    <a href="../index.html">
+      <img src="../../assets/images/Leap.png" alt="Leap Logo" />
+    </a>
+  </div>
 </div>
-    </div>
 
     <div class="loginDiv">
       <div class="loginButton" id="loginButton">Login</div>
@@ -184,125 +181,162 @@
     <hr style="border: 0.5px solid var(--border); width: 80%; margin: 10px auto; opacity: 0.3;">
 
     <a href="chapter1.html">Kapitel 1: Einstieg</a>
-    <a href="chapter2.html" class="active-chapter">Kapitel 2: Variablen</a>
-    <a href="chapter3.html">Kapitel 3: Datentypen</a>
-    <a href="chapter4.html">Kapitel 4: Rechnen</a>
-    <a href="chapter5.html">Kapitel 5: Bedingungen (If)</a>
-    <a href="chapter6.html">Kapitel 6: Logik-Gatter</a>
-    <a href="chapter7.html">Kapitel 7: Schleifen (Loops)</a>
-    <a href="chapter8.html">Kapitel 8: Listen</a>
-    <a href="chapter9.html">Kapitel 9: Funktionen</a>
-    <a href="chapter10.html">Kapitel 10: Objekte</a>
-    <a href="chapter11.html">Kapitel 11: Finale Projekt</a>
+    <a href="chapter2.html">Kapitel 2: Variablen</a>
+    <a href="chapter3.html" class="active-chapter">Kapitel 3: Mathematische Operatoren</a>
+    <a href="chapter4.html">Kapitel 4: Statements</a>
+    <a href="chapter5.html">Kapitel 5: Schleifen</a>
+    <a href="chapter6.html">Kapitel 6: Methoden</a>
+    <a href="chapter7.html">Kapitel 7: Files (Read, Write)</a>
+    <a href="chapter8.html">Kapitel 8: Collections</a>
+    <a href="chapter9.html">Kapitel 9: Debugging</a>
+    <a href="chapter10.html">Kapitel 10: Arbeiten mit Leap-AI</a>
+    <a href="chapter11.html">Kapitel 11: Documents.exe</a>
 </div>
 
 <div class="container">
-    <div class="links">
+<div class="links">
     <div class="chapter-header">
-        <span class="chapter-number">Kapitel 02</span>
-        <h2>Die Macht der Variablen 📦</h2>
-        <div class="progress-info">Lesezeit: 3 Min. | Schwierigkeit: Einsteiger</div>
+        <span class="chapter-number">Kapitel 03</span>
+        <h2 class="accent-title">Mathematische Operatoren ⚙️</h2>
     </div>
 
     <p class="intro-text">
-        Stell dir eine Variable wie eine **beschriftete Box** vor. Du legst einen Wert hinein (z. B. eine Zahl oder einen Namen), schließt den Deckel und kannst diesen Wert später im Programm jederzeit wieder herausholen, indem du einfach den Namen der Box benutzt.
+        Operatoren sind die Werkzeuge, mit denen du Werte vergleichst, kombinierst und transformierst. In Leap arbeiten sie genauso schlank wie der Rest der Sprache – ohne unnötige Schlüsselwörter.
     </p>
 
-    <div class="info-box">
-        <h4>🔹 Anatomie einer Variable</h4>
-        <p>Jede Variable in Leap besteht aus zwei entscheidenden Teilen:</p>
-        <ul>
-            <li><b class="highlight-cyan">Name:</b> Das Etikett auf der Box (z. B. <code>punkte</code>).</li>
-            <li><b class="highlight-cyan">Wert:</b> Der Inhalt der Box (z. B. <code>100</code>).</li>
-        </ul>
+    <div class="info-box compact">
+        <p><strong>Merke:</strong> Jede Rechenanweisung endet mit einem <code>;</code>. Ohne Terminator hängt der Interpreter mehrere Zeilen zusammen und wirft einen Fehler.</p>
     </div>
 
-    <h3>1. Deine erste Variable erstellen</h3>
-    <p>
-        In Leap musst du keine komplizierten Befehle wie <code>let</code> oder <code>var</code> lernen. Du schreibst einfach den Namen, ein Gleichheitszeichen und den Wert:
-    </p>
+    <h3 class="accent-title">1. Operator-Quickstart</h3>
+    <p>Die wichtigsten Operatoren kennst du bereits aus der Schule. In Leap setzt du sie direkt zwischen die Operanden.</p>
+    <div class="rules-grid operator-grid">
+        <div class="rule-item">
+            <b>Addition (+)</b>
+            <code>summe = a + b;</code>
+            <span>Fügt Werte zusammen, ideal für Punkte oder Ressourcen.</span>
+        </div>
+        <div class="rule-item">
+            <b>Subtraktion (-)</b>
+            <code>rest = hp - schaden;</code>
+            <span>Zieht Werte ab, etwa Lebenspunkte.</span>
+        </div>
+        <div class="rule-item">
+            <b>Multiplikation (*)</b>
+            <code>krit = basis * faktor;</code>
+            <span>Skaliert Werte für Buffs oder Boni.</span>
+        </div>
+        <div class="rule-item">
+            <b>Division (/)</b>
+            <code>proSpieler = loot / team;</code>
+            <span>Teilt Ressourcen fair auf.</span>
+        </div>
+        <div class="rule-item">
+            <b>Modulo (%)</b>
+            <code>reste = loot % team;</code>
+            <span>Ermittelt den Rest einer Division.</span>
+        </div>
+        <div class="rule-item">
+            <b>Klammern</b>
+            <code>score = (a + b) * c;</code>
+            <span>Überschreibt die Standard-Reihenfolge.</span>
+        </div>
+    </div>
 
-    <div class="code-example">
-        <div class="code-label">Leap Syntax</div>
-        <pre><code class="language-leap">gold = 50
-spielerName = "Daniela"</code></pre>
+    <h3 class="accent-title">2. Reihenfolge & Lesbarkeit</h3>
+    <p>Berechnungen folgen der bekannten Regel: erst Klammern, dann Multiplikation/Division, zum Schluss Addition/Subtraktion. Nutze Klammern großzügig, damit dein Squad sofort versteht, was zuerst passiert.</p>
+    <div class="code-example compact">
+        <pre><code class="language-leap">basis = 40;
+bonus = 12;
+score = (basis + bonus) * 2;
+ausgeben(score);</code></pre>
     </div>
 
     <div class="pro-tip">
-        <strong>Pro-Tipp:</strong> Namen dürfen keine Leerzeichen haben. Nutze stattdessen "CamelCase" (<code>meineVariable</code>) oder Unterstriche (<code>meine_variable</code>).
+        <strong>Debug-Tipp:</strong> Prüfe Zwischenergebnisse mit <code>ausgeben()</code>. So erkennst du sofort, welcher Teil der Formel falsche Werte liefert.
     </div>
 
-    <h3>2. Daten ans Licht bringen (Output)</h3>
-    <p>
-        Damit du siehst, was in deinen "Boxen" gespeichert ist, nutzt du das Terminal-Kommando <code>ausgeben(...)</code>:
-    </p>
-
-    <pre><code class="language-leap">alter = 18
-ausgeben(alter) // Zeigt 18 im Terminal</code></pre>
-
-    <h3>3. Mit Variablen rechnen</h3>
-    <p>
-        Das Beste an Variablen? Du kannst mit ihnen rechnen wie mit echten Zahlen. Das Programm ersetzt den Namen beim Rechnen automatisch durch den gespeicherten Wert.
-    </p>
-
-    <div class="math-grid">
-        <div class="math-item"><code>+</code> Plus</div>
-        <div class="math-item"><code>-</code> Minus</div>
-        <div class="math-item"><code>*</code> Mal</div>
-        <div class="math-item"><code>/</code> Geteilt</div>
+    <h3 class="accent-title">3. Modulo & Restenergie</h3>
+    <p>Der Modulo-Operator verrät dir, ob nach einer Division noch Ressourcen übrig bleiben. Perfekt für Bonus-Loot oder Restenergie.</p>
+    <div class="info-box compact">
+        <p><code>energie % spruenge</code> gibt dir, wie viele Energiepunkte nach einer gleichmäßigen Verteilung bleiben. Bei <code>120 % 3</code> wären das <code>0</code>, bei <code>122 % 3</code> die <code>2</code> extra Punkte.</p>
     </div>
 
-    <pre><code class="language-leap">level = 1
-neuesLevel = level + 1
-ausgeben(neuesLevel) // Ergibt 2</code></pre>
+    <h3 class="accent-title">4. Operator-Stacks planen</h3>
+    <ul class="compact-list">
+        <li>⭐ <b>Kurze Namen</b> halten Formeln lesbar (<code>verbrauchProSprung</code> statt <code>vps</code>).</li>
+        <li>🔁 <b>Wiederkehrende Teile</b> zuerst berechnen und in Variablen speichern.</li>
+        <li>🧮 <b>Klammern</b> setzen, sobald mehr als zwei Operatoren beteiligt sind.</li>
+        <li>🧪 <b>Ausgabe testen</b>, bevor du komplexere Logik auf diese Werte aufbaust.</li>
+    </ul>
+
+    <h3 class="accent-title">5. Kontrollierter Output</h3>
+    <p>Nutze die Operatoren jetzt in einer Mini-Mission und prüfe das Ergebnis direkt im Terminal.</p>
+    <div class="code-example compact">
+      <pre><code class="language-leap">energie = 120;
+  verbrauchProSprung = 15;
+  spruenge = 3;
+  reserveBonus = 12;
+
+  verbrauch = verbrauchProSprung * spruenge;
+  verbleibend = energie - verbrauch;
+  proSprung = energie / spruenge;
+
+  gesamt = verbleibend + reserveBonus;
+  ausgeben(gesamt); // Erwartet: 87</code></pre>
+    </div>
 
     <hr class="divider">
 
     <div class="next-step">
-         <p class="sub-text">Im nächsten Kapitel: <b>Bedingungen (if)</b> – Wir geben deinem Code ein Gehirn!</p>
+         <p class="sub-text">Im nächsten Kapitel: <b>Rechnen</b> – wir bauen längere Operator-Ketten.</p>
     </div>
 </div>
 
 <div class="rechts">
-<div class="task-panel">
-    <div class="task-header">🎯 MISSION: ZAHLEN-KOMBINATOR</div>
+  <div class="task-panel">
+    <div class="task-header">🎯 MISSION: ENERGIE-CONTROLLER</div>
     <div class="task-body">
-        <p>1. Erstelle <b>x = 10</b> und <b>y = 20</b></p>
-        <p>2. Erstelle <b>z</b> und rechne <b>x + y</b> zusammen</p>
-        <p>3. Nutze <code>ausgeben(z)</code> für das Ergebnis</p>
-        
-        <div class="task-check">
-            Ziel: Im Terminal muss die <b>30</b> stehen.
-        </div>
+      <p>1. Setze <b>energie = 120</b>, <b>verbrauchProSprung = 15</b>, <b>spruenge = 3</b>, <b>reserveBonus = 12</b>.</p>
+      <p>2. Berechne <b>verbrauch = verbrauchProSprung * spruenge</b>.</p>
+      <p>3. Ziehe den Verbrauch mit <b>verbleibend = energie - verbrauch</b> ab.</p>
+      <p>4. Füge den Kontrollwert <b>proSprung = energie / spruenge</b> hinzu.</p>
+      <p>5. Addiere den Bonus mit <b>gesamt = verbleibend + reserveBonus</b> und gib das Ergebnis via <code>ausgeben(gesamt);</code> aus.</p>
+      <p>6. Optional: Nutze <code>energie % spruenge</code>, um Restenergie zu prüfen.</p>
+
+      <div class="task-check">
+        Ziel: Im Terminal muss die <b>87</b> stehen.
+      </div>
     </div>
+  </div>
+
+  <div class="vscode-container">
+    <div class="vscode-toolbar">
+      <span class="file-title">chapter3.lp</span>
+      <div class="vsc-buttons">
+        <button id="runBtn" class="vsc-btn run">▶ Run</button>
+        <button id="stopBtn" class="vsc-btn stop">⏹ Stop</button>
+      </div>
+    </div>
+
+    <div id="leapEditor" class="vscode-editor-frame"></div>
+
+    <div class="vscode-terminal">
+      <div class="terminal-header-bar">OUTPUT</div>
+      <div id="editorOutput" class="terminal-content">> Warte auf Eingabe...</div>
+    </div>
+
+    <div class="vscode-footer">
+      <span>Ready</span>
+      <span>Leap Language</span>
+    </div>
+  </div>
+
+  <div class="chapter-statusbar">
+    <div class="chapter-status-fill" id="chapterStatusFill"></div>
+    <span id="chapterStatusText">Aufgabe noch nicht gelöst</span>
+  </div>
 </div>
-
-    <div class="vscode-container">
-        <div class="vscode-toolbar">
-            <span class="file-title">chapter2.lp</span>
-            <div class="vsc-buttons">
-                <button id="runBtn" class="vsc-btn run">▶ Run</button>
-                <button id="stopBtn" class="vsc-btn stop">⏹ Stop</button>
-            </div>
-        </div>
-
-        <div id="leapEditor" class="vscode-editor-frame"></div>
-
-        <div class="vscode-terminal">
-            <div class="terminal-header-bar">OUTPUT</div>
-            <div id="editorOutput" class="terminal-content">> Warte auf Eingabe...</div>
-        </div>
-
-        <div class="vscode-footer">
-            <span>Ready</span>
-            <span>Leap Language</span>
-        </div>
-    </div>
-
-    <div class="chapter-statusbar">
-        <div class="chapter-status-fill" id="chapterStatusFill"></div>
-        <span id="chapterStatusText">Aufgabe noch nicht gelöst</span>
-    </div>
 </div>
 </body>
 </html>
