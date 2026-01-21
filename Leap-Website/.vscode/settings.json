@@ -1,3 +1,15 @@
 {
-    "livePreview.defaultPreviewPath": "/html/index.html"
+    "livePreview.defaultPreviewPath": "/html/index.html",
+    "livePreview.autoRefreshPreview": "OnSave",
+    "liveServer.settings.ignoreFiles": [
+        "**/*.json",
+        "**/*.lp",
+        "**/*.log",
+        ".git/**",
+        "**/node_modules/**"
+    ],
+    "files.watcherExclude": {
+        "**/*.json": true,
+        "**/*.lp": true
+    }
 }

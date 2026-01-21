@@ -1,82 +1,8 @@
 /* =========================================================
-   AI – Scoped Styles
+   AI – SCOPED STYLES (Final Fixed Version)
 ========================================================= */
 
-/* --- Markdown Styling für den Chat --- */
-
-/* 1. Code-Blöcke (Die dunkle Box) */
-pre {
-  background-color: #1e1e1e; /* VS Code Dunkelgrau */
-  color: #d4d4d4;             /* Helle Schrift */
-  border-radius: 6px;
-  padding: 12px;
-  margin: 10px 0;
-  overflow-x: auto;           /* Scrollen bei langen Zeilen */
-  border: 1px solid #333;
-  font-family: 'Consolas', 'Monaco', monospace;
-  white-space: pre;           /* WICHTIG: Behält Formatierung bei! */
-}
-
-/* 2. Inline Code (einzelne Wörter wie `x`) */
-code {
-  font-family: 'Consolas', 'Monaco', monospace;
-  background-color: rgba(255, 255, 255, 0.1);
-  padding: 2px 4px;
-  border-radius: 4px;
-  font-size: 0.9em;
-}
-
-/* Der Code innerhalb der Pre-Box soll keinen extra Hintergrund haben */
-pre code {
-  background-color: transparent;
-  padding: 0;
-  border-radius: 0;
-}
-
-/* 3. Überschriften */
-.message h3 {
-  font-size: 1.1rem;
-  font-weight: bold;
-  margin-top: 15px;
-  margin-bottom: 5px;
-  color: #fff;
-  border-bottom: 2px solid #444;
-  padding-bottom: 5px;
-  display: inline-block;
-}
-
-/* 4. Fettgedrucktes */
-/* 4. Fettgedrucktes (Jetzt mit deinem schicken Gradient!) */
-.message strong {
-  font-weight: bold;
-  
-  /* 1. Den Gradient als Hintergrund setzen */
-  background: linear-gradient(
-    270deg,
-    #50e9ba,
-    #148fac,
-    #e6f0f4,
-    #50e9ba
-  );
-  
-  /* Optional: Den Gradient etwas strecken, damit er weicher wirkt */
-  background-size: 200% auto;
-
-  /* 2. MAGIE: Den Hintergrund genau auf die Buchstaben zuschneiden */
-  -webkit-background-clip: text;
-  background-clip: text;
-
-  /* 3. Die eigentliche Textfarbe transparent machen, damit der Hintergrund durchscheint */
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-}
-
-/* 5. Listen */
-.message li {
-  margin-left: 1.5rem;
-}
-
-/* --- Layout & Variablen --- */
+/* --- 1. Layout & Variablen --- */
 .ai-page {
   --bg: #111;
   --panel: #1e1e1e;
@@ -84,14 +10,14 @@ pre code {
   --accent: #148fac;
   --border: #333;
   --text: #f2f2f2;
-  --muted: #ccc;
   background: var(--bg);
   min-height: 100vh;
   position: relative;
   overflow: hidden;
+  font-family: system-ui, -apple-system, sans-serif;
 }
 
-/* Particle Canvas unter allem */
+/* Particle Canvas Background */
 .ai-page #particleCanvas {
   position: absolute;
   inset: 0;
@@ -122,18 +48,17 @@ pre code {
 }
 
 /* =========================================================
-   CHAT UI – Container
+   2. CHAT CONTAINER
 ========================================================= */
-
-/* Container nutzt vollen Viewport unterhalb der Haupt-Navigation */
 .chat-container {
   width: 90%;
   margin: 0 auto;
   padding: 0 16px;
   display: grid;
   grid-template-rows: auto 1fr auto auto;
-  /* 120px = Höhe .hauptMenu */
   height: calc(100vh - 120px);
+  position: relative;
+  z-index: 2;
 }
 
 /* Header */
@@ -145,23 +70,21 @@ pre code {
   padding: 8px 4px 0;
   margin-bottom: 10px;
 }
-.chat-header .title { display: flex; align-items: center; gap: 10px; }
 .chat-header h1 { font-size: 1.15rem; margin: 0; color: #fff; }
-
-/* Statuspunkt */
 .status-dot {
   width: 10px; height: 10px; border-radius: 50%;
   background: #2ed573;
   box-shadow: 0 0 10px rgba(46,213,115,.6);
 }
 
-/* Chatverlauf */
+/* Chatverlauf Box */
 .message-box {
-  min-height: 0; /* wichtig damit 1fr scrollt */
+  min-height: 0;
   overflow-y: auto;
   background: rgba(0,0,0,.25);
   border-radius: 12px;
   padding: 16px;
+  scroll-behavior: smooth;
 }
 .pretty-scroll::-webkit-scrollbar { width: 10px; }
 .pretty-scroll::-webkit-scrollbar-thumb {
@@ -169,330 +92,303 @@ pre code {
   border-radius: 10px;
 }
 
-/* Messages (Bubbles) - Basis */
+/* =========================================================
+   3. MESSAGES (Bubbles)
+========================================================= */
+
+
 .msg {
   display: flex;
   flex-direction: column;
   margin: 10px 0;
   gap: 6px;
+  width: 98%; /* Container nimmt volle Breite */
 }
-
-
 
 .msg .bubble {
   background: #1e1e1e;
   border-radius: 12px;
-  padding: 12px 14px;
-  line-height: 1.5;
+  padding: 12px 16px; /* Etwas mehr Luft */
+  line-height: 1.6;
   border: 1px solid #333;
   position: relative;
   z-index: 0;
+  color: #eee;
   
-  /* WICHTIG: Das !important erzwingt, dass CSS Regeln greifen */
-  white-space: pre-wrap !important;       
-  word-wrap: break-word !important; 
-  font-family: system-ui, -apple-system, sans-serif;
+  /* Layout-Sicherheit */
+  white-space: normal;       
+  word-wrap: break-word; 
+  
+  /* 🔥 FIX: Bubble wächst nur so weit wie der Text braucht */
+  width: fit-content;  
+  max-width: 100%;     /* Aber niemals breiter als der Screen */
+  
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2); /* Dezent mehr Tiefe */
 }
 
-/* Gradient Rahmen Animation für Bubbles */
-.msg .bubble::before {
-  content: "";
-  position: absolute;
-  inset: -1.5px;
-  border-radius: inherit;
-  background: linear-gradient(
-    140deg,
-    rgba(20,143,172, 0.38),
-    rgba(50,90,110, 0.35),
-    rgba(230,244,246, 0.28),
-    rgba(20,143,172, 0.38)
-  );
-  background-size: 220% 220%;
-  animation: rotateBorder 16s ease-in-out infinite;
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  z-index: -1;
-}
-
+/* User Bubble (Grün) */
 .msg.user .bubble {
   background: #3ca447;
   color: #fff;
   align-self: flex-end;
+  white-space: pre-wrap; /* User Zeilenumbrüche erhalten */
+  max-width: 80%;
 }
+
+/* AI Bubble (Grau) */
 .msg.ai .bubble {
   background: #1a1a1a;
   color: #e9e9e9;
+  width: 100%; /* Volle Breite für Grid */
 }
 
-/* Zeit / Metatext */
-.msg .meta {
-  font-size: .8rem;
-  color: #aaa;
-}
-
-/* ============== Suggestions ============== */
-
-.suggestions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  padding: 4px 0 30px;
-  min-height: 46px;
-  position: relative;
-  height: auto;
-}
-
-.suggestion {
-  background: transparent;
-  border: 1px solid #333;
-  border-radius: 999px;
-  padding: 0px 10px;
-  cursor: pointer;
-  font-size: .85rem;
-  color: #fff;
-  position: relative;
-  transition: background .15s ease, transform .08s ease;
-  height: auto;
-}
-.suggestion:hover { background: rgba(255,255,255,.08); }
-.suggestion:active { transform: translateY(1px); }
-
-/* Suggestion Loading Styles */
-.suggestion.loading { color: transparent; }
-.suggestion.loading::after {
+/* Gradient Rahmen Animation (nur für AI Bubbles, nicht Typing) */
+.msg.ai:not(.typing) .bubble::before {
   content: "";
   position: absolute;
-  inset: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 8px;
-  height: 8px;
-  margin: auto;
-  border-radius: 50%;
-  background: #cfcfcf;
-  opacity: .8;
-  animation: dotPulse 1s ease-in-out infinite;
-  box-shadow: 14px 0 0 0 #cfcfcf, -14px 0 0 0 #cfcfcf;
-}
-@keyframes dotPulse {
-  0%, 80%, 100% { transform: translateY(0); opacity: .6; }
-  40%          { transform: translateY(-3px); opacity: 1; }
+  inset: -1.5px;
+  border-radius: inherit;
+  background: linear-gradient(140deg, rgba(20,143,172, 0.38), rgba(50,90,110, 0.35), rgba(230,244,246, 0.28));
+  background-size: 220% 220%;
+  animation: rotateBorder 16s ease-in-out infinite;
+  z-index: -1;
+  opacity: 0.6;
 }
 
-.suggestions.thinking { animation: suggPulse 1.2s ease-in-out infinite alternate; }
-@keyframes suggPulse {
-  0%   { transform: translateY(0);     filter: brightness(1); }
-  100% { transform: translateY(-1px);  filter: brightness(1.02); }
+.msg .meta { font-size: .8rem; color: #aaa; margin-left: 4px; }
+
+/* =========================================================
+   4. MARKDOWN & TEXT STYLING
+========================================================= */
+code {
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #e6e6e6;
 }
 
-/* --- Code-Block Wrapper (.lp Support) --- */
+.message strong {
+  font-weight: bold;
+  background: linear-gradient(270deg, #50e9ba, #148fac, #e6f0f4, #50e9ba);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
 
-/* --- Code-Block Design (Modern Mac-Terminal Style) --- */
+/* =========================================================
+   5. GRID LAYOUT (Text | Code)
+========================================================= */
+.message-row {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+  margin-bottom: 10px;
+}
 
+@media (min-width: 1100px) {
+  .message-row {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr; /* 40% Text | 60% Code */
+    gap: 40px; 
+    align-items: center;
+  }
+  .message-row.full-width {
+    display: block;
+  }
+}
+
+.row-text { font-size: 1rem; line-height: 1.6; color: #e0e0e0; min-width: 0; }
+.row-code { width: 100%; min-width: 0; }
+.row-separator {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  margin: 20px 0;
+  width: 100%;
+  display: block;
+}
+.message-row:last-child + .row-separator { display: none; }
+
+/* =========================================================
+   6. CODE TERMINAL (Design)
+========================================================= */
 .code-wrapper {
-  margin: 16px 0;
-  background-color: #0d0d0d; /* Sehr dunkel, fast schwarz */
-  border-radius: 12px;       /* Schön abgerundet */
-  border: 1px solid #333;    /* Dezenter Rand */
+  margin: 0;
+  background-color: #0d0d0d;
+  border-radius: 12px;
+  border: 1px solid #333;
   overflow: hidden;
-  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace; /* Moderne Fonts */
-  box-shadow: 0 8px 24px rgba(0,0,0,0.5); /* Satter Schatten für Tiefe */
-  position: relative;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  white-space: normal;
 }
 
-/* Der Header (Fensterleiste) */
 .code-header {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* Punkte links, Sprache rechts */
+  justify-content: space-between;
   background-color: #1a1a1a;
   padding: 8px 16px;
   border-bottom: 1px solid #333;
-  user-select: none;
 }
 
-/* Container für die 3 Mac-Punkte */
-.window-controls {
-  display: flex;
-  gap: 6px;
-}
+.header-left { display: flex; align-items: center; gap: 8px; }
+.code-icon { font-size: 0.75rem; color: #666; font-weight: 500; }
+.lang-label { font-size: 0.75rem; font-weight: 700; color: #888; text-transform: uppercase; }
+.lang-label.leap { color: #50e9ba; text-shadow: 0 0 10px rgba(80, 233, 186, 0.4); }
 
-/* Die Punkte selbst */
-.dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-}
-.red    { background-color: #ff5f56; }
-.yellow { background-color: #ffbd2e; }
-.green  { background-color: #27c93f; }
-
-/* Das Sprach-Label rechts */
-.lang-label {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #888;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-/* Wenn es Leap ist, färben wir es ein! */
-.lang-label.leap {
-  color: #50e9ba; /* Deine Accent Farbe */
-  text-shadow: 0 0 10px rgba(80, 233, 186, 0.4);
-}
-
-/* Der Code Inhalt */
 .code-wrapper pre {
-  margin: 0;
-  padding: 16px;
-  overflow-x: auto;
-  color: #e0e0e0;     /* Helles Grau, angenehmer als reines Weiß */
-  font-size: 0.9rem;
-  line-height: 1.6;   /* Etwas mehr Zeilenabstand für Lesbarkeit */
-  white-space: pre;   
+  margin: 0; padding: 16px; overflow-x: auto;
+  color: #e0e0e0; font-size: 0.9rem; line-height: 1.6;
+  background: transparent; border: none; white-space: pre;
 }
 
-/* Scrollbar im Code hübsch machen */
-.code-wrapper pre::-webkit-scrollbar { height: 8px; }
-.code-wrapper pre::-webkit-scrollbar-thumb {
-  background: #333;
-  border-radius: 4px;
+/* Copy Button */
+.copy-btn {
+  background: transparent; border: 1px solid rgba(255,255,255,0.1);
+  color: #aaa; font-size: 0.75rem; padding: 4px 10px; border-radius: 6px;
+  cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;
 }
-.code-wrapper pre::-webkit-scrollbar-track { background: transparent; }
+.copy-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+.copy-btn.copied { color: #27c93f; border-color: #27c93f; background: rgba(39, 201, 63, 0.1); }
 
 /* =========================================================
-   COMPOSER (Eingabefeld)
+   7. NEURAL WAVE ANIMATION (Der Fix!)
 ========================================================= */
 
-.composer {
-  position: sticky;
-  bottom: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 12px;
-  padding-top: 14px;
-  backdrop-filter: blur(6px);
-  background: rgba(0,0,0,.20);
-  border-radius: 14px;
-  isolation: isolate;
-  z-index: 10;
+/* Wenn die Bubble "typing" ist, soll sie flex sein */
+.msg.typing .bubble {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 15px;
+  min-width: 140px;
+  padding: 10px 20px;
 }
 
-/* Animierter Rand für Composer */
-.composer::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(270deg, #50e9ba, #148fac, #e6f0f4, #50e9ba);
-  background-size: 300% 300%;
-  animation: rotateComposer 8s linear infinite;
-  padding: 2px;
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  z-index: -1;
-}
-
-@keyframes rotateComposer {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.composer-top {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 10px;
-  width: 100%;
-}
-
-/* Dropzone */
-.dropzone {
+.typing-indicator {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 46px; height: 46px;
-  min-width: 46px; min-height: 46px;
-  background: #202020;
-  border-radius: 10px;
-  border: 1px solid #333;
-  cursor: pointer;
-  transition: background .15s ease, border-color .15s ease;
+  gap: 5px;
+  height: 25px;
 }
-.dropzone:hover { background: #2b2b2b; border-color: var(--accent); }
-.dropzone .icon { font-size: 20px; opacity: .85; }
+
+.typing-bar {
+  display: block; /* Wichtig! Sonst unsichtbar */
+  width: 4px;
+  height: 10px; /* Start-Höhe */
+  background-color: #50e9ba;
+  border-radius: 2px;
+  animation: neuralWave 1s ease-in-out infinite;
+  box-shadow: 0 0 8px rgba(80, 233, 186, 0.5);
+}
+
+.typing-bar:nth-child(1) { animation-delay: 0.0s; height: 8px; }
+.typing-bar:nth-child(2) { animation-delay: 0.1s; height: 16px; }
+.typing-bar:nth-child(3) { animation-delay: 0.2s; height: 20px; }
+.typing-bar:nth-child(4) { animation-delay: 0.1s; height: 16px; }
+.typing-bar:nth-child(5) { animation-delay: 0.0s; height: 8px; }
+
+@keyframes neuralWave {
+  0%, 100% { transform: scaleY(1); opacity: 0.3; }
+  50% { transform: scaleY(2); opacity: 1; background-color: #fff; }
+}
+
+.typing-text {
+  font-size: 0.85rem;
+  color: #999;
+  font-style: italic;
+  animation: textPulse 1.5s infinite;
+}
+@keyframes textPulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+
+/* =========================================================
+   8. INPUT & SUGGESTIONS
+========================================================= */
+.composer {
+  position: sticky; bottom: 16px; z-index: 10;
+  display: flex; flex-direction: column; gap: 10px;
+  padding: 12px; backdrop-filter: blur(6px);
+  background: rgba(0,0,0,.20); border-radius: 14px;
+}
+/* Composer Border Animation */
+.composer::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  background: linear-gradient(270deg, #50e9ba, #148fac, #e6f0f4, #50e9ba);
+  background-size: 300% 300%; animation: rotateComposer 8s linear infinite;
+  padding: 2px; -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude; z-index: -1;
+}
+@keyframes rotateComposer { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+
+.composer-top { display: grid; grid-template-columns: 1fr auto; gap: 10px; width: 100%; }
+.dropzone {
+  display: flex; align-items: center; justify-content: center;
+  width: 46px; height: 46px; background: #202020; border-radius: 10px;
+  border: 1px solid #333; cursor: pointer; color: #aaa;
+}
+.dropzone:hover { border-color: #148fac; color: #fff; }
 .file-label input { display: none; }
 
-/* File Preview */
-.file-preview[hidden] { display: none !important; }
-.file-preview {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 10px;
-  background: #1e1e1e;
-  border: 1px solid #333;
-  border-radius: 999px;
-  color: #ddd;
-}
-.file-preview .file-chip button { margin-left: 8px; background: transparent; border: none; color: #bbb; cursor: pointer; }
-
-/* Input Field */
 #userInput {
-  width: 97%;
-  min-height: 44px;
-  max-height: 180px;
-  background: #222;
-  border: 1px solid #333;
-  border-radius: 10px;
-  padding: 14px;
-  color: #eee;
-  resize: none;
-  outline: none;
-  line-height: 1.4;
-  font-size: 22px;
-  transition: font-size .12s;
-  overflow-y: auto;
+  width: 98%; min-height: 44px; max-height: 180px;
+  background: #222; border: 1px solid #333; border-radius: 10px;
+  padding: 14px; color: #eee; resize: none; outline: none; font-size: 1rem;
 }
-#userInput.l2 { font-size: 18px; }
-#userInput.l3 { font-size: 15px; }
-#userInput:focus { border-color: #148fac; box-shadow: 0 0 0 3px rgba(20,143,172,.25); }
-
-.composer-right {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.counter { color: #ccc; }
+#userInput:focus { border-color: #148fac; }
 
 .send-btn {
-  background: #148fac;
-  border: none;
-  color: #fff;
-  border-radius: 10px;
-  padding: 10px 16px;
-  cursor: pointer;
-  transition: .15s;
+  background: #148fac; border: none; color: #fff; border-radius: 10px;
+  padding: 10px 16px; cursor: pointer; margin-left: auto; display: block;
 }
-.send-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
-.send-btn:disabled { opacity: .4; cursor: not-allowed; }
 
-/* === Bild in Chat === */
+/* Bild Vorschau im Chat */
 .image-message img {
-  max-width: 500px;
-  max-height: 500px;
-  width: auto; height: auto;
-  border-radius: 12px;
-  object-fit: cover;
-  border: 1px solid rgba(255,255,255,.08);
-  box-shadow: 0 2px 6px rgba(0,0,0,.4);
+  max-width: 400px; max-height: 400px; border-radius: 12px;
+  border: 1px solid #444; margin-top: 10px;
 }
 
-@media (max-width: 640px) {
-  .composer-top { grid-template-columns: 1fr; }
+/* Suggestions */
+.suggestions { display: flex; gap: 8px; padding-bottom: 30px; }
+.suggestion {
+  background: transparent; border: 1px solid #333; border-radius: 20px;
+  padding: 6px 12px; color: #ccc; cursor: pointer; font-size: 0.85rem;
+}
+.suggestion:hover { background: #333; color: #fff; }
+
+
+
+/* =========================================================
+   UX: DISABLED STATES (Lade-Status Visualisierung)
+========================================================= */
+
+/* Wenn das Input-Feld gesperrt ist (während AI denkt) */
+#userInput:disabled {
+  background-color: #1a1a1a; /* Dunkler */
+  color: #666;               /* Text ausgrauen */
+  border-color: #333;        /* Rand unauffällig */
+  cursor: not-allowed;       /* Verbot-Mauszeiger */
+  opacity: 0.7;
+}
+
+/* Der Senden-Button im Lade-Status */
+.send-btn:disabled {
+  background-color: #333;
+  color: #777;
+  cursor: wait; /* Lade-Mauszeiger */
+  transform: none !important; /* Keine Klick-Animation */
+  filter: grayscale(100%);
+}
+
+/* Optional: Die Dropzone auch ausgrauen, wenn Input gesperrt ist */
+body:has(#userInput:disabled) .dropzone {
+  opacity: 0.5;
+  pointer-events: none;
+  filter: grayscale(100%);
 }
