@@ -1,0 +1,5 @@
+# User Feedback Dataset
+# Diese Dateien enthalten User-generierte Trainingsdaten
+# und sollten nicht ins Repo committed werden
+
+*.jsonl

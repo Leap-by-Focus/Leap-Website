@@ -5,14 +5,41 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
+    "start:prod": "pm2 start ecosystem.config.cjs --env production",
+    "stop:prod": "pm2 stop leap-ai-server",
+    "restart:prod": "pm2 restart leap-ai-server",
+    "logs": "pm2 logs leap-ai-server",
+    "status": "pm2 status",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test": "node --check server.js && node --check src/*.js",
     "sync:leap": "bash ./scripts/sync_leap_code.sh",
-    "index:leap": "node ./scripts/build_leap_index.js"
+    "index:leap": "node ./scripts/build_leap_index.js",
+    "loadtest": "node scripts/load_test.js",
+    "loadtest:light": "node scripts/load_test.js --levels=5,10,20",
+    "loadtest:heavy": "node scripts/load_test.js --levels=25,50,100,200",
+    "loadtest:pro": "node scripts/load_test_pro.js",
+    "loadtest:ramp": "node scripts/load_test_pro.js --testType=ramp",
+    "loadtest:spike": "node scripts/load_test_pro.js --testType=spike",
+    "loadtest:stress": "node scripts/load_test_pro.js --testType=stress",
+    "loadtest:soak": "node scripts/load_test_pro.js --testType=soak --soakDuration=60000"
   },
   "dependencies": {
     "autocannon": "^8.0.0",
+    "chokidar": "^5.0.0",
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "multer": "^1.4.5-lts.1",
-    "node-fetch": "^3.3.2"
-  }
+    "node-fetch": "^3.3.2",
+    "winston": "^3.19.0",
+    "winston-daily-rotate-file": "^5.0.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.1",
+    "eslint": "^8.57.1"
+  },
+  "description": "",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

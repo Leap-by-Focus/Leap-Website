@@ -1,0 +1,23 @@
+{
+  "name": "leap-website",
+  "version": "1.0.0",
+  "description": "LEAP Programming Language Website & AI Assistant",
+  "main": "playwright.config.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "npx playwright test",
+    "test:ui": "npx playwright test --ui",
+    "test:headed": "npx playwright test --headed",
+    "test:debug": "npx playwright test --debug",
+    "test:report": "npx playwright show-report test-results/html",
+    "server": "cd ai && node server.js"
+  },
+  "keywords": ["leap", "programming", "education", "ai"],
+  "author": "Leap Team",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.58.1"
+  }
+}

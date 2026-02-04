@@ -1,0 +1,215 @@
+{
+  "updated": "2026-02-03T00:50:09.038Z",
+  "interpreter": "leap-interpreter.jar",
+  "source": "Main.java",
+  "loops": [
+    {
+      "keyword": "for",
+      "german": "für",
+      "syntax": "for (init; condition; increment) { ... }",
+      "example": "for (i = 0; i < 10; i = i + 1) { print(i); }"
+    },
+    {
+      "keyword": "für",
+      "german": true,
+      "syntax": "für (init; bedingung; inkrement) { ... }",
+      "example": "für (i = 0; i < 5; i = i + 1) { ausgeben(i); }"
+    },
+    {
+      "keyword": "while",
+      "german": "während",
+      "syntax": "while (condition) { ... }",
+      "example": "while (x < 10) { print(x); x = x + 1; }"
+    },
+    {
+      "keyword": "während",
+      "german": true,
+      "syntax": "während (bedingung) { ... }",
+      "example": "während (x < 10) { ausgeben(x); x = x + 1; }"
+    },
+    {
+      "keyword": "repeat",
+      "german": "wiederhole",
+      "syntax": "repeat (condition) { ... }",
+      "example": "repeat (x < 5) { print(x); x = x + 1; }"
+    },
+    {
+      "keyword": "wiederhole",
+      "german": true,
+      "syntax": "wiederhole (bedingung) { ... }",
+      "example": "wiederhole (x < 5) { ausgeben(x); x = x + 1; }"
+    }
+  ],
+  "conditionals": [
+    {
+      "keyword": "if",
+      "german": "falls",
+      "syntax": "if (condition) { ... } else { ... }",
+      "example": "if (x > 5) { print(\"groß\"); } else { print(\"klein\"); }"
+    },
+    {
+      "keyword": "falls",
+      "german": true,
+      "syntax": "falls (bedingung) { ... } sonst { ... }",
+      "example": "falls (x > 5) { ausgeben(\"groß\"); } sonst { ausgeben(\"klein\"); }"
+    },
+    {
+      "keyword": "else",
+      "german": "sonst",
+      "syntax": "... else { ... }",
+      "note": "Wird nach if/falls verwendet"
+    },
+    {
+      "keyword": "sonst",
+      "german": true,
+      "syntax": "... sonst { ... }",
+      "note": "Wird nach falls verwendet"
+    }
+  ],
+  "output": [
+    {
+      "keyword": "print",
+      "german": "ausgeben",
+      "syntax": "print(expression);",
+      "example": "print(\"Hallo Welt\");"
+    },
+    {
+      "keyword": "ausgeben",
+      "german": true,
+      "syntax": "ausgeben(ausdruck);",
+      "example": "ausgeben(\"Hallo Welt\");"
+    }
+  ],
+  "variables": [
+    {
+      "syntax": "name = wert;",
+      "example": "x = 10;",
+      "note": "KEINE Typ-Keywords wie int, var, const!"
+    },
+    {
+      "syntax": "let name = wert;",
+      "example": "let x = 10;",
+      "note": "Optional mit 'let' Prefix"
+    }
+  ],
+  "operators": [
+    {
+      "op": "==",
+      "desc": "Gleich"
+    },
+    {
+      "op": "!=",
+      "desc": "Ungleich"
+    },
+    {
+      "op": "<",
+      "desc": "Kleiner"
+    },
+    {
+      "op": "<=",
+      "desc": "Kleiner oder gleich"
+    },
+    {
+      "op": ">",
+      "desc": "Größer"
+    },
+    {
+      "op": ">=",
+      "desc": "Größer oder gleich"
+    },
+    {
+      "op": "-",
+      "desc": "Subtraktion"
+    },
+    {
+      "op": "*",
+      "desc": "Multiplikation"
+    },
+    {
+      "op": "/",
+      "desc": "Division"
+    },
+    {
+      "op": "||",
+      "desc": "Logisches ODER (in Bedingungen)",
+      "example": "if (x == 1 || x == 2)"
+    },
+    {
+      "op": "&&",
+      "desc": "Logisches UND (in Bedingungen)",
+      "example": "if (x > 0 && x < 10)"
+    }
+  ],
+  "dataTypes": [
+    {
+      "type": "Number",
+      "example": "42, 3.14"
+    },
+    {
+      "type": "String",
+      "example": "\"Hallo\", 'Welt'"
+    },
+    {
+      "type": "Boolean",
+      "example": "true, false, wahr, falsch"
+    },
+    {
+      "type": "Array",
+      "example": "[1, 2, 3], [\"a\", \"b\"]"
+    }
+  ],
+  "notSupported": [
+    {
+      "feature": "Math-Funktionen",
+      "reason": "Abs, Sqrt, Round etc. nicht implementiert"
+    },
+    {
+      "feature": "i++/i--",
+      "reason": "Nutze stattdessen: i = i + 1"
+    }
+  ],
+  "builtinFunctions": [
+    {
+      "keyword": "random",
+      "german": "zufall",
+      "variants": [
+        {
+          "syntax": "random()",
+          "desc": "Gibt 0 oder 1 zurück",
+          "example": "let x = random();"
+        },
+        {
+          "syntax": "random(max)",
+          "desc": "Gibt 0 bis max-1 zurück",
+          "example": "let x = random(10);  // 0-9"
+        },
+        {
+          "syntax": "random(min, max)",
+          "desc": "Gibt min bis max-1 zurück",
+          "example": "let x = random(5, 10);  // 5-9"
+        }
+      ]
+    },
+    {
+      "keyword": "zufall",
+      "german": true,
+      "variants": [
+        {
+          "syntax": "zufall()",
+          "desc": "Gibt 0 oder 1 zurück",
+          "example": "let x = zufall();"
+        },
+        {
+          "syntax": "zufall(max)",
+          "desc": "Gibt 0 bis max-1 zurück",
+          "example": "let x = zufall(100);  // 0-99"
+        },
+        {
+          "syntax": "zufall(min, max)",
+          "desc": "Gibt min bis max-1 zurück",
+          "example": "let x = zufall(1, 7);  // 1-6 (Würfel)"
+        }
+      ]
+    }
+  ]
+}

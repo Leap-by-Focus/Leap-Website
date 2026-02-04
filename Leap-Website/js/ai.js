@@ -1,30 +1,83 @@
+// ai.js
+
+// ======================================================
+// 🔥 FEEDBACK SYSTEM — Globale Variablen für Prompt/Response Tracking
+// ======================================================
+let _lastUserPrompt = "";
+let _lastAiResponse = "";
+
 (() => {
     // ======================================================
     // 0. GLOBALE FUNKTIONEN (Müssen für onclick verfügbar sein)
     // ======================================================
     
     /**
-     * 🔥 Kopiervorgang für den Copy-Button im Terminal
-     * Wir hängen das ans window-Objekt, damit das HTML-onclick es findet.
+     * 👍👎 FEEDBACK SENDEN — Speichert User-Bewertung für Training
+     */
+    window.sendFeedback = async function(button, rating) {
+        // Verhindere doppeltes Klicken
+        const feedbackContainer = button.closest('.feedback-buttons');
+        if (!feedbackContainer || feedbackContainer.classList.contains('submitted')) return;
+        
+        // Prompt/Response aus der Bubble extrahieren
+        const bubble = button.closest('.msg.ai');
+        const bubbleContent = bubble?.querySelector('.bubble')?.innerHTML || "";
+        
+        // Die letzte User-Nachricht finden (direkt davor)
+        let userPrompt = _lastUserPrompt;
+        const prevSibling = bubble?.previousElementSibling;
+        if (prevSibling?.classList.contains('user')) {
+            userPrompt = prevSibling.querySelector('.bubble')?.textContent?.trim() || _lastUserPrompt;
+        }
+        
+        try {
+            const resp = await fetch(`${window.AI_API_BASE || 'http://localhost:8081'}/api/feedback`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    prompt: userPrompt,
+                    response: bubbleContent,
+                    rating: rating  // "positive" oder "negative"
+                })
+            });
+            
+            if (resp.ok) {
+                // Visuelles Feedback: Button markieren
+                feedbackContainer.classList.add('submitted');
+                button.classList.add('selected');
+                
+                // Anderen Button deaktivieren
+                const otherBtn = feedbackContainer.querySelector(rating === 'positive' ? '.feedback-negative' : '.feedback-positive');
+                if (otherBtn) otherBtn.disabled = true;
+                button.disabled = true;
+                
+                // Danke-Nachricht
+                const thanks = document.createElement('span');
+                thanks.className = 'feedback-thanks';
+                thanks.textContent = ' Danke!';
+                feedbackContainer.appendChild(thanks);
+            }
+        } catch (err) {
+            console.error('Feedback Error:', err);
+        }
+    };
+    
+    /**
+     * 🔥 Kopiervorgang für den Copy-Button
      */
     window.copyCode = function(button) {
-        // 1. Den Code-Text finden
         const wrapper = button.closest('.code-wrapper');
-        // Suche nach <code> oder fallback auf <pre>
         const codeElement = wrapper.querySelector('pre code') || wrapper.querySelector('pre');
         
         if (!codeElement) return;
   
         const textToCopy = codeElement.innerText; 
   
-        // 2. In Zwischenablage schreiben
         navigator.clipboard.writeText(textToCopy).then(() => {
-            // 3. Visuelles Feedback am Button
             const originalContent = button.innerHTML;
-            button.innerHTML = `<span class="copy-icon">✅</span> Kopiert!`;
+            button.innerHTML = `<span class="copy-icon">✅</span>`; // Kurzzeichen
             button.classList.add('copied');
   
-            // Nach 2 Sekunden zurücksetzen
             setTimeout(() => {
                 button.innerHTML = originalContent;
                 button.classList.remove('copied');
@@ -33,6 +86,74 @@
             console.error('Copy failed:', err);
             button.innerText = "Error ❌";
         });
+    };
+
+    /**
+     * 🚀 LEAP CODE AUSFÜHREN (Neu fürs Ticket)
+     */
+    /**
+     * 🚀 LEAP CODE AUSFÜHREN (Fixed URL + HTML Decode)
+     */
+    window.runLeapCode = async function(button) {
+        const wrapper = button.closest('.code-wrapper');
+        const codeElement = wrapper.querySelector('pre code') || wrapper.querySelector('pre');
+        const consoleDiv = wrapper.querySelector('.console-output');
+
+        if (!codeElement || !consoleDiv) return;
+
+        // 🔥 FIX: innerText holen und HTML-Entities dekodieren
+        let code = codeElement.innerText;
+        
+        // HTML-Entities manuell dekodieren (falls innerText sie nicht dekodiert hat)
+        code = code
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&amp;/g, '&')
+            .replace(/&quot;/g, '"')
+            .replace(/&#039;/g, "'")
+            .replace(/&nbsp;/g, ' ');
+        
+        console.log("🔍 DEBUG - Code to run:", code); // Debug
+
+        // UI Feedback: Laden
+        const originalText = button.innerText;
+        button.disabled = true;
+        button.innerText = "⏳ ...";
+        
+        consoleDiv.style.display = "block";
+        consoleDiv.className = "console-output loading";
+        consoleDiv.innerText = "Sende an Interpreter...";
+
+        try {
+            // 🔥 FIX: Volle URL verwenden (http://localhost:8081/api/runLeap)
+            // Das verhindert Fehler, wenn die HTML-Datei lokal geöffnet wurde.
+            const response = await fetch('http://localhost:8081/api/runLeap', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: code })
+            });
+
+            const data = await response.json();
+
+            // Output anzeigen
+            consoleDiv.innerText = "> " + data.output;
+
+            // Styling je nach Erfolg/Fehler
+            const outputLower = (data.output || "").toLowerCase();
+            if (outputLower.includes("fehler") || outputLower.includes("error") || outputLower.includes("timeout")) {
+                consoleDiv.className = "console-output error";
+            } else {
+                consoleDiv.className = "console-output success";
+            }
+
+        } catch (err) {
+            consoleDiv.innerText = "🔥 Verbindungsfehler: " + err.message + "\n(Läuft der Server auf Port 8081?)";
+            consoleDiv.className = "console-output error";
+        } finally {
+            // Button Reset
+            button.disabled = false;
+            button.innerText = originalText;
+        }
     };
   
     // ======================================================
@@ -53,7 +174,6 @@
     const API_BASE    = "http://localhost:8081";
     const STORAGE_KEY = "leap_chat_history"; 
     
-    // Einfache Session-ID
     const SESSION_ID = (typeof crypto !== "undefined" && crypto.randomUUID)
         ? crypto.randomUUID()
         : "web-" + Math.random().toString(36).slice(2);
@@ -62,70 +182,59 @@
     // 2. PARSER & FORMATTER (Das Herzstück ❤️)
     // ======================================================
   
-
     /**
- * 🖼️ IMAGE COMPRESSOR
- * Skaliert Bilder auf max 1024px und komprimiert sie zu JPEG 80%.
- * Gibt ein Promise zurück, das mit dem optimierten Blob aufgelöst wird.
- */
-function compressImage(file) {
-    return new Promise((resolve, reject) => {
-        // Falls kein Bild oder schon klein genug -> Original zurückgeben (optional)
-        // Aber hier wollen wir Konsistenz (JPEG), also immer verarbeiten.
-        
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        
-        reader.onload = (event) => {
-            const img = new Image();
-            img.src = event.target.result;
+     * 🖼️ IMAGE COMPRESSOR
+     */
+    function compressImage(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
             
-            img.onload = () => {
-                // 1. Neue Dimensionen berechnen (Max 1024px)
-                const MAX_SIZE = 1024;
-                let width = img.width;
-                let height = img.height;
-
-                if (width > height) {
-                    if (width > MAX_SIZE) {
-                        height *= MAX_SIZE / width;
-                        width = MAX_SIZE;
-                    }
-                } else {
-                    if (height > MAX_SIZE) {
-                        width *= MAX_SIZE / height;
-                        height = MAX_SIZE;
-                    }
-                }
-
-                // 2. Auf Canvas zeichnen
-                const canvas = document.createElement('canvas');
-                canvas.width = width;
-                canvas.height = height;
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
                 
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, width, height);
+                img.onload = () => {
+                    const MAX_SIZE = 1024;
+                    let width = img.width;
+                    let height = img.height;
 
-                // 3. Als JPEG exportieren (0.8 = 80% Qualität)
-                canvas.toBlob((blob) => {
-                    if (!blob) {
-                        reject(new Error("Komprimierung fehlgeschlagen"));
-                        return;
+                    if (width > height) {
+                        if (width > MAX_SIZE) {
+                            height *= MAX_SIZE / width;
+                            width = MAX_SIZE;
+                        }
+                    } else {
+                        if (height > MAX_SIZE) {
+                            width *= MAX_SIZE / height;
+                            height = MAX_SIZE;
+                        }
                     }
-                    console.log(`📉 Bild optimiert: ${(file.size/1024).toFixed(1)}KB -> ${(blob.size/1024).toFixed(1)}KB`);
-                    resolve(blob);
-                }, 'image/jpeg', 0.8);
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    canvas.toBlob((blob) => {
+                        if (!blob) {
+                            reject(new Error("Komprimierung fehlgeschlagen"));
+                            return;
+                        }
+                        console.log(`📉 Bild optimiert: ${(file.size/1024).toFixed(1)}KB -> ${(blob.size/1024).toFixed(1)}KB`);
+                        resolve(blob);
+                    }, 'image/jpeg', 0.8);
+                };
+                img.onerror = (err) => reject(err);
             };
-            
-            img.onerror = (err) => reject(err);
-        };
-        
-        reader.onerror = (err) => reject(err);
-    });
-}
+            reader.onerror = (err) => reject(err);
+        });
+    }
+
     /**
      * 🛠️ GRID PARSER (Final Version)
-     * Baut logische Paare: [ Erklärung (Links) | Code (Rechts) ]
      */
     function renderAnswerHTML(text) {
         if (!text) return "";
@@ -136,19 +245,20 @@ function compressImage(file) {
         let html = "";
         let lastIndex = 0;
         let match;
+        let hasCodeBlocks = false;
   
-        // Loop durch alle Code-Blöcke
         while ((match = regex.exec(text)) !== null) {
-            // 1. Text VOR dem Code (die Erklärung)
+            hasCodeBlocks = true;
+            // 1. Text VOR dem Code
             const textPart = text.substring(lastIndex, match.index);
             const formattedText = formatText(textPart);
             
-            // 2. Der Code-Block selbst
-            const lang = match[1] || "leap";
+            // 2. Der Code-Block
+            const lang = match[1] || ""; // Wenn leer, behandeln wir es evtl. auch als Leap
             const codeContent = match[2];
             const formattedCode = formatCodeBlock(lang, codeContent);
   
-            // 3. Nur wenn Inhalt da ist, erstellen wir eine Grid-Zeile
+            // 3. Grid-Zeile erstellen
             if (formattedText.trim() || formattedCode.trim()) {
                 html += `
                 <div class="message-row">
@@ -156,69 +266,135 @@ function compressImage(file) {
                     <div class="row-code">${formattedCode}</div>
                 </div>`;
                 
-                // Trennlinie unter dem Paar (wird per CSS beim letzten Element ausgeblendet)
                 html += `<div class="row-separator"></div>`;
             }
   
             lastIndex = regex.lastIndex;
         }
   
-        // 4. Restlicher Text nach dem allerletzten Code (z.B. Fazit)
+        // 4. Restlicher Text
         const remainingText = text.substring(lastIndex);
         if (remainingText.trim()) {
-            html += `
-            <div class="message-row full-width">
-                <div class="row-text">${formatText(remainingText)}</div>
-            </div>`;
+            // 🔥 NEU: Prüfe ob der Text wie Leap-Code aussieht (ohne ``` Wrapper)
+            const looksLikeCode = detectLeapCode(remainingText);
+            
+            if (looksLikeCode && !hasCodeBlocks) {
+                // Wenn es wie Code aussieht und keine anderen Code-Blöcke da waren
+                html += `
+                <div class="message-row">
+                    <div class="row-text"></div>
+                    <div class="row-code">${formatCodeBlock('leap', remainingText.trim())}</div>
+                </div>`;
+            } else {
+                html += `
+                <div class="message-row full-width">
+                    <div class="row-text">${formatText(remainingText)}</div>
+                </div>`;
+            }
         }
   
         return html;
     }
+    
+    /**
+     * 🔍 Erkennt ob Text wie Leap-Code aussieht (auch ohne ``` Wrapper)
+     * STRENGER: Nur wenn es WIRKLICH wie Code aussieht, nicht bei normalem Text
+     */
+    function detectLeapCode(text) {
+        if (!text || text.length < 5) return false;
+        
+        const trimmed = text.trim();
+        
+        // Wenn es mehr als 50% Buchstaben ohne Sonderzeichen hat, ist es wahrscheinlich Text
+        const words = trimmed.split(/\s+/);
+        if (words.length > 10) return false; // Lange Sätze sind kein Code
+        
+        // Prüfe ob es wie normaler deutscher/englischer Text aussieht
+        const looksLikeNaturalText = /^[A-ZÄÖÜ][a-zäöüß]+(\s+[a-zäöüßA-ZÄÖÜ]+)*[.!?]?$/i.test(trimmed);
+        if (looksLikeNaturalText && !trimmed.includes('(') && !trimmed.includes(';')) {
+            return false;
+        }
+        
+        // STARKE Leap-Code-Patterns (muss mindestens eines haben)
+        const strongPatterns = [
+            /\bausgeben\s*\([^)]+\)\s*;/i,      // ausgeben("..."); mit Semikolon
+            /\beingabe\s*\([^)]*\)/i,           // eingabe(...)
+            /\bfür\s*\([^)]+\)\s*\{/i,          // für(...) {
+            /\bfalls\s*\([^)]+\)\s*\{/i,        // falls(...) {
+            /\bsolange\s*\([^)]+\)\s*\{/i,      // solange(...) {
+            /\bwiederhole\s+\d+\s+mal\s*\{/i,   // wiederhole X mal {
+            /^[a-zA-Z_]\w*\s*=\s*\d+\s*;/m,     // x = 10;
+            /^[a-zA-Z_]\w*\s*=\s*"[^"]*"\s*;/m, // x = "text";
+            /\bprint\s*\([^)]+\)\s*;/i          // print("..."); mit Semikolon
+        ];
+        
+        // Mindestens EIN starkes Pattern muss matchen
+        for (const pattern of strongPatterns) {
+            if (pattern.test(trimmed)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
   
     /**
-     * Baut den Code-Container mit Header und Copy-Button
+     * Baut den Code-Container mit Header, Copy-Button UND Run-Button
+     */
+    /**
+     * Baut den Code-Container:
+     * Links: Label (z.B. LEAP)
+     * Rechts: Gruppe aus [RUN] und [COPY]
      */
     function formatCodeBlock(lang, code) {
-        const safeCode = escapeHtml(code);
-        const langClass = lang.toLowerCase() === 'leap' ? 'leap' : '';
+        const lowerLang = lang.toLowerCase();
+        
+        // Leap erkennen
+        const isLeap = lowerLang === 'leap' || lowerLang === 'leaps' || lowerLang === ''; 
+        const langLabel = lang ? lang.toUpperCase() : 'LEAP';
+        const langClass = isLeap ? 'leap' : '';
+
+        // 🎨 Syntax Highlighting anwenden (nur für Leap)
+        const highlightedCode = isLeap ? highlightLeapCode(code) : escapeHtml(code);
+
+        // Run Button HTML (nur wenn Leap)
+        const runBtnHTML = isLeap 
+            ? `<button class="run-btn" onclick="runLeapCode(this)">▶ RUN</button>` 
+            : '';
   
         return `
         <div class="code-wrapper">
             <div class="code-header">
                 <div class="header-left">
-                    <span class="code-icon">Variant:</span>
-                    <span class="lang-label ${langClass}">${lang.toUpperCase()}</span>
+                    <span class="lang-label ${langClass}">${langLabel}</span>
                 </div>
                 
-                <button class="copy-btn" onclick="copyCode(this)">
-                    <span class="copy-icon">📋</span> Kopieren
-                </button>
+                <div class="header-right">
+                    ${runBtnHTML}
+                    <button class="copy-btn" onclick="copyCode(this)" title="Code kopieren">
+                        <span class="copy-icon">📋</span>
+                    </button>
+                </div>
             </div>
-            <pre><code>${safeCode}</code></pre>
+            <pre><code class="${isLeap ? 'language-leap' : ''}">${highlightedCode}</code></pre>
+            <div class="console-output" style="display:none;"></div>
         </div>`;
     }
   
     /**
-     * Formatiert normalen Text (Fett, Kursiv, Inline-Code)
+     * Formatiert normalen Text
      */
     function formatText(rawText) {
         if (!rawText) return "";
-        
-        // HTML-Sonderzeichen entschärfen
         let safeText = escapeHtml(rawText);
         
-        // Markdown: **Fett**
         safeText = safeText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-        // Markdown: *Kursiv*
         safeText = safeText.replace(/\*(.*?)\*/g, '<em>$1</em>');
-        // Markdown: `Inline Code`
         safeText = safeText.replace(/`(.*?)`/g, '<code>$1</code>');
   
-        // Zeilenumbrüche zu <br> (aber in einen span gewickelt)
         return `<span class="chat-text">${safeText.replace(/\n/g, "<br>")}</span>`;
     }
   
-    // Hilfsfunktion: HTML Escaping (Sicherheit gegen XSS)
     function escapeHtml(unsafe) {
         return unsafe
             .replace(/&/g, "&amp;")
@@ -230,89 +406,179 @@ function compressImage(file) {
   
     const esc = (s) => escapeHtml(s || "");
     const escAttr = (s = "") => String(s).replace(/"/g, "&quot;");
+
+    // ======================================================
+    // 🎨 SYNTAX HIGHLIGHTING (Leap Code)
+    // ======================================================
+    
+    /**
+     * Highlightet Leap-Code mit Farben für Keywords, Strings, Zahlen, Kommentare
+     */
+    function highlightLeapCode(code) {
+        // Leap Keywords (deutsch + englisch)
+        const keywords = [
+            'für', 'for', 'falls', 'if', 'sonst', 'else', 'solange', 'while',
+            'wiederhole', 'repeat', 'ausgeben', 'print', 'eingabe', 'input',
+            'return', 'funktion', 'function', 'wahr', 'true', 'falsch', 'false',
+            'und', 'and', 'oder', 'or', 'nicht', 'not', 'break', 'continue',
+            'liste', 'list', 'länge', 'length', 'hinzufügen', 'add', 'entfernen', 'remove'
+        ];
+        
+        // Token-Typen in Reihenfolge der Priorität
+        const tokenPatterns = [
+            // Kommentare (// ...)
+            { type: 'comment', regex: /(\/\/[^\n]*)/g },
+            // Strings ("..." oder '...')
+            { type: 'string', regex: /(&quot;[^&]*&quot;|&#039;[^&]*&#039;|"[^"]*"|'[^']*')/g },
+            // Zahlen (Integer und Floats)
+            { type: 'number', regex: /\b(\d+\.?\d*)\b/g },
+            // Keywords
+            { type: 'keyword', regex: new RegExp(`\\b(${keywords.join('|')})\\b`, 'gi') },
+            // Funktionsaufrufe (name gefolgt von Klammer)
+            { type: 'function', regex: /\b([a-zA-ZäöüÄÖÜß_][a-zA-Z0-9äöüÄÖÜß_]*)\s*(?=\()/g },
+            // Operatoren
+            { type: 'operator', regex: /([+\-*/%=<>!&|]+)/g }
+        ];
+        
+        // Escape HTML zuerst
+        let escaped = escapeHtml(code);
+        
+        // Platzhalter-System um Überlappungen zu vermeiden
+        const placeholders = [];
+        let placeholderIndex = 0;
+        
+        const createPlaceholder = (type, content) => {
+            const id = `__PLACEHOLDER_${placeholderIndex++}__`;
+            placeholders.push({ id, type, content });
+            return id;
+        };
+        
+        // Kommentare zuerst (höchste Priorität)
+        escaped = escaped.replace(tokenPatterns[0].regex, (match) => {
+            return createPlaceholder('comment', match);
+        });
+        
+        // Strings
+        escaped = escaped.replace(tokenPatterns[1].regex, (match) => {
+            return createPlaceholder('string', match);
+        });
+        
+        // Zahlen (nur wenn nicht in Platzhalter)
+        escaped = escaped.replace(tokenPatterns[2].regex, (match, num) => {
+            if (match.includes('__PLACEHOLDER_')) return match;
+            return createPlaceholder('number', num);
+        });
+        
+        // Keywords
+        escaped = escaped.replace(tokenPatterns[3].regex, (match) => {
+            if (match.includes('__PLACEHOLDER_')) return match;
+            return createPlaceholder('keyword', match);
+        });
+        
+        // Funktionen
+        escaped = escaped.replace(tokenPatterns[4].regex, (match, funcName) => {
+            if (match.includes('__PLACEHOLDER_')) return match;
+            return createPlaceholder('function', funcName);
+        });
+        
+        // Operatoren
+        escaped = escaped.replace(tokenPatterns[5].regex, (match) => {
+            if (match.includes('__PLACEHOLDER_')) return match;
+            return createPlaceholder('operator', match);
+        });
+        
+        // Platzhalter durch Spans ersetzen
+        placeholders.forEach(({ id, type, content }) => {
+            escaped = escaped.replace(id, `<span class="hl-${type}">${content}</span>`);
+        });
+        
+        return escaped;
+    }
   
     // ======================================================
     // 3. CHAT UI LOGIK
     // ======================================================
   
-// Speichert den Chat im Browser (ohne die Lade-Animation!)
-  function saveChatHistory() {
-    if (!box) return;
-    
-    // Trick: Wir kopieren die Box virtuell
-    const clone = box.cloneNode(true);
-    
-    // Wir suchen und löschen den Typing-Indicator aus der Kopie
-    const typingIndicator = clone.querySelector("#typing");
-    if (typingIndicator) typingIndicator.remove();
-    
-    // Jetzt speichern wir nur den sauberen Chat
-    localStorage.setItem(STORAGE_KEY, clone.innerHTML);
-  }
+    function saveChatHistory() {
+        if (!box) return;
+        const clone = box.cloneNode(true);
+        const typingIndicator = clone.querySelector("#typing");
+        if (typingIndicator) typingIndicator.remove();
+        localStorage.setItem(STORAGE_KEY, clone.innerHTML);
+    }
   
-    // Blase hinzufügen
     function addBubble({ html, who = "ai", includeTime = true, imageUrl = null }) {
       if (!box) return;
       const wrap = document.createElement("div");
-      // Klassen für Styling
       const cssClasses = who === "user" ? "msg user" : "msg ai";
       wrap.className = cssClasses;
-  
+
       const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  
+
       let bubbleHTML = "";
       if (imageUrl) {
           bubbleHTML = `<div class="bubble">${html ? html + "<br/>" : ""}<div class="image-message"><img src="${imageUrl}" alt="Upload" /></div></div>`;
       } else {
           bubbleHTML = `<div class="bubble">${html || ""}</div>`;
       }
-  
-      wrap.innerHTML = bubbleHTML + (includeTime ? `<div class="meta"><span class="time">${time}</span></div>` : "");
-  
+
+      // 🔥 FEEDBACK BUTTONS nur für echte AI-Antworten (nicht Fehlermeldungen/Status)
+      let feedbackHTML = "";
+      if (who === "ai" && includeTime && html && !html.includes("Fehler:") && !html.includes("⚙️")) {
+          feedbackHTML = `
+            <div class="feedback-buttons">
+              <button type="button" class="feedback-btn feedback-positive" onclick="sendFeedback(this, 'positive')" title="Gute Antwort">👍</button>
+              <button type="button" class="feedback-btn feedback-negative" onclick="sendFeedback(this, 'negative')" title="Schlechte Antwort">👎</button>
+            </div>`;
+          // Response für Feedback-System speichern
+          _lastAiResponse = html;
+      }
+      
+      // User-Prompt für Feedback-System speichern
+      if (who === "user" && html) {
+          _lastUserPrompt = html.replace(/<[^>]*>/g, '').trim();
+      }
+
+      wrap.innerHTML = bubbleHTML + (includeTime ? `<div class="meta"><span class="time">${time}</span>${feedbackHTML}</div>` : "");
+
       box.appendChild(wrap);
       box.scrollTop = box.scrollHeight;
-  
+
       saveChatHistory();
     }
   
-// In js/ai.js - Ersetze setTyping hiermit:
-function setTyping(on) {
-  if (!box) return;
-  let t = document.getElementById("typing");
-  
-  if (on) {
-    if (t) return; // Schon da? Nichts tun.
+    function setTyping(on) {
+      if (!box) return;
+      let t = document.getElementById("typing");
+      
+      if (on) {
+        if (t) return;
+        t = document.createElement("div");
+        t.className = "msg ai typing";
+        t.id = "typing";
+        t.innerHTML = `
+          <div class="bubble">
+             <div class="typing-indicator">
+               <span class="typing-bar"></span>
+               <span class="typing-bar"></span>
+               <span class="typing-bar"></span>
+               <span class="typing-bar"></span>
+               <span class="typing-bar"></span>
+             </div>
+             <span class="typing-text">Leap denkt...</span>
+          </div>
+        `;
+        box.appendChild(t);
+        box.scrollTop = box.scrollHeight;
+      } else {
+        if (t) t.remove();
+      }
+    }
 
-    t = document.createElement("div");
-    t.className = "msg ai typing"; // Wichtig: Klasse "typing" für CSS
-    t.id = "typing";
-    
-    // HTML exakt passend zum CSS oben
-    t.innerHTML = `
-      <div class="bubble">
-         <div class="typing-indicator">
-           <span class="typing-bar"></span>
-           <span class="typing-bar"></span>
-           <span class="typing-bar"></span>
-           <span class="typing-bar"></span>
-           <span class="typing-bar"></span>
-         </div>
-         <span class="typing-text">Leap denkt...</span>
-      </div>
-    `;
-
-    box.appendChild(t);
-    box.scrollTop = box.scrollHeight;
-  } else {
-    if (t) t.remove();
-  }
-}
-
-// UI Helpers
-function autosize() {
-  if (!input) return;
-  input.style.height = "auto";
-  input.style.height = Math.min(180, input.scrollHeight) + "px";
+    function autosize() {
+      if (!input) return;
+      input.style.height = "auto";
+      input.style.height = Math.min(180, input.scrollHeight) + "px";
     }
   
     function adjustInputFont() {
@@ -358,38 +624,58 @@ function autosize() {
     }
   
     // ======================================================
-    // 4. SUGGESTIONS
+    // 4. SUGGESTIONS (Repariert & Sofort-Senden)
     // ======================================================
+    
+    // Findet das Element, egal ob class=".suggestions" oder id="suggestions"
+
     function fallbackSuggestions(userText = "", aiText = "") {
       const t = (userText || "").toLowerCase();
+      
+      // 1. Spezifische Fragen erkennen
       if (/^was ist\b|^what is\b|^erkl(ä|ae)re\b/.test(t)) {
-        return ["Was ist OOP", "Erste Schritte", "Java vs C# Vergleich"];
-      } else if (/^wie\b|^how\b|^schritt/.test(t)) {
-        return ["Alternativer Ansatz", "Häufige Fehler", "Best Practices"];
-      } else if (/java|python|leap|oop|klasse|objekt|array|funktion/.test(t)) {
-        return ["Einfaches Codebeispiel", "Typische Use Cases", "Weiterführende Ressourcen"];
+        return ["Was ist eine Variable?", "Erkläre 'für' Schleifen", "Zeig mir ein Beispiel"];
+      } 
+      // 2. Programmier-Keywords
+      else if (/schleife|loop|for|while/.test(t)) {
+        return ["Schleife mit Bedingung", "Endlosschleife verhindern", "Code ausführen"];
       }
-      return ["Beispiel zeigen", "Vergleich erläutern", "Nächste Schritte"];
+      else if (/fehler|error|problem/.test(t)) {
+        return ["Typische Syntaxfehler", "Wie debugge ich?", "Hilfe bei Fehlermeldung"];
+      }
+      
+      // 3. Standard (Fallback)
+      return ["Zeig mir Code", "Wie mache ich eine Ausgabe?", "Was kann Leap?"];
     }
   
     function renderSuggestions(list = []) {
-      if (!suggWrap) return;
+      if (!suggWrap) return; // Wenn Element fehlt, abbrechen
       if (!Array.isArray(list) || list.length === 0) return; 
   
       suggWrap.innerHTML = "";
+      
+      // Max 3 Vorschläge anzeigen
       list.slice(0, 3).forEach((label) => {
         const b = document.createElement("button");
         b.className = "suggestion";
         b.type = "button";
         b.textContent = label;
+        
+        // 🔥 FIX: Beim Klick sofort senden!
         b.addEventListener("click", () => {
           if (!input) return;
-          input.value = label;
+          
+          input.value = label; // Text einfügen
           input.focus();
+          
+          // UI Updates
           autosize();
-          adjustInputFont();
-          updateCounterAndSendState();
+          if (typeof updateCounterAndSendState === "function") updateCounterAndSendState();
+          
+          // 🚀 SOFORT SENDEN
+          if (typeof send === "function") send(); 
         });
+        
         suggWrap.appendChild(b);
       });
     }
@@ -397,139 +683,126 @@ function autosize() {
     function setSuggestionsThinking(on) {
       if (!suggWrap) return;
       suggWrap.classList.toggle("thinking", !!on);
+      // Wenn er denkt, Buttons deaktivieren
+      const btns = suggWrap.querySelectorAll("button");
+      btns.forEach(b => b.disabled = !!on);
     }
   
     function setSuggestionsLoading(on) {
-      if (!suggWrap) return;
-      const btns = [...suggWrap.querySelectorAll(".suggestion")];
-      if (on) {
-        btns.forEach(btn => {
-          btn.dataset.label = btn.textContent;
-          btn.classList.add("loading");
-        });
-      } else {
-        btns.forEach(btn => {
-          if (btn.dataset.label) btn.textContent = btn.dataset.label;
-          btn.classList.remove("loading");
-          delete btn.dataset.label;
-        });
-      }
+        // Optional: Lade-Animation für die Buttons selbst
+        if (!suggWrap) return;
+        if(on) suggWrap.classList.add("loading");
+        else suggWrap.classList.remove("loading");
     }
   
     // ======================================================
     // 5. SEND FUNKTION
     // ======================================================
-   // ======================================================
-  // 6. SEND FUNKTION (Updated)
-  // ======================================================
-  async function send() {
-      if (!input || !sendBtn) return;
-  
-      const text = input.value.trim();
-      const file = imageInput?.files?.[0] || null;
-      if (!text && !file) return;
-  
-      // Sperren
-      input.disabled = true;
-      sendBtn.disabled = true;
-      if (imageInput) imageInput.disabled = true;
-  
-      // User Nachricht anzeigen
-      const userTextHTML = text ? esc(text).replace(/\n/g, "<br>") : "";
-      const objectUrl = file ? URL.createObjectURL(file) : null;
-  
-      addBubble({
-        html: userTextHTML || (file ? "📷 Bild gesendet" : ""),
-        who: "user",
-        imageUrl: objectUrl,
-      });
-  
-      // Reset Inputs
-      input.value = "";
-      autosize();
-      adjustInputFont();
-      if (imageInput) imageInput.value = "";
-      renderPreview(null);
-  
-      // Loading Status
-      setTyping(true);
-      setSuggestionsThinking(true);
-      setSuggestionsLoading(true);
-  
-      try {
-        const form = new FormData();
-        if (text) form.append("text", text);
-
-        // 🔥 LOGIK: Bild optimieren vor dem Senden
-        if (file) {
-             // Kurzes Feedback für User
-             addBubble({ html: "<i>⚙️ Optimiere Bild für Vision-Modell...</i>", who: "ai", includeTime: false });
-             
-             try {
-                 const compressedBlob = await compressImage(file);
-                 // Wir senden das optimierte JPEG
-                 form.append("image", compressedBlob, "optimized.jpg");
-
-                 // Entferne die "Optimiere..." Nachricht wieder
-                 if (box && box.lastChild && box.lastChild.innerText.includes("Optimiere")) {
-                    box.lastChild.remove();
-                 }
-             } catch (err) {
-                 console.error("Optimierung fehlgeschlagen, sende Original:", err);
-                 form.append("image", file, file.name);
-             }
-        }
-  
-        form.append("useLeapContext", "true");
-        form.append("sessionId", SESSION_ID);
-  
-        // Request
-        const resp = await fetch(`${API_BASE}/api/chat`, {
-          method: "POST",
-          body: form
+    async function send() {
+        if (!input || !sendBtn) return;
+    
+        const text = input.value.trim();
+        const file = imageInput?.files?.[0] || null;
+        if (!text && !file) return;
+    
+        // Sperren
+        input.disabled = true;
+        sendBtn.disabled = true;
+        if (imageInput) imageInput.disabled = true;
+    
+        // User Nachricht anzeigen
+        const userTextHTML = text ? esc(text).replace(/\n/g, "<br>") : "";
+        const objectUrl = file ? URL.createObjectURL(file) : null;
+    
+        addBubble({
+          html: userTextHTML || (file ? "📷 Bild gesendet" : ""),
+          who: "user",
+          imageUrl: objectUrl,
         });
+    
+        // Reset Inputs
+        input.value = "";
+        autosize();
+        adjustInputFont();
+        if (imageInput) imageInput.value = "";
+        renderPreview(null);
+    
+        // Loading Status
+        setTyping(true);
+        setSuggestionsThinking(true);
+        setSuggestionsLoading(true);
+    
+        try {
+          const form = new FormData();
+          if (text) form.append("text", text);
   
-        if (!resp.ok) {
-          const err = await resp.text().catch(() => String(resp.status));
-          addBubble({ html: `<b>Fehler:</b> ${esc(err)}`, who: "ai" });
+          // 🔥 LOGIK: Bild optimieren vor dem Senden
+          if (file) {
+               addBubble({ html: "<i>⚙️ Optimiere Bild für Vision-Modell...</i>", who: "ai", includeTime: false });
+               
+               try {
+                   const compressedBlob = await compressImage(file);
+                   form.append("image", compressedBlob, "optimized.jpg");
+  
+                   if (box && box.lastChild && box.lastChild.innerText.includes("Optimiere")) {
+                      box.lastChild.remove();
+                   }
+               } catch (err) {
+                   console.error("Optimierung fehlgeschlagen, sende Original:", err);
+                   form.append("image", file, file.name);
+               }
+          }
+    
+          form.append("useLeapContext", "true");
+          form.append("sessionId", SESSION_ID);
+    
+          // Request
+          const resp = await fetch(`${API_BASE}/api/chat`, {
+            method: "POST",
+            body: form
+          });
+    
+          if (!resp.ok) {
+            const err = await resp.text().catch(() => String(resp.status));
+            addBubble({ html: `<b>Fehler:</b> ${esc(err)}`, who: "ai" });
+            renderSuggestions(fallbackSuggestions(text, ""));
+            return;
+          }
+    
+          const data = await resp.json();
+          
+          // Grid-Parser aufrufen
+          const html = renderAnswerHTML(String(data.answer || ""));
+          addBubble({ html, who: "ai" });
+    
+          const sugg = (Array.isArray(data.suggestions) && data.suggestions.length)
+            ? data.suggestions
+            : fallbackSuggestions(text, data.answer);
+          renderSuggestions(sugg);
+    
+        } catch (e) {
+          console.error("Fetch Error:", e);
+          addBubble({ 
+            html: `<b>Netzwerkfehler:</b> Der Server ist nicht erreichbar.<br>Prüfe ob 'node server.js' läuft!`, 
+            who: "ai" 
+          });
           renderSuggestions(fallbackSuggestions(text, ""));
-          return;
+        } finally {
+          setTyping(false);
+          setSuggestionsThinking(false);
+          setSuggestionsLoading(false);
+          
+          input.disabled = false;
+          sendBtn.disabled = false;
+          if (imageInput) imageInput.disabled = false;
+    
+          setTimeout(() => {
+            input.focus();
+            autosize();
+            updateCounterAndSendState();
+          }, 50);
         }
-  
-        const data = await resp.json();
-        
-        // Grid-Parser aufrufen
-        const html = renderAnswerHTML(String(data.answer || ""));
-        addBubble({ html, who: "ai" });
-  
-        const sugg = (Array.isArray(data.suggestions) && data.suggestions.length)
-          ? data.suggestions
-          : fallbackSuggestions(text, data.answer);
-        renderSuggestions(sugg);
-  
-      } catch (e) {
-        console.error("Fetch Error:", e);
-        addBubble({ 
-          html: `<b>Netzwerkfehler:</b> Der Server ist nicht erreichbar.<br>Prüfe ob 'node server.js' läuft!`, 
-          who: "ai" 
-        });
-        renderSuggestions(fallbackSuggestions(text, ""));
-      } finally {
-        setTyping(false);
-        setSuggestionsThinking(false);
-        setSuggestionsLoading(false);
-        
-        input.disabled = false;
-        sendBtn.disabled = false;
-        if (imageInput) imageInput.disabled = false;
-  
-        setTimeout(() => {
-          input.focus();
-          autosize();
-          updateCounterAndSendState();
-        }, 50);
       }
-    }
   
     // ======================================================
     // 6. EVENT LISTENER
@@ -620,22 +893,16 @@ function autosize() {
     // ======================================================
     // 7. INIT
     // ======================================================
-    
-// Chat wiederherstellen
     const savedHistory = localStorage.getItem(STORAGE_KEY);
   
     if (savedHistory && savedHistory.trim().length > 0) {
       if (box) {
           box.innerHTML = savedHistory;
-          
-          // 🔥 FIX: Falls aus Versehen eine alte Animation gespeichert wurde -> Löschen!
           const oldTyping = box.querySelectorAll("#typing");
           oldTyping.forEach(el => el.remove());
-
           setTimeout(() => { box.scrollTop = box.scrollHeight; }, 100);
       }
     } else {
-       // ... (Rest bleibt gleich)^
       addBubble({
         html: "Hi! Ich bin <b>Leap&nbsp;AI</b>. Frag mich was — z. B. „Wie mache ich eine Schleife?“",
         who: "ai",

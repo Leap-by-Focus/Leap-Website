@@ -155,7 +155,107 @@
   opacity: 0.6;
 }
 
-.msg .meta { font-size: .8rem; color: #aaa; margin-left: 4px; }
+.msg .meta { font-size: .8rem; color: #aaa; margin-left: 4px; display: flex; align-items: center; gap: 8px; }
+
+/* --- Feedback Buttons --- */
+.feedback-buttons {
+  display: inline-flex;
+  gap: 4px;
+  margin-left: 8px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.msg.ai:hover .feedback-buttons {
+  opacity: 1;
+}
+
+.feedback-buttons.submitted {
+  opacity: 1;
+}
+
+.feedback-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0.5;
+  transform: scale(1);
+}
+
+.feedback-btn:hover {
+  opacity: 1;
+  background: rgba(255,255,255,0.1);
+  transform: scale(1.15);
+}
+
+.feedback-btn:active {
+  transform: scale(0.9);
+}
+
+/* 👍 Positiv gewählt */
+.feedback-btn.selected.feedback-positive {
+  opacity: 1;
+  transform: scale(1.3);
+  filter: drop-shadow(0 0 8px rgba(80, 233, 186, 0.6));
+  animation: thumbUp 0.4s ease;
+}
+
+/* 👎 Negativ gewählt */
+.feedback-btn.selected.feedback-negative {
+  opacity: 1;
+  transform: scale(1.3);
+  filter: drop-shadow(0 0 8px rgba(255, 100, 100, 0.6));
+  animation: thumbDown 0.4s ease;
+}
+
+@keyframes thumbUp {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.5) rotate(-10deg); }
+  60% { transform: scale(1.2) rotate(5deg); }
+  100% { transform: scale(1.3) rotate(0deg); }
+}
+
+@keyframes thumbDown {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.5) rotate(10deg); }
+  60% { transform: scale(1.2) rotate(-5deg); }
+  100% { transform: scale(1.3) rotate(0deg); }
+}
+
+.feedback-btn:disabled {
+  cursor: default;
+  pointer-events: none;
+}
+
+.feedback-btn:disabled:not(.selected) {
+  opacity: 0.2;
+  transform: scale(0.85);
+}
+
+.feedback-thanks {
+  font-size: 0.75rem;
+  color: #50e9ba;
+  animation: fadeInSlide 0.4s ease;
+  text-shadow: 0 0 10px rgba(80, 233, 186, 0.4);
+}
+
+@keyframes fadeInSlide {
+  from { 
+    opacity: 0; 
+    transform: translateX(-10px) scale(0.8); 
+  }
+  50% {
+    transform: translateX(3px) scale(1.05);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateX(0) scale(1); 
+  }
+}
 
 /* =========================================================
    4. MARKDOWN & TEXT STYLING
@@ -243,10 +343,60 @@ code {
 .lang-label { font-size: 0.75rem; font-weight: 700; color: #888; text-transform: uppercase; }
 .lang-label.leap { color: #50e9ba; text-shadow: 0 0 10px rgba(80, 233, 186, 0.4); }
 
+/* =========================================================
+   FIX: CODE TERMINAL SCROLLING
+========================================================= */
+
+/* =========================================================
+   FIX: RESET FÜR CODE IM TERMINAL
+   Entfernt die "Boxen" um die Zeilen im schwarzen Fenster
+========================================================= */
+
+.code-wrapper pre code {
+  background-color: transparent !important; /* Kein grauer Hintergrund */
+  border: none !important;                  /* Kein Rand */
+  padding: 0 !important;                    /* Kein Innenabstand */
+  box-shadow: none !important;              /* Kein Schatten */
+  border-radius: 0 !important;
+  color: inherit;                           /* Nimm Textfarbe vom Terminal */
+  
+  /* Wichtig für sauberes Scrollen: */
+  display: inline-block; 
+  min-width: 100%;
+}
+
 .code-wrapper pre {
-  margin: 0; padding: 16px; overflow-x: auto;
-  color: #e0e0e0; font-size: 0.9rem; line-height: 1.6;
-  background: transparent; border: none; white-space: pre;
+  margin: 0; 
+  padding: 16px; 
+  
+  /* 🔥 WICHTIG: Kein Zeilenumbruch, sondern Scrollen! */
+  white-space: pre;        /* Erzwingt, dass alles in einer Zeile bleibt */
+  overflow-x: auto;        /* Zeigt Scrollbalken unten, wenn nötig */
+  word-wrap: normal;       
+  
+  color: #e0e0e0; 
+  font-size: 0.9rem; 
+  line-height: 1.7;        /* Etwas mehr Luft zwischen den Zeilen */
+  background: transparent; 
+  border: none; 
+  
+  /* Schriftart sicherstellen */
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+}
+
+/* Optional: Den Scrollbalken im Code-Block hübsch machen */
+.code-wrapper pre::-webkit-scrollbar {
+  height: 8px;             /* Höhe des horizontalen Balkens */
+}
+.code-wrapper pre::-webkit-scrollbar-track {
+  background: transparent;
+}
+.code-wrapper pre::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 4px;
+}
+.code-wrapper pre::-webkit-scrollbar-thumb:hover {
+  background: #50e9ba;     /* Wird Türkis beim Drüberfahren */
 }
 
 /* Copy Button */
@@ -391,4 +541,175 @@ body:has(#userInput:disabled) .dropzone {
   opacity: 0.5;
   pointer-events: none;
   filter: grayscale(100%);
+}
+
+
+/* Container */
+.code-wrapper {
+    background: #1e1e1e;
+    border: 1px solid #444;
+    border-radius: 6px;
+    margin: 15px 0;
+    font-family: 'Courier New', monospace;
+    overflow: hidden;
+}
+
+/* Header Leiste */
+.code-header {
+    background: #252526;
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between; /* Button rechts, Text links */
+    align-items: center;
+    border-bottom: 1px solid #333;
+    color: #ccc;
+    font-weight: bold;
+    font-size: 0.85rem;
+}
+
+/* Der Run Button */
+.run-btn {
+    background: #2da44e; /* GitHub Green */
+    color: white;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background 0.2s;
+}
+.run-btn:hover { background: #2c974b; }
+.run-btn:disabled { background: #444; cursor: wait; }
+
+/* Code Bereich */
+pre { margin: 0; padding: 12px; color: #d4d4d4; overflow-x: auto; }
+
+/* Konsole (Output) */
+.console-output {
+    border-top: 1px solid #555;
+    padding: 12px;
+    background: #0d1117; /* Sehr dunkel */
+    font-size: 0.9rem;
+    white-space: pre-wrap; /* Zeilenumbrüche erhalten */
+}
+
+/* Status Farben */
+.console-output.loading { color: #e3b341; } /* Gelb */
+.console-output.success { color: #56d364; } /* Grün */
+.console-output.error { color: #f85149; }   /* Rot */
+
+
+/* Container Header */
+.code-header {
+    background: #252526;
+    padding: 6px 12px;
+    display: flex;
+    justify-content: space-between; /* Schiebt Links und Rechts auseinander */
+    align-items: center;
+    border-bottom: 1px solid #333;
+    min-height: 32px;
+}
+
+/* Linke Seite (Label) */
+.header-left {
+    display: flex;
+    align-items: center;
+}
+
+.lang-label {
+    color: #ccc;
+    font-size: 0.75rem;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+.lang-label.leap {
+    color: #4ec9b0; /* Leap Mint-Farbe */
+}
+
+/* Rechte Seite (Buttons) */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Abstand zwischen Run und Copy */
+}
+
+/* RUN Button */
+.run-btn {
+    background: #2ea043;
+    color: white;
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 3px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    height: 24px;
+    display: flex;
+    align-items: center;
+}
+.run-btn:hover { background: #2c974b; }
+.run-btn:disabled { background: #444; cursor: wait; opacity: 0.7; }
+
+/* COPY Button (kleiner & dezenter) */
+.copy-btn {
+    background: transparent;
+    color: #bbb;
+    border: 1px solid #444;
+    padding: 3px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem; /* Icon Größe */
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+.copy-btn:hover {
+    background: #333;
+    color: white;
+    border-color: #666;
+}
+.copy-btn.copied {
+    border-color: #2ea043;
+    color: #2ea043;
+}
+
+/* =========================================================
+   🎨 SYNTAX HIGHLIGHTING (Leap Code)
+========================================================= */
+
+/* Keywords (für, falls, ausgeben, etc.) - Akzentfarbe */
+.code-wrapper .hl-keyword {
+    color: #50e9ba;
+    font-weight: 600;
+    text-shadow: 0 0 8px rgba(80, 233, 186, 0.3);
+}
+
+/* Strings ("Hallo Welt") - Orange/Koralle */
+.code-wrapper .hl-string {
+    color: #ce9178;
+}
+
+/* Zahlen (42, 3.14) - Helles Blau */
+.code-wrapper .hl-number {
+    color: #b5cea8;
+}
+
+/* Kommentare (// ...) - Grau/Gedimmt */
+.code-wrapper .hl-comment {
+    color: #6a9955;
+    font-style: italic;
+    opacity: 0.85;
+}
+
+/* Funktionsaufrufe (ausgeben, eingabe) - Gelb */
+.code-wrapper .hl-function {
+    color: #dcdcaa;
+}
+
+/* Operatoren (+, -, *, =, <, >) - Weiß/Hell */
+.code-wrapper .hl-operator {
+    color: #d4d4d4;
 }

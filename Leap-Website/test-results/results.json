@@ -1,0 +1,514 @@
+{
+  "config": {
+    "configFile": "/Users/veselinovicluka/Desktop/Github/Leap/Leap-Website/Leap-Website/playwright.config.js",
+    "rootDir": "/Users/veselinovicluka/Desktop/Github/Leap/Leap-Website/Leap-Website/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 6
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/veselinovicluka/Desktop/Github/Leap/Leap-Website/Leap-Website/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 6
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/veselinovicluka/Desktop/Github/Leap/Leap-Website/Leap-Website/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "html",
+        {
+          "outputFolder": "playwright-report"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results/results.json"
+        }
+      ],
+      [
+        "list",
+        null
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.1",
+    "workers": 6,
+    "webServer": {
+      "command": "cd ai && node server.js",
+      "url": "http://localhost:8081/api/health",
+      "reuseExistingServer": true,
+      "timeout": 30000
+    }
+  },
+  "suites": [
+    {
+      "title": "ai-chat.spec.js",
+      "file": "ai-chat.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "AI Chat - Seitenladung",
+          "file": "ai-chat.spec.js",
+          "line": 9,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Seite lädt korrekt",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5903,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-03T02:46:49.741Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fc296e61a1ac79d3bec0-93af158126cf3b1a76ee",
+              "file": "ai-chat.spec.js",
+              "line": 11,
+              "column": 9
+            },
+            {
+              "title": "Willkommensnachricht wird angezeigt",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 5944,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-03T02:46:49.738Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fc296e61a1ac79d3bec0-184e5f99180d7fd8f361",
+              "file": "ai-chat.spec.js",
+              "line": 20,
+              "column": 9
+            }
+          ]
+        },
+        {
+          "title": "AI Chat - Chat Flow",
+          "file": "ai-chat.spec.js",
+          "line": 31,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Hallo eingeben -> Senden -> Antwort erhalten",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 5931,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-03T02:46:49.752Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fc296e61a1ac79d3bec0-912dbb60074863c1ef06",
+              "file": "ai-chat.spec.js",
+              "line": 33,
+              "column": 9
+            },
+            {
+              "title": "Leere Eingabe -> Senden deaktiviert",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 5927,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-03T02:46:49.742Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fc296e61a1ac79d3bec0-94d5d3966e9f65cfdd10",
+              "file": "ai-chat.spec.js",
+              "line": 66,
+              "column": 9
+            },
+            {
+              "title": "Enter drücken sendet Nachricht",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 5912,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-03T02:46:49.747Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fc296e61a1ac79d3bec0-92d757bd147867692882",
+              "file": "ai-chat.spec.js",
+              "line": 85,
+              "column": 9
+            }
+          ]
+        },
+        {
+          "title": "AI Chat - Code Ausführung",
+          "file": "ai-chat.spec.js",
+          "line": 106,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Code-Block hat Run-Button",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 5,
+                      "status": "passed",
+                      "duration": 5953,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-03T02:46:49.755Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fc296e61a1ac79d3bec0-1acf01fa5df8d32fc770",
+              "file": "ai-chat.spec.js",
+              "line": 108,
+              "column": 9
+            },
+            {
+              "title": "Copy-Button kopiert Code",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 2083,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-03T02:46:56.191Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fc296e61a1ac79d3bec0-1a762070d65c0546db1e",
+              "file": "ai-chat.spec.js",
+              "line": 130,
+              "column": 9
+            }
+          ]
+        },
+        {
+          "title": "AI Chat - Feedback System",
+          "file": "ai-chat.spec.js",
+          "line": 159,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Feedback-Buttons erscheinen bei AI-Antwort",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7101,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-03T02:46:56.201Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fc296e61a1ac79d3bec0-5f406242ec3c2ea232e1",
+              "file": "ai-chat.spec.js",
+              "line": 161,
+              "column": 9
+            },
+            {
+              "title": "Positives Feedback funktioniert",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 5029,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-03T02:46:56.201Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fc296e61a1ac79d3bec0-209775d01cdb27e8e173",
+              "file": "ai-chat.spec.js",
+              "line": 181,
+              "column": 9
+            }
+          ]
+        },
+        {
+          "title": "AI Chat - Bild Upload",
+          "file": "ai-chat.spec.js",
+          "line": 207,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Bild-Upload Button ist vorhanden",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 1920,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-03T02:46:56.213Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fc296e61a1ac79d3bec0-0fa23c19f29bcac9f72c",
+              "file": "ai-chat.spec.js",
+              "line": 209,
+              "column": 9
+            }
+          ]
+        },
+        {
+          "title": "AI Chat - Responsive",
+          "file": "ai-chat.spec.js",
+          "line": 221,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Mobile Ansicht funktioniert",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1997,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-03T02:46:56.221Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fc296e61a1ac79d3bec0-3a4dfcaa5622e5b415eb",
+              "file": "ai-chat.spec.js",
+              "line": 223,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-02-03T02:46:48.369Z",
+    "duration": 14975.388,
+    "expected": 11,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}
