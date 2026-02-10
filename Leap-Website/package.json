@@ -16,7 +16,7 @@
   },
   "keywords": ["leap", "programming", "education", "ai"],
   "author": "Leap Team",
-  "license": "ISC",
+  "license": "CC-BY-NC-4.0",
   "devDependencies": {
     "@playwright/test": "^1.58.1"
   }
