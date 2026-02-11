@@ -25,6 +25,7 @@ import { startFileWatcher } from "./src/file-watcher.js";
 const PORT = process.env.PORT || 8081;
 const OLLAMA_URL = process.env.OLLAMA_URL || "http://localhost:11434";
 const DATASET_PATH = path.join(__dirname, "dataset.jsonl");
+
 const UPLOADS_DIR = path.join(__dirname, "uploads");
 
 if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
@@ -39,7 +40,7 @@ app.use("/css", express.static(path.join(__dirname, "..", "css")));
 app.use("/js", express.static(path.join(__dirname, "..", "js")));
 app.use("/assets", express.static(path.join(__dirname, "..", "assets")));
 
-// ── Multer für Bild-Upload ─────────────────────────────────────────────────────
+
 const upload = multer({
   dest: UPLOADS_DIR,
   limits: { fileSize: 5 * 1024 * 1024 },
@@ -61,8 +62,8 @@ function buildMessages(userMessage, imageBase64 = null) {
   }
 
   const userContent = imageBase64
-    ? [{ type: "text", text: userMessage }, { type: "image_url", image_url: { url: `data:image/png;base64,${imageBase64}` } }]
-    : userMessage;
+    ? [{ type: "text", text: userMessage }, { type: "image_url", image_url: 
+      { url: `data:image/png;base64,${imageBase64}` } }]: userMessage;
 
   messages.push({ role: "user", content: userContent });
   return messages;

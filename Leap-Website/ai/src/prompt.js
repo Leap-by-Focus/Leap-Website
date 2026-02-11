@@ -14,10 +14,9 @@ export function generateSystemPrompt(contextData = "") {
     // Fallback wenn keine Features geladen
     if (!INTERPRETER_FEATURES) {
         return `Du bist "Leap AI", der freundliche AI-Assistant für die Programmiersprache LEAP.
-Bei Begrüßungen stellst du dich kurz vor und fragst wie du helfen kannst.
-
-WICHTIG: Interpreter-Features konnten nicht geladen werden!
-Führe 'node scripts/build_interpreter_docs.js' aus.
+                Bei Begrüßungen stellst du dich kurz vor und fragst wie du helfen kannst.
+                WICHTIG: Interpreter-Features konnten nicht geladen werden!
+                Führe 'node scripts/build_interpreter_docs.js' aus.
 
 ${contextData}`;
     }
@@ -82,6 +81,60 @@ ARRAYS:
 
 ⚠️ WICHTIG: Arrays MÜSSEN erst erstellt werden (= [] oder = [...]) bevor man auf Indizes zugreift!
 
+DATEI-OPERATIONEN:
+- inhalt = File.Read("datei.txt");           // Datei lesen (englisch)
+- inhalt = Datei.Lesen("datei.txt");         // Datei lesen (deutsch)
+- File.Write("datei.txt", text);             // Datei schreiben (überschreibt)
+- Datei.Schreiben("datei.txt", text);        // Datei schreiben (deutsch)
+- File.Append("datei.txt", text);            // An Datei anhängen
+- Datei.Anhängen("datei.txt", text);         // An Datei anhängen (deutsch)
+- existiert = File.Exists("datei.txt");      // Prüfen ob Datei existiert
+- existiert = Datei.Existiert("datei.txt");  // Prüfen ob Datei existiert (deutsch)
+
+STRING-METHODEN (über String.* oder Text.*):
+- laenge = String.Length("Hallo");           // Länge: 5
+- laenge = Text.Länge("Hallo");              // Länge: 5 (deutsch)
+- gross = String.ToUpper("hallo");           // "HALLO"
+- gross = Text.Gross("hallo");               // "HALLO" (deutsch)
+- klein = String.ToLower("HALLO");           // "hallo"
+- klein = Text.Klein("HALLO");               // "hallo" (deutsch)
+- teil = String.Substring("Hallo", 0, 3);    // "Hal"
+- teil = Text.Teil("Hallo", 0, 3);           // "Hal" (deutsch)
+- zeichen = String.CharAt("Hallo", 0);       // "H"
+- zeichen = Text.ZeichenAn("Hallo", 0);      // "H" (deutsch)
+- ja = String.Contains("Hallo", "all");      // true
+- ja = Text.Enthält("Hallo", "all");         // true (deutsch)
+- pos = String.IndexOf("Hallo", "l");        // 2
+- pos = Text.Position("Hallo", "l");         // 2 (deutsch)
+- neu = String.Replace("Hallo", "a", "e");   // "Hello"
+- neu = Text.Ersetze("Hallo", "a", "e");     // "Hello" (deutsch)
+- sauber = String.Trim("  Hallo  ");         // "Hallo"
+- sauber = Text.Kürze("  Hallo  ");          // "Hallo" (deutsch)
+- ja = String.StartsWith("Hallo", "Ha");     // true
+- ja = Text.BeginntMit("Hallo", "Ha");       // true (deutsch)
+- ja = String.EndsWith("Hallo", "lo");       // true
+- ja = Text.EndetMit("Hallo", "lo");         // true (deutsch)
+- teile = String.Split("A,B,C", ",");        // ["A", "B", "C"]
+- teile = Text.Teile("A,B,C", ",");          // ["A", "B", "C"] (deutsch)
+- rev = String.Reverse("Hallo");             // "ollaH"
+- rev = Text.Umkehren("Hallo");              // "ollaH" (deutsch)
+- rep = String.Repeat("Ha", 3);              // "HaHaHa"
+- rep = Text.Wiederhole("Ha", 3);            // "HaHaHa" (deutsch)
+- ja = String.IsEmpty("");                   // true
+- ja = Text.IstLeer("");                     // true (deutsch)
+- ja = String.IsNumber("42");                // true
+- ja = Text.IstZahl("42");                   // true (deutsch)
+- zahl = String.ToNumber("42");              // 42
+- zahl = Text.ZuZahl("42");                  // 42 (deutsch)
+- pad = String.PadLeft("5", 3, "0");         // "005"
+- pad = Text.LinksFüllen("5", 3, "0");       // "005" (deutsch)
+- pad = String.PadRight("5", 3, "0");        // "500"
+- pad = Text.RechtsFüllen("5", 3, "0");      // "500" (deutsch)
+
+RANDOM/ ZUFALL:
+- x = random(10);    // Zufallszahl 0 bis 9
+- x = zufall(100);   // Zufallszahl 0 bis 99 (deutsch)
+
 DATENTYPEN:
 ${typesList}
 
@@ -122,6 +175,21 @@ falls (x > 5) {
     print("Groß!");
 } sonst {
     print("Klein!");
+}
+\`\`\`
+
+📝 BEISPIEL - Exception Handling (try/catch, versuche/fange):
+\`\`\`leap
+try {
+    print(1/0);
+} catch (err) {
+    print("Fehler: " + err);
+}
+
+versuche {
+    print(1/0);
+} fange (fehler) {
+    print("Fehler: " + fehler);
 }
 \`\`\`
 

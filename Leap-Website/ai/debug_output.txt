@@ -1,0 +1,12 @@
+[DEV-LOG] Statement-Start: 'm = { "a": 1, "b": 2 };\nprint(m);\nprint('
+[DEV-LOG] Assignment-Statement: 'm = { "a": 1, "b": 2 }'
+[DEV-LOG] parsePrimary: next char '{' (Code: 123)
+[DEV-LOG] parsePrimary: next char '1' (Code: 49)
+[DEV-LOG] parsePrimary: next char '2' (Code: 50)
+[DEV-LOG] Statement-Start: 'print(m);\nprint(m["a"]);\nm["c"] = 42;\npr'
+[DEV-LOG] parsePrimary: next char 'm' (Code: 109)
+{"a": 1, "b": 2}
+[DEV-LOG] Statement-Start: 'print(m["a"]);\nm["c"] = 42;\nprint(m["c"]'
+[DEV-LOG] parsePrimary: next char 'm' (Code: 109)
+[DEV-LOG] parsePrimary: next char '"' (Code: 34)
+Interpreter error: Array index must be a number
