@@ -1,534 +1,807 @@
 {
-  "updated": "2026-02-03T02:59:13.490Z",
+  "updated": "2026-02-04T23:43:59.730Z",
   "items": [
     {
-      "id": "f1542d85-c8df-4bd1-9160-c5d0c1a417ae",
+      "id": "e864cc4e-7987-4322-994b-bf802bd4da37",
       "text": "In der Sprache LEAP ist die Schleife 'für(k=0; k<10; k=k+1)' zu 100% korrekt. Das Wort 'für' ist kein Tippfehler (deutsch für 'for'). Auch 'wiederhole 5 mal' ist korrekt.",
       "embedding": [],
       "file": "SYSTEM_RULES_LOOPS",
       "method": "System Rule"
     },
     {
-      "id": "af1e1301-ee1e-46e3-a109-af92721e1b63",
+      "id": "832063cc-fd16-48e2-89b7-5e23c5d47f22",
       "text": "Variablen in LEAP: Man schreibt 'x = 10;'. Man benutzt NIEMALS 'int', 'var', 'let' oder 'const' für die Deklaration.",
       "embedding": [],
       "file": "SYSTEM_RULES_VARS",
       "method": "System Rule"
     },
     {
-      "id": "c130f94a-3354-4b73-b5b0-f4fdbaf6fdae",
+      "id": "e3f8630d-0081-4a43-8f15-2b358f129014",
       "text": "Ausgabe in LEAP: Man benutzt 'ausgeben(\"Text\")'. Man benutzt NIEMALS 'Console.WriteLine', 'System.out' oder 'print'.",
       "embedding": [],
       "file": "SYSTEM_RULES_PRINT",
       "method": "System Rule"
     },
     {
-      "id": "f4ab29e6-3a1a-41b0-b377-73a671f9a9ed",
+      "id": "5cbd10b7-0ad5-4865-bc17-4e2f784230a7",
+      "text": "Datei-Operationen in LEAP: Man benutzt 'File.Read(pfad)' oder 'Datei.Lesen(pfad)' um eine Datei zu lesen. Man benutzt 'File.Write(pfad, text)' oder 'Datei.Schreiben(pfad, text)' um in eine Datei zu schreiben. Man benutzt 'File.Append(pfad, text)' oder 'Datei.Anhängen(pfad, text)' um Text an eine Datei anzuhängen. Man benutzt 'File.Exists(pfad)' oder 'Datei.Existiert(pfad)' um zu prüfen ob eine Datei existiert. Alle deutschen Varianten (Datei.Lesen, Datei.Schreiben, Datei.Anhängen, Datei.Existiert) sind korrekt!",
+      "embedding": [],
+      "file": "SYSTEM_RULES_FILES",
+      "method": "System Rule"
+    },
+    {
+      "id": "f13b8e05-2ba4-4b40-8381-60d3998b4099",
+      "text": "Arrays in LEAP: Man erstellt Arrays mit eckigen Klammern z.B. 'zahlen = [1, 2, 3];'. Zugriff auf Elemente: 'zahlen[0]' gibt das erste Element. Arrays können Zahlen, Strings oder gemischte Werte enthalten.",
+      "embedding": [],
+      "file": "SYSTEM_RULES_ARRAYS",
+      "method": "System Rule"
+    },
+    {
+      "id": "27daa028-482d-41cb-bb63-b0519a0028dd",
+      "text": "String-Methoden in LEAP: Alle String-Operationen werden über 'String.Methode()' oder 'Text.Methode()' aufgerufen. Verfügbare Methoden: String.Length(text)/Text.Länge(text) für Länge, String.ToUpper(text)/Text.Gross(text) für Großbuchstaben, String.ToLower(text)/Text.Klein(text) für Kleinbuchstaben, String.Substring(text,start,länge)/Text.Teil(text,start,länge) für Teilstrings, String.CharAt(text,pos)/Text.ZeichenAn(text,pos) für einzelne Zeichen, String.Contains(text,suche)/Text.Enthält(text,suche) zum Prüfen ob enthalten, String.IndexOf(text,suche)/Text.Position(text,suche) für Position, String.Replace(text,suche,ersatz)/Text.Ersetze(text,suche,ersatz) zum Ersetzen, String.Trim(text)/Text.Kürze(text) zum Entfernen von Leerzeichen, String.Split(text,trenner)/Text.Teile(text,trenner) zum Aufteilen in Array, String.Reverse(text)/Text.Umkehren(text) zum Umkehren, String.Repeat(text,n)/Text.Wiederhole(text,n) zum Wiederholen, String.StartsWith(text,prefix)/Text.BeginntMit(text,prefix) und String.EndsWith(text,suffix)/Text.EndetMit(text,suffix) zum Prüfen von Anfang/Ende, String.IsEmpty(text)/Text.IstLeer(text) zum Prüfen ob leer, String.IsNumber(text)/Text.IstZahl(text) zum Prüfen ob Zahl, String.ToNumber(text)/Text.ZuZahl(text) zum Konvertieren in Zahl, String.PadLeft(text,länge,zeichen)/Text.LinksFüllen(text,länge,zeichen) und String.PadRight(text,länge,zeichen)/Text.RechtsFüllen(text,länge,zeichen) zum Auffüllen.",
+      "embedding": [],
+      "file": "SYSTEM_RULES_STRINGS",
+      "method": "System Rule"
+    },
+    {
+      "id": "a54004d9-bcbb-4f90-91b2-3667ff824e62",
+      "text": "Zufallszahlen in LEAP: Mit random(n) oder zufall(n) erhält man eine Zufallszahl von 0 bis n-1. Beispiel: x = random(10); // 0 bis 9. x = zufall(100); // 0 bis 99. Das Argument n muss eine positive Zahl sein.",
+      "embedding": [],
+      "file": "SYSTEM_RULES_RANDOM",
+      "method": "System Rule"
+    },
+    {
+      "id": "21a7c237-784a-4370-a654-bffaa76456ec",
+      "text": "Mit try { ... } catch (err) { ... } oder versuche { ... } fange (err) { ... } kann man Fehler abfangen. Im catch/fange-Block steht die Fehlermeldung als Variable zur Verfügung.",
+      "embedding": [],
+      "file": "SYSTEM_RULES_EXCEPTION",
+      "method": "System Rule"
+    },
+    {
+      "id": "b4afff97-79ab-4711-859c-755d0946acdd",
       "text": "// Datei: leap.lp\n// Kontext: Global Script Context\n//int zahl = 10;",
       "embedding": [],
       "file": "leap.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "f54abc0e-e448-4087-8198-ebe3aad291e9",
+      "id": "982fe669-9fa8-4d65-9824-6a506f01c817",
       "text": "// Datei: leap.lp\n// Kontext: Global Script Context\nz = 10;",
       "embedding": [],
       "file": "leap.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "35b24340-2674-4ba3-9d88-da1a927edd04",
+      "id": "f8dfd673-16cf-4468-bbd6-95cefeafb743",
       "text": "// Datei: leap.lp\n// Kontext: Global Script Context\n//Console.WriteLine(zahl);",
       "embedding": [],
       "file": "leap.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "192ac4d9-d62a-4222-859d-c856ba65f4f3",
+      "id": "6c716d71-3efa-451e-8d7a-42589c7d2e67",
       "text": "// Datei: leap.lp\n// Kontext: Global Script Context\nprint(z);",
       "embedding": [],
       "file": "leap.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "f9275937-fb91-46cb-b332-6663f4723d48",
-      "text": "// Datei: leap.lp\n// Kontext: Global Script Context\nausgeben(\"Max war hier\");// Timestamp: 1770087498",
+      "id": "2b572056-5025-4818-afbf-b2648036cef3",
+      "text": "// Datei: leap.lp\n// Kontext: Global Script Context\nausgeben(\"Max war hier\");",
       "embedding": [],
       "file": "leap.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "84e28cc4-36c2-4d74-97a5-7c1ebec81aff",
-      "text": "// Datei: leap.lp\n// Kontext: Global Script Context\n// Test Tue Feb  3 03:58:39 CET 2026",
-      "embedding": [],
-      "file": "leap.lp",
-      "method": "Global Script Context"
-    },
-    {
-      "id": "af4609a8-46c9-48f5-a01a-84b88ec83c09",
-      "text": "// Datei: leap.lp\n// Kontext: Global Script Context\n// Watcher Test Tue Feb  3 03:59:11 CET 2026",
-      "embedding": [],
-      "file": "leap.lp",
-      "method": "Global Script Context"
-    },
-    {
-      "id": "c629228b-4900-4502-a7ab-b70d56ac2f08",
+      "id": "78af3a77-16a5-406e-95ef-6b02b958c4e4",
       "text": "// Datei: test_and.lp\n// Kontext: if (x\nlet x = 5; let y = 10; if (x == 5 && y == 10) { print(\"Both match!\"); }",
       "embedding": [],
       "file": "test_and.lp",
       "method": "if (x"
     },
     {
-      "id": "c5b5252f-0e82-4710-be94-c7220363b30b",
+      "id": "9f9118d3-b2df-4621-9d41-1ff90eef77b0",
+      "text": "// Datei: test_assign.lp\n// Kontext: Global Script Context\nx = 5;",
+      "embedding": [],
+      "file": "test_assign.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "8c615f1d-9378-4f28-8dda-439d0b6205a8",
+      "text": "// Datei: test_assign.lp\n// Kontext: Global Script Context\ny = [1,2,3];",
+      "embedding": [],
+      "file": "test_assign.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "15b76acf-6324-42a8-9529-e006988ea0f3",
+      "text": "// Datei: test_assign.lp\n// Kontext: Global Script Context\nz = \"hallo\";",
+      "embedding": [],
+      "file": "test_assign.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "2c8ec050-2993-4505-acca-b0d39c5695b9",
+      "text": "// Datei: test_assign.lp\n// Kontext: Global Script Context\nm = { \"a\": 1, \"b\": 2 };",
+      "embedding": [],
+      "file": "test_assign.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "53acec4d-6144-44a9-adcc-105b1cfab987",
+      "text": "// Datei: test_assign.lp\n// Kontext: Global Script Context\nprint(x);",
+      "embedding": [],
+      "file": "test_assign.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "ffa9d340-893e-4d92-b382-20e3f30a4ac8",
+      "text": "// Datei: test_assign.lp\n// Kontext: Global Script Context\nprint(y);",
+      "embedding": [],
+      "file": "test_assign.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "379692a1-44b4-4061-99d4-35fec5b8b5cc",
+      "text": "// Datei: test_assign.lp\n// Kontext: Global Script Context\nprint(z);",
+      "embedding": [],
+      "file": "test_assign.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "1455c0b5-2498-4c2a-ac6c-b0345c7849a9",
+      "text": "// Datei: test_assign.lp\n// Kontext: Global Script Context\nprint(m);",
+      "embedding": [],
+      "file": "test_assign.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "00a46b54-281d-4fea-b6c3-80844661059b",
+      "text": "// Datei: test_debug.lp\n// Kontext: Global Script Context\nm = { \"a\": 1, \"b\": 2 };",
+      "embedding": [],
+      "file": "test_debug.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "de7ea5ee-7cd1-4def-8c89-21048815fa18",
+      "text": "// Datei: test_exception.lp\n// Kontext: Global Script Context\n// Test für Exception Handling in LEAP",
+      "embedding": [],
+      "file": "test_exception.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "2be39479-9a68-4906-bb38-6f1bafbf2106",
+      "text": "// Datei: test_exception.lp\n// Kontext: Global Script Context\ntry {\n  print(1/0);\n} catch (err) {\n  print(\"Fehler: \" + err);\n}",
+      "embedding": [],
+      "file": "test_exception.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "2b0ba23a-ab5a-40dd-aa92-0a5f0aec7dce",
+      "text": "// Datei: test_exception.lp\n// Kontext: Global Script Context\nversuche {\n  print(1/0);\n} fange (fehler) {\n  print(\"Fehler: \" + fehler);\n}",
+      "embedding": [],
+      "file": "test_exception.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "872679b9-8559-4a46-824a-3253a4fcf134",
       "text": "// Datei: test_for.lp\n// Kontext: for(i\nfor(i = 0; i < 3; i = i + 1) { print(i); }",
       "embedding": [],
       "file": "test_for.lp",
       "method": "for(i"
     },
     {
-      "id": "97e5a45c-9d76-4541-a81e-62e6d0e6b80f",
+      "id": "e820f62b-5169-4151-afe1-a7c74c1cf116",
       "text": "// Datei: test_for2.lp\n// Kontext: for(i\nfor(i=0;i<3;i=i+1){print(i);}",
       "embedding": [],
       "file": "test_for2.lp",
       "method": "for(i"
     },
     {
-      "id": "88b87bac-df8a-4d45-a92d-2fc57da2d468",
+      "id": "3a049b1b-3ffa-4ef7-980a-4a173c1192b4",
+      "text": "// Datei: test_map.lp\n// Kontext: Global Script Context\n// Test für Map/Wörterbuch in LEAP",
+      "embedding": [],
+      "file": "test_map.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "4303face-c6b6-415b-bb52-1d448d269854",
+      "text": "// Datei: test_map.lp\n// Kontext: Global Script Context\nm = { \"a\": 1, \"b\": 2 };",
+      "embedding": [],
+      "file": "test_map.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "e45c7f92-b334-4825-80ca-f9c361ba3338",
+      "text": "// Datei: test_map.lp\n// Kontext: Global Script Context\nprint(m);",
+      "embedding": [],
+      "file": "test_map.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "c4289acc-5f47-419f-81e4-2d2dcf49a2dc",
+      "text": "// Datei: test_map.lp\n// Kontext: Global Script Context\nprint(m[\"a\"]);",
+      "embedding": [],
+      "file": "test_map.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "afd22c6e-b44f-4688-a952-fdd26cf547ec",
+      "text": "// Datei: test_map.lp\n// Kontext: Global Script Context\nm[\"c\"] = 42;",
+      "embedding": [],
+      "file": "test_map.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "14158a3c-ebbd-4639-82ad-918dc6149e12",
+      "text": "// Datei: test_map.lp\n// Kontext: Global Script Context\nprint(m[\"c\"]);",
+      "embedding": [],
+      "file": "test_map.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "28cb19bd-dd47-4193-a525-d8b7549185ad",
       "text": "// Datei: test_or.lp\n// Kontext: if (x\nlet x = 5; if (x == 3 || x == 5) { print(\"Match!\"); }",
       "embedding": [],
       "file": "test_or.lp",
       "method": "if (x"
     },
     {
-      "id": "61aa85c0-90ad-48e5-b2df-e994bcb9aacf",
+      "id": "8ccc0276-d0dd-4cdd-a0a4-e0b7b13b29b6",
       "text": "// Datei: test_password.lp\n// Kontext: Global Script Context\nbuchstaben = [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\", \"G\", \"H\", \"I\", \"J\", \"K\", \"L\", \"M\", \"N\", \"O\", \"P\", \"Q\", \"R\", \"S\", \"T\", \"U\", \"V\", \"W\", \"X\", \"Y\", \"Z\"];",
       "embedding": [],
       "file": "test_password.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "d9528771-02f0-4eac-920b-1ef274136130",
+      "id": "67bdf711-b525-4bd3-a1e2-8918e66cb17c",
       "text": "// Datei: test_password.lp\n// Kontext: Global Script Context\nzahlen = [\"0\", \"1\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\"];",
       "embedding": [],
       "file": "test_password.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "8d0e78d0-f92c-44c7-89ca-a1a6be34fd5d",
+      "id": "5175e6cc-0f13-44ed-86f5-6dd5496ec9c5",
       "text": "// Datei: test_password.lp\n// Kontext: Global Script Context\npasswort = \"\";",
       "embedding": [],
       "file": "test_password.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "8ae42362-e81a-4705-a7ba-af1a1ecf9649",
+      "id": "83abd8f5-4131-42ce-ad38-269d3ce7e35c",
       "text": "// Datei: test_password.lp\n// Kontext: for (i\nfor (i = 0; i < 4; i = i + 1) {\n    passwort = passwort + buchstaben[random(26)];\n}",
       "embedding": [],
       "file": "test_password.lp",
       "method": "for (i"
     },
     {
-      "id": "7c1f974a-a6f6-4ded-8960-9e6d7f3321ed",
+      "id": "fa613d44-1193-484c-aa08-b1602214735b",
       "text": "// Datei: test_password.lp\n// Kontext: for (i\nfor (i = 0; i < 2; i = i + 1) {\n    passwort = passwort + zahlen[random(10)];\n}",
       "embedding": [],
       "file": "test_password.lp",
       "method": "for (i"
     },
     {
-      "id": "0e515cc5-e4f2-4a29-b80b-b72fa1280bf0",
+      "id": "63e1f631-0a7f-4043-a409-de7f65d1c68f",
       "text": "// Datei: test_password.lp\n// Kontext: Global Script Context\nprint(passwort);",
       "embedding": [],
       "file": "test_password.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "7c2ea518-2b56-4d78-a44c-3f394e60418b",
+      "id": "88dc6828-a9b0-4b60-8a4a-752019c53f0f",
       "text": "// Datei: test_random.lp\n// Kontext: Global Script Context\nlet x = zufall(100); ausgeben(x);",
       "embedding": [],
       "file": "test_random.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "e9e8865c-ee0e-4474-8ab1-5dbb42e865b3",
+      "id": "705e2c3f-ead2-4037-9d46-c52b0d9789f2",
       "text": "// Datei: test_simple.lp\n// Kontext: Global Script Context\nx = 0;",
       "embedding": [],
       "file": "test_simple.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "3a26e016-d4b4-44ea-a8b4-ed033e51db2e",
+      "id": "7a216307-07ff-4b76-8f2f-d1dedcba8ec8",
       "text": "// Datei: test_simple.lp\n// Kontext: Global Script Context\nprint(x);",
       "embedding": [],
       "file": "test_simple.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "7d8f2da2-f0af-43b2-934d-8cb16f4f2b60",
+      "id": "49c63b61-c0f6-4f7e-a0c5-e70b624a6709",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\n//Rechnung in Variablen",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "8ee7eccc-e480-4969-b569-c10584d37f94",
+      "id": "e8353309-d149-49cf-89f9-9405a8f0cc6a",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nlet x = 41.5 + 1.2;",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "221eea5d-fb0a-4112-ac87-f6e6711f7d10",
+      "id": "f37b0438-b134-4257-b171-58494d4c25ac",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\ny = 67;",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "149d3eae-bb34-4303-b95b-11cd10f0f5b3",
+      "id": "206d71e2-1d2e-44b0-9843-350685d9252e",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nprint(x);",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "f2be631e-8c53-4824-a8c9-302fce1cf7d0",
+      "id": "4cc49e20-3dff-40cc-8a7c-659171876362",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nprint(y);",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "bdb7ac82-4c18-48c0-90aa-af5eddd4ca93",
+      "id": "7948d789-dd57-446a-ae5b-389b2706848c",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\n//PrintAusgabe",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "c646c1e1-fb21-49d1-b988-c64cadc0188b",
+      "id": "5053523f-4a7a-4af2-9491-fe13c5b520a4",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nprint(\"Test\");",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "dd1a1acd-0357-40aa-9d3d-64a03c878043",
+      "id": "377f2631-8062-4b43-84eb-a0d5e7bbd5ac",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\n//Rechnung in Print",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "0836ff42-f1a3-4d82-bcfd-ae6a7f391a80",
+      "id": "67b2c524-3ab5-4ab2-a373-35631e432051",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nprint(\"Ergebnis der Rechnung von X + Y: \" + (x + y));",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "8816acd3-2e82-4904-a356-72aca027f2ed",
+      "id": "4230d66a-fa47-4466-b4cf-0011a517be1e",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\n//Ausgabe mit deutschem Syntax",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "2996213a-c132-4111-bc2a-326ebe3da0f5",
+      "id": "f4a52671-684b-4cb6-85d1-53ea9bdcf850",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nausgeben(\"TestMitDeutsch\");",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "4ddaa297-0ea7-470f-9a92-ab41cd0b0c4b",
+      "id": "490676a7-ca74-4888-b14f-d918e37621f5",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nausgeben(\"AUSGEBEN des Ergebnis der Rechnung von X + Y: \" + (x + y));",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "13137c3a-73bc-4a35-a521-7faa08a31bc2",
+      "id": "6464986d-d981-4cfa-8e25-e81655bd617e",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\n//IfStatement Englisch",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "867f2c3e-d5a4-4757-973f-519e8d1b4871",
+      "id": "7a1b3c0c-1428-4016-9870-3365ad6d066c",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nj = 29;",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "d8119227-ea2a-4adf-a030-fb0029e590ca",
+      "id": "ff3d9143-6305-4c6f-9c0a-8096bf0e7187",
       "text": "// Datei: hello.lp\n// Kontext: else\nif(j == 30){\n    print(\"j ist 30\");\n} \nelse if(j == 41){\n    print(\"j ist 41\");\n}\nelse {\n    print(\"j ist \"+j);\n}",
       "embedding": [],
       "file": "hello.lp",
       "method": "else"
     },
     {
-      "id": "46e70afd-7389-49d3-9fa8-16f25d700bf6",
+      "id": "1e7f3d86-e5de-4753-8398-f7fded3d99c4",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\n//IfStatmement Deutsch",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "268be2e2-6a09-4c71-a25f-48ca1ca5811e",
+      "id": "b1174795-efef-41f7-bb3f-81eb0fb996cf",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nz = 41;",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "1752d3e5-dff6-40d8-adfe-ab1b9b8de802",
+      "id": "e0b14c2a-23d0-4cb4-b8ea-c8505138508c",
       "text": "// Datei: hello.lp\n// Kontext: sonst\nfalls(z == 40){\n    ausgeben(\"z ist 40\");\n} \nsonst falls(z == 41){\n    ausgeben(\"z ist 41\");\n}\nsonst {\n    ausgeben(\"z ist nicht 40\");\n}",
       "embedding": [],
       "file": "hello.lp",
       "method": "sonst"
     },
     {
-      "id": "ba4b3930-148b-4ecb-a301-c8f2b1d97453",
+      "id": "390d00b4-cc17-406b-adf8-3a623b166692",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\n//Boolean Variablen Englisch",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "0ee6216c-7f79-40d5-b9e0-3d944cba9e5c",
+      "id": "b4ca33a6-2fc1-4a31-97fb-c7ecc5b3ddf8",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nbedingung = true;",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "3e77c0fb-fca6-4c21-aa1a-6f8f4e22e29a",
+      "id": "10740db7-503c-40e0-a008-f2d2b0c443f1",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nprint(\"Die Bedingung ist: \" + bedingung);",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "6ad23243-1ed9-4418-bece-57c6ba76e8bd",
+      "id": "a95f3298-09e2-4218-9358-8b64984fe4f5",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\n//Boolean Variablen Deutsch",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "a4219116-43cb-4e6b-8915-888a2cd60441",
+      "id": "53f9c3dd-d6ec-460d-9827-194db7a2af11",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nfalsch = falsch;",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "7a566ed6-28a9-48b1-a943-496183566669",
+      "id": "40aea0a0-82a4-4c09-a822-a8b5dcb71f75",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nausgeben(\"Falsch ist: \" + falsch);",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "795f8b08-fba1-462f-9866-976b2f563ffd",
+      "id": "0b1bf84c-96c7-42c0-a0dc-2e36756f8ba9",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\n//For Schleife Englisch",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "f80347b0-8b8c-46e0-a9e0-3ddbf5ee0167",
+      "id": "2aca411e-3984-45c2-be46-a3a1f615aa16",
       "text": "// Datei: hello.lp\n// Kontext: for(i\nfor(i = 0; i < 5; i = i + 1){\n    print(\"i ist: \" + i);\n}",
       "embedding": [],
       "file": "hello.lp",
       "method": "for(i"
     },
     {
-      "id": "e8d8a52f-c9c6-42e8-ae19-71a9e4b267e6",
+      "id": "ed652c0e-4d96-46de-a9b9-5fb75707e492",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\n//For Schleife Deutsch",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "f72dc317-781a-4f83-b55f-d8ab86370e77",
+      "id": "27a36b0e-27b3-486b-8b25-ba29335696f8",
       "text": "// Datei: hello.lp\n// Kontext: für(k\nfür(k = 0; k < 20; k = k + 5){\n    ausgeben(\"k ist: \" + k);\n}",
       "embedding": [],
       "file": "hello.lp",
       "method": "für(k"
     },
     {
-      "id": "3da7c4d4-c447-4533-b1b6-90b9bbd6cefd",
+      "id": "62c28d7a-ab89-46f9-ae0e-4669955c5ac9",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\n//While Schleife Englisch",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "dc809f30-408f-45e2-a6e9-018c7d0e4185",
+      "id": "dadcc62e-9e23-4470-9f64-4b141d1a270e",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\np = 0;",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "66f8bd6b-3c08-4c38-837a-814308b45e58",
+      "id": "9c750c52-f34a-47d3-b9b2-db634e64ff2e",
       "text": "// Datei: hello.lp\n// Kontext: while(p\nwhile(p < 3){\n    print(\"p ist: \" + p);\n    p = p + 1;\n}",
       "embedding": [],
       "file": "hello.lp",
       "method": "while(p"
     },
     {
-      "id": "de3cdbdb-0576-4eab-a6e4-769e46e60bb0",
+      "id": "fa421f9a-29b8-40e8-a39a-fc4916ca3719",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\n//While Schleife Deutsch",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "f7c52991-ae84-4a44-8664-79e47dfa4ef5",
+      "id": "482b80cf-c56f-47a2-9416-e59b3caa5566",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nq = 0;",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "82aa685f-9b3d-49dd-b198-5263b4abe0f4",
+      "id": "c6b4ee7d-05ef-43e5-a427-bbd54bff362b",
       "text": "// Datei: hello.lp\n// Kontext: während(q\nwährend(q < 3){\n    ausgeben(\"q ist: \" + q);\n    q = q + 1;\n}",
       "embedding": [],
       "file": "hello.lp",
       "method": "während(q"
     },
     {
-      "id": "e21b2e5c-36c4-4f1b-803c-94b5837d03b5",
+      "id": "48db0b6c-e721-4230-a547-9827b98b142b",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\n//Repeat Schleife Englisch",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "25b7ddf3-1f97-4dde-8d61-9552dd705f36",
+      "id": "3923a577-2dc4-4a52-8b04-89da98665fb4",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nb = 0;",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "b61857ed-11a0-45c8-9f28-cf277abe2bf1",
+      "id": "b44f9689-54a9-47c6-ae32-6411ba6b316d",
       "text": "// Datei: hello.lp\n// Kontext: repeat (b\nrepeat (b < 5) {\n    print(\"b ist: \" + b);\n    b = b + 1; // wichtig, sonst bleibt die Bedingung true\n}",
       "embedding": [],
       "file": "hello.lp",
       "method": "repeat (b"
     },
     {
-      "id": "4f28e3bb-2570-4c3f-bb12-e31315784ee3",
+      "id": "b0173e9e-7cf3-4792-91fe-48c6a1e1e533",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\n//Repeat Schleife Deutsch",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "bde239f6-18be-4886-9fa9-52aa52d8f01c",
+      "id": "3516eabf-a3b1-4dbd-9dbc-e68a639114eb",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nm = 0;",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "711478e7-3b0d-4355-b26b-7c2997bd4036",
+      "id": "6f296a28-7bf8-4e8e-9773-853cc9d20633",
       "text": "// Datei: hello.lp\n// Kontext: wiederhole (m\nwiederhole (m < 5){\n    ausgeben(\"m ist: \" + m);\n    m = m + 1;\n}",
       "embedding": [],
       "file": "hello.lp",
       "method": "wiederhole (m"
     },
     {
-      "id": "f37c0322-7963-4778-a6aa-272760af33b2",
+      "id": "72b88fcf-73c4-4301-9559-a8917954391d",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nlet names = [\"Anna\", \"Ben\", \"Cara\"];",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "525ed875-f189-48b9-adba-9dbe626f166d",
+      "id": "31390e4d-78b8-43ff-89f8-8666d2c19517",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nlet matrix = [",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "fa1918e1-1b5e-4855-85e8-738270bdb376",
+      "id": "11c2688b-14f7-48d0-bead-bd5b288c370f",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\n    [1, 2, 3],",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "32903bd9-1674-4424-a3cf-d29660abeaf7",
+      "id": "4168ff8f-8a64-43bb-8966-b65a47e641d3",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\n    [4, 5, 6],",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "34402b5d-867f-4e28-b2ea-a950b4db9790",
+      "id": "7f4b250c-7351-4797-b56a-7539d9afe8d6",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\n    [7, 8, 9]",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "26d346b0-56e3-49ce-bf3b-3996f2c63763",
+      "id": "9c9f77cd-ed95-49f0-964a-a109c11fb5ed",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nprint(\"First name: \" + names[0]);",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "8c7b0d6e-8cf9-4a43-8c04-03a121832374",
+      "id": "83c5ada4-8262-4fc9-8c6b-9593ae67b906",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nprint(\"Middle row, last value: \" + matrix[1, 2]);",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "84c512da-4e1d-485d-a622-fa2c3f380dc4",
+      "id": "77a1992f-2a13-4af6-9a26-f834b4f434fe",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nmatrix[0][1] = 42;",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "07548e31-194b-44d8-8f59-d07b72b1c3a6",
+      "id": "f3d4a44a-bce7-4d2a-8df8-12e52fe93d57",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nnames[2] = names[2] + \" 🚀\";",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "1b93130a-ef60-4fc9-89ec-bc48f41517db",
+      "id": "21ce911a-62a0-4ce1-8f8d-5f03292acf7f",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nprint(\"Names array: \" + names);",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "007e2735-4f72-459b-9c84-e52cc89eb9d9",
+      "id": "6079e18b-e1ad-4fb4-afc1-9bae60f58146",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nprint(\"Matrix row 0: \" + matrix[0]);",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "49fdd7c6-1fba-4bdc-81eb-cd375e97528a",
+      "id": "68db5d2c-9df0-4dc1-ba12-0a6540f487f0",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nlet total = matrix[0][0] + matrix[1, 1] + matrix[2][2];",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"
     },
     {
-      "id": "075f05b1-f7a6-489b-8b7a-530d34ff86f6",
+      "id": "82245028-0d3f-4f5e-b518-08a8a4daf3e4",
       "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nprint(\"Diagonal sum: \" + total);",
+      "embedding": [],
+      "file": "hello.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "35909f6e-5bdf-4015-a885-4da874d9c0c1",
+      "text": "// Datei: hello.lp\n// Kontext: Global Script Context\n//Dateioperationen Read Englisch",
+      "embedding": [],
+      "file": "hello.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "eaad7cdf-92d0-4fc9-a913-dd876a4ab3be",
+      "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nfileContent = File.Read(\"beispiel.txt\"); //Groß und kleinschreibung möglicgh",
+      "embedding": [],
+      "file": "hello.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "f30a21cb-f5fb-4d90-9f1c-8e011223dbcc",
+      "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nprint(\"Dateiinhalt: \" + fileContent);",
+      "embedding": [],
+      "file": "hello.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "65c3ca19-291a-4f0f-ad1d-7fca52c43145",
+      "text": "// Datei: hello.lp\n// Kontext: Global Script Context\n//Dateioperationen Write Englisch",
+      "embedding": [],
+      "file": "hello.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "5de09a88-1e96-4c8f-b867-6fb40cd3434b",
+      "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nFile.Write(\"output.txt\", \"Hsaidhasiudhasoj.\");",
+      "embedding": [],
+      "file": "hello.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "d52dac7c-f61e-4bc8-9d09-24165b55d4bc",
+      "text": "// Datei: hello.lp\n// Kontext: Global Script Context\n//Dateioperationen Deutsch",
+      "embedding": [],
+      "file": "hello.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "b0f61b57-1dc1-43e8-92b8-23b1153f09a1",
+      "text": "// Datei: hello.lp\n// Kontext: Global Script Context\ndateiInhalt = Datei.lies(\"output.txt\");",
+      "embedding": [],
+      "file": "hello.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "ec63f7e3-aff0-4b0a-94f9-58649bb68430",
+      "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nausgeben(\"Dateiinhalt \" + dateiInhalt);",
+      "embedding": [],
+      "file": "hello.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "63bad6bc-1b5f-4ee9-b68a-20f01bb9dcdb",
+      "text": "// Datei: hello.lp\n// Kontext: Global Script Context\n//Dateioperationen Schreiben Deutsch",
+      "embedding": [],
+      "file": "hello.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "02e001f4-22c7-4561-9073-4e42d6208740",
+      "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nDatei.schreibe(\"beispiel2.txt\", \"Das ist ein Test.\");",
+      "embedding": [],
+      "file": "hello.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "b38e7578-87e6-4fe7-8193-3b07d6e0e5b3",
+      "text": "// Datei: hello.lp\n// Kontext: Global Script Context\n//Dateioperationen Append Englisch",
+      "embedding": [],
+      "file": "hello.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "9c98328d-1a11-4da8-a971-0b90d0d73dec",
+      "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nFile.Append(\"beispiel2.txt\", \"\\nNeue Zeile angehängt.\");",
+      "embedding": [],
+      "file": "hello.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "9608d365-bce5-475f-95e1-dc14cb24d955",
+      "text": "// Datei: hello.lp\n// Kontext: Global Script Context\n//Dateioperationen Anhängen Deutsch",
+      "embedding": [],
+      "file": "hello.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "6b5cbd82-304a-4870-b00b-ce193007a040",
+      "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nDatei.anhängen(\"beispiel2.txt\", \"\\nNoch eine angehängte Zeile.\");",
+      "embedding": [],
+      "file": "hello.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "d1441686-6c2c-4d31-8629-4ad1a5838e70",
+      "text": "// Datei: hello.lp\n// Kontext: Global Script Context\n//File Existence Check Englisch",
+      "embedding": [],
+      "file": "hello.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "8b6e0c40-aaa9-44f2-8ca3-ee7257190717",
+      "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nprint(File.exists(\"beispiel2.txt\"));",
+      "embedding": [],
+      "file": "hello.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "defbacb5-c083-49e6-b064-be03cdde8491",
+      "text": "// Datei: hello.lp\n// Kontext: Global Script Context\n//File Existence Check Deutsch",
+      "embedding": [],
+      "file": "hello.lp",
+      "method": "Global Script Context"
+    },
+    {
+      "id": "72c2e85a-9a43-47fc-8a51-b1f8b6a15bf5",
+      "text": "// Datei: hello.lp\n// Kontext: Global Script Context\nprint(Datei.existiert(\"nichtExistenteDatei.txt\"));",
       "embedding": [],
       "file": "hello.lp",
       "method": "Global Script Context"

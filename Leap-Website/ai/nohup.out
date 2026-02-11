@@ -1,0 +1,478 @@
+✅ RAG Index geladen: 97 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+✅ RAG Index geladen
+23:14:16 [32minfo[39m: 👁️ FILE-WATCHER: Starte Überwachung...
+23:14:16 [34mdebug[39m:    Pfad: /Users/veselinovicluka/Desktop/Github/Leap/Leap-Website/Leap-Website/ai/leap-code
+👁️  File Watcher aktiv
+🚀 SERVER läuft auf Port 8081
+   → http://localhost:8081
+23:14:16 [32minfo[39m: Server gestartet auf Port 8081
+23:14:16 [32minfo[39m: 👁️ FILE-WATCHER: Bereit (überwacht 539 Verzeichnisse)
+23:14:22 [32minfo[39m: ➕ FILE-WATCHER: Neue Datei: ai/leap-code/test_exception.lp
+23:14:22 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+23:14:23 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 100 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+23:15:57 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/test_exception.lp
+23:15:57 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+23:15:58 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 100 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+23:16:53 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+23:16:53 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+23:16:54 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 100 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+23:18:06 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+23:18:06 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+23:18:06 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 100 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+23:18:34 [32minfo[39m: ➕ FILE-WATCHER: Neue Datei: ai/leap-code/test_map.lp
+23:18:34 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+23:18:34 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 106 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+23:20:11 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/test_map.lp
+23:20:11 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+23:20:11 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+23:20:12 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 106 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+23:20:59 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/test_map.lp
+23:20:59 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+23:21:00 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 106 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+23:21:07 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/test_map.lp
+23:21:07 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+23:21:08 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 106 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:10:40 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+00:10:40 [32minfo[39m: Log rotated: combined-2026-02-04.log → combined-2026-02-05.log
+00:10:40 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:10:41 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 106 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:10:47 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+00:10:47 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:10:48 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 106 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:11:16 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+00:11:16 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:11:17 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 106 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:12:12 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+00:12:12 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:12:13 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 106 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:12:23 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+00:12:23 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:12:24 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 106 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:12:34 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+00:12:34 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:12:35 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 106 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:12:40 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+00:12:40 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:12:40 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 106 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:13:53 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+00:13:53 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:13:54 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 106 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:14:09 [32minfo[39m: ➕ FILE-WATCHER: Neue Datei: ai/leap-code/test_debug.lp
+00:14:09 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:14:10 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 107 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:15:25 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+00:15:25 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:15:25 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/test_debug.lp
+00:15:26 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 107 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:23:00 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+00:23:00 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:23:02 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 107 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:23:20 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+00:23:20 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:23:21 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 107 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:23:35 [32minfo[39m: ➕ FILE-WATCHER: Neue Datei: ai/leap-code/test_assign.lp
+00:23:35 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:23:36 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 115 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:24:23 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/test_assign.lp
+00:24:23 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:24:24 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 115 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:24:46 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+00:24:46 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:24:47 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 115 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:25:09 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+00:25:09 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:25:09 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 115 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:25:27 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+00:25:27 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:25:28 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 115 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:27:55 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+00:27:55 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:27:56 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 115 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:28:17 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+00:28:17 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:28:18 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 115 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:28:27 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+00:28:27 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:28:28 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 115 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:29:54 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+00:29:54 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:29:55 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 115 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:30:10 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+00:30:10 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:30:11 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 115 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:34:48 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+00:34:48 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:34:49 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 115 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:36:19 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+00:36:19 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:36:20 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 115 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:38:07 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+00:38:07 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:38:08 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 115 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:38:14 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+00:38:14 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:38:15 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 115 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:38:33 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+00:38:33 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:38:34 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 115 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:40:19 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+00:40:19 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:40:20 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 115 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:40:54 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+00:40:54 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:40:55 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 115 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:41:02 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+00:41:02 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:41:03 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 115 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:42:38 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+00:42:38 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:42:39 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 115 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:43:00 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+00:43:00 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:43:01 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 115 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:43:14 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+00:43:14 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:43:15 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 115 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen
+00:43:58 [32minfo[39m: 📝 FILE-WATCHER: Änderung erkannt: ai/leap-code/java-src/leap/Main.java
+00:43:58 [32minfo[39m: 🔄 FILE-WATCHER: Starte Index-Rebuild...
+00:43:59 [32minfo[39m: ✅ FILE-WATCHER: Index erfolgreich neu gebaut
+🔥 HOT-RELOAD: Lade RAG Index neu...
+✅ RAG Index geladen: 115 Einträge
+✅ Interpreter Features geladen aus Main.java
+   📦 Loops: 6
+   📦 Conditionals: 4
+   📦 Not Supported: 2
+🔥 HOT-RELOAD: Erfolgreich!
+🔄 RAG Index wurde neu geladen

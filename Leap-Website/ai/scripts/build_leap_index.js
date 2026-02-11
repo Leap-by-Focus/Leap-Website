@@ -27,6 +27,27 @@ const MANUAL_RULES = [
     {
         file: "SYSTEM_RULES_PRINT",
         text: "Ausgabe in LEAP: Man benutzt 'ausgeben(\"Text\")'. Man benutzt NIEMALS 'Console.WriteLine', 'System.out' oder 'print'."
+    },
+    {
+        file: "SYSTEM_RULES_FILES",
+        text: "Datei-Operationen in LEAP: Man benutzt 'File.Read(pfad)' oder 'Datei.Lesen(pfad)' um eine Datei zu lesen. Man benutzt 'File.Write(pfad, text)' oder 'Datei.Schreiben(pfad, text)' um in eine Datei zu schreiben. Man benutzt 'File.Append(pfad, text)' oder 'Datei.Anhängen(pfad, text)' um Text an eine Datei anzuhängen. Man benutzt 'File.Exists(pfad)' oder 'Datei.Existiert(pfad)' um zu prüfen ob eine Datei existiert. Alle deutschen Varianten (Datei.Lesen, Datei.Schreiben, Datei.Anhängen, Datei.Existiert) sind korrekt!"
+    },
+    {
+        file: "SYSTEM_RULES_ARRAYS",
+        text: "Arrays in LEAP: Man erstellt Arrays mit eckigen Klammern z.B. 'zahlen = [1, 2, 3];'. Zugriff auf Elemente: 'zahlen[0]' gibt das erste Element. Arrays können Zahlen, Strings oder gemischte Werte enthalten."
+    },
+    {
+        file: "SYSTEM_RULES_STRINGS",
+        text: "String-Methoden in LEAP: Alle String-Operationen werden über 'String.Methode()' oder 'Text.Methode()' aufgerufen. Verfügbare Methoden: String.Length(text)/Text.Länge(text) für Länge, String.ToUpper(text)/Text.Gross(text) für Großbuchstaben, String.ToLower(text)/Text.Klein(text) für Kleinbuchstaben, String.Substring(text,start,länge)/Text.Teil(text,start,länge) für Teilstrings, String.CharAt(text,pos)/Text.ZeichenAn(text,pos) für einzelne Zeichen, String.Contains(text,suche)/Text.Enthält(text,suche) zum Prüfen ob enthalten, String.IndexOf(text,suche)/Text.Position(text,suche) für Position, String.Replace(text,suche,ersatz)/Text.Ersetze(text,suche,ersatz) zum Ersetzen, String.Trim(text)/Text.Kürze(text) zum Entfernen von Leerzeichen, String.Split(text,trenner)/Text.Teile(text,trenner) zum Aufteilen in Array, String.Reverse(text)/Text.Umkehren(text) zum Umkehren, String.Repeat(text,n)/Text.Wiederhole(text,n) zum Wiederholen, String.StartsWith(text,prefix)/Text.BeginntMit(text,prefix) und String.EndsWith(text,suffix)/Text.EndetMit(text,suffix) zum Prüfen von Anfang/Ende, String.IsEmpty(text)/Text.IstLeer(text) zum Prüfen ob leer, String.IsNumber(text)/Text.IstZahl(text) zum Prüfen ob Zahl, String.ToNumber(text)/Text.ZuZahl(text) zum Konvertieren in Zahl, String.PadLeft(text,länge,zeichen)/Text.LinksFüllen(text,länge,zeichen) und String.PadRight(text,länge,zeichen)/Text.RechtsFüllen(text,länge,zeichen) zum Auffüllen."
+    },
+    {
+        file: "SYSTEM_RULES_RANDOM",
+        text: "Zufallszahlen in LEAP: Mit random(n) oder zufall(n) erhält man eine Zufallszahl von 0 bis n-1. Beispiel: x = random(10); // 0 bis 9. x = zufall(100); // 0 bis 99. Das Argument n muss eine positive Zahl sein."
+    },
+    // Goldene Regel: Exception Handling (try/catch, versuche/fange)
+    {
+        file: "SYSTEM_RULES_EXCEPTION",
+        text: "Mit try { ... } catch (err) { ... } oder versuche { ... } fange (err) { ... } kann man Fehler abfangen. Im catch/fange-Block steht die Fehlermeldung als Variable zur Verfügung."
     }
 ];
 
