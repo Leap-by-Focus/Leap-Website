@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Optional: Verhindere, dass die KI-Backend-Daten indexiert werden
+Disallow: /ai/
