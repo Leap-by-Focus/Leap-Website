@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leap – Kapitel 4</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="../../css/index.css">
+    <link rel="stylesheet" href="../../css/forum.css">
+    <link rel="stylesheet" href="../../css/whoarewe.css">
+    <link rel="stylesheet" href="../../css/chapter.css">
+
+    <!-- Monaco Editor Loader -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
+
+    <!-- Monaco Editor -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<!-- Editor + Checker (RICHTIGE REIHENFOLGE!) -->
+<script type="module" src="../../js/chapter4-logic.js" defer></script>
+ <script type="module" src="../js/firebaseauth.js" defer></script>
+    <script src="../js/loginFormularDiv.js" defer></script>
+    <script src="../js/openLogin.js" defer></script>
+
+
+
+<!-- NICHT LADEN:
+<script type="module" src="../../js/checker2-check.js"></script>
+-->
+
+    <!-- Darkmode -->
+    <script src="../../js/appearance-apply.js" defer></script>
+
+    <!-- Menü -->
+    <script src="../../js/particlesMenu.js" defer></script>
+</head>
+<body>
+<div class="hauptMenu">
+  <canvas id="particleCanvas"></canvas>
+  <div class="backToMainLogo">
+    <a href="../index.html">
+      <img src="../../assets/images/Leap.png" alt="Leap Logo" />
+    </a>
+  </div>
+</div>
+
+    <div class="loginDiv">
+      <div class="loginButton" id="loginButton">Login</div>
+      <div class="registerButton" id="registerButton">Register</div>
+
+      <div class="loginFormularDiv" id="loginFormular">
+        <form class="loginForm">
+          <label for="logUsername">Benutzername:</label>
+          <input type="text" id="logUsername" required />
+          <label for="logPassword">Passwort:</label>
+          <input type="password" id="logPassword" required />
+          <button type="submit" class="submitButton" id="submitbuttonlogin">
+            Anmelden
+          </button>
+          <div id="signInMessage" class="alert"></div>
+        </form>
+        <div class="reset-password-link">
+          <a href="#" id="forgotLink">Passwort vergessen?</a>
+        </div>
+      </div>
+
+      <div class="resetFormularDiv" id="resetFormular">
+        <form class="loginForm" id="resetForm">
+          <!-- Phase A -->
+          <div id="phase-request">
+            <label for="resetEmail">E-Mail-Adresse:</label>
+            <input
+              type="email"
+              id="resetEmail"
+              name="resetEmail"
+              placeholder="dein@mail.tld"
+              required
+            />
+            <button type="submit" class="submitButton" id="btnSendReset">
+              Link zum Zurücksetzen senden
+            </button>
+          </div>
+
+          <!-- Phase B (über E-Mail-Link sichtbar) -->
+          <div id="phase-set" style="display: none">
+            <p id="emailLine" class="muted"></p>
+
+            <label for="pw1">Neues Passwort:</label>
+            <input
+              type="password"
+              id="pw1"
+              name="newPassword"
+              minlength="6"
+              autocomplete="new-password"
+              required
+            />
+
+            <label for="pw2">Neues Passwort wiederholen:</label>
+            <input
+              type="password"
+              id="pw2"
+              name="newPasswordRepeat"
+              minlength="6"
+              autocomplete="new-password"
+              required
+            />
+
+            <button type="submit" class="submitButton" id="btnConfirmReset">
+              Passwort speichern
+            </button>
+          </div>
+
+          <div id="resetMessage" class="alert"></div>
+
+          <div class="reset-actions">
+            <button type="button" class="textButton" id="backToLogin">
+              ← Zurück zum Login
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="registerFormularDiv">
+        <form class="registerForm" id="registerForm">
+          <label for="regUsername">Benutzername:</label>
+          <input
+            type="text"
+            id="regUsername"
+            name="username"
+            placeholder="Benutzername"
+            required
+          />
+          <label for="regEmail">Email:</label>
+          <input
+            type="email"
+            id="regEmail"
+            name="email"
+            placeholder="Email"
+            required
+          />
+          <label for="regPassword">Passwort:</label>
+          <input
+            type="password"
+            id="regPassword"
+            placeholder="Passwort"
+            required
+          />
+          <button type="submit" class="submitButton" id="submitbuttonregister">
+            Registrieren
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="userinfo">
+      <div class="character" id="avatarLink"></div>
+      <div class="welcomeNote">Willkommen</div>
+      <div class="CharacterName"></div>
+      <div id="submitlogout" class="logoutButton" style="display: none">
+        ⎋ Logout
+      </div>
+    </div>
+
+    <!-- Willkommen-Text, wird nur angezeigt, wenn der Benutzer eingeloggt ist -->
+    <div id="welcomeMessage" class="welcomeMessage" style="display: none">
+      <p>Willkommen, <span id="usernameDisplay"></span>!</p>
+    </div>
+
+
+
+
+<div class="gradient-transition"></div>
+
+<div class="menu">
+    <div class="Menu-menu-text">Menü</div>
+    
+    <a href="../docs.html">Home</a>
+    
+    <hr style="border: 0.5px solid var(--border); width: 80%; margin: 10px auto; opacity: 0.3;">
+
+    <a href="chapter1.html">Kapitel 1: Einstieg</a>
+    <a href="chapter2.html">Kapitel 2: Variablen</a>
+    <a href="chapter3.html">Kapitel 3: Mathematische Operatoren</a>
+    <a href="chapter4.html" class="active-chapter">Kapitel 4: Statements</a>
+    <a href="chapter5.html">Kapitel 5: Schleifen</a>
+    <a href="chapter6.html">Kapitel 6: Methoden</a>
+    <a href="chapter7.html">Kapitel 7: Files (Read, Write)</a>
+    <a href="chapter8.html">Kapitel 8: Collections</a>
+    <a href="chapter9.html">Kapitel 9: Debugging</a>
+    <a href="chapter10.html">Kapitel 10: Arbeiten mit Leap-AI</a>
+    <a href="chapter11.html">Kapitel 11: Documents.exe</a>
+</div>
+
+<div class="container">
+<div class="links">
+    <div class="chapter-header">
+        <span class="chapter-number">Kapitel 04</span>
+        <h2 class="accent-title">Statements (If, Switch)</h2>
+    </div>
+
+    <p class="intro-text">
+        Operatoren liefern Werte, Statements entscheiden den Pfad. Mit <code>falls</code>/<code>if</code> reagierst du auf Situationen, mit Switch-Denken ordnest du vielen Fällen die passende Aktion zu.
+    </p>
+
+    <div class="info-box compact">
+        <p><strong>Merke:</strong> Jeder Block bekommt sein eigenes Paar aus <code>{</code> und <code>}</code>. Lass niemals einen Block ohne Abschluss stehen – Leap interpretiert sonst Linien falsch zusammen.</p>
+    </div>
+
+    <h3 class="accent-title">1. Entscheidungen treffen</h3>
+    <p>Das Grundgerüst bewertet eine Bedingung und führt nur dann Befehle aus, wenn sie erfüllt ist.</p>
+    <div class="code-example compact">
+<pre><code class="language-leap">energie = 45;
+falls (energie > 50) {
+    meldung = "Boost aktiv";
+} sonst {
+    meldung = "Energie sparen";
+}
+ausgeben(meldung);</code></pre>
+    </div>
+
+    <h3 class="accent-title">2. Else-if als Kaskade</h3>
+    <p>Leap verzichtet auf ein eigenes Schlüsselwort. Verschachtle einfach weitere <code>falls</code>-Blöcke im <code>sonst</code>-Zweig – so entsteht eine saubere Prioritätenliste.</p>
+    <div class="code-example compact">
+<pre><code class="language-leap">modus = "dock";
+aktion = "";
+
+falls (modus == "scan") {
+    aktion = "Sensoren aktivieren";
+} sonst {
+    falls (modus == "dock") {
+        aktion = "Dock-Port öffnen";
+    } sonst {
+        aktion = "Standby";
+    }
+}
+ausgeben(aktion);</code></pre>
+    </div>
+
+    <div class="pro-tip">
+        <strong>Debug-Tipp:</strong> Gib innerhalb jedes Blocks kurze Nachrichten aus. Du siehst sofort, welcher Pfad ausgeführt wurde.</div>
+
+    <h3 class="accent-title">3. Switchboard-Denken</h3>
+    <p>Ein Switch ordnet Eingaben festen Aktionen zu. In Leap erreichst du das mit einer Kaskade oder einem kleinen Mapping.</p>
+    <div class="info-box compact">
+<pre><code class="language-leap">modus = "scan";
+reaktionen = {
+    "scan": "Spektral-Scanner",
+    "dock": "Andock-Sequenz",
+    "warp": "Sprung vorbereiten"
+};
+ausgeben(reaktionen[modus]);</code></pre>
+        <p>Nutze dieses Muster, wenn viele Modi dieselbe Struktur teilen – so hältst du deine Switch-Fälle übersichtlich.</p>
+    </div>
+
+    <h3 class="accent-title">4. Best Practices</h3>
+    <ul class="compact-list">
+        <li>🧠 <b>Lesbare Bedingungen:</b> Nutze sprechende Variablennamen statt verschachtelter Ausdrücke.</li>
+        <li>🎯 <b>Ein Fokus pro Block:</b> Lass Statements nur entscheiden und Werte setzen – Ausgabe folgt danach.</li>
+        <li>⚠️ <b>Default einplanen:</b> Der letzte <code>sonst</code>-Block schützt vor unbekannten Eingaben.</li>
+        <li>📈 <b>Pfad protokollieren:</b> <code>ausgeben()</code> in frühen Versionen hilft, Logikfehler sofort zu sehen.</li>
+    </ul>
+
+    <h3 class="accent-title">5. Kontrollierter Output</h3>
+    <p>Baue jetzt eine Mini-Schaltzentrale, die Energie und Modus kombiniert.</p>
+    <div class="code-example compact">
+<pre><code class="language-leap">energie = 72;
+modus = "scan";
+ziel = "asteroid";
+
+falls (energie >= 70) {
+    status = "stabil";
+} sonst {
+    status = "kritisch";
+}
+
+aktion = "";
+falls (modus == "scan") {
+    aktion = "Sensoren aktiv";
+} sonst {
+    falls (modus == "dock") {
+        aktion = "Andocken bereit";
+    } sonst {
+        aktion = "Warte auf Befehl";
+    }
+}
+
+ausgeben(status);
+ausgeben(aktion);</code></pre>
+    </div>
+
+    <hr class="divider">
+
+    <div class="next-step">
+         <p class="sub-text">Weiter zu Kapitel 5 – wir verwandeln Entscheidungen in Schleifen.</p>
+    </div>
+</div>
+
+<div class="rechts">
+  <div class="task-panel">
+    <div class="task-header">🎯 MISSION: ROUTEN-KONTROLLE</div>
+    <div class="task-body">
+      <p>1. Setze <b>energie = 72</b>, <b>modus = "scan"</b> und <b>ziel = "asteroid"</b>.</p>
+      <p>2. Prüfe mit <b>falls</b>, ob die Energie mindestens 70 ist. Setze <code>status = "stabil"</code>, sonst <code>"kritisch"</code>.</p>
+      <p>3. Erstelle eine zweite Entscheidung für <code>modus</code>: "scan" → <code>aktion = "sensoren aktiv"</code>, "dock" → <code>"andocken bereit"</code>, sonst <code>"warte auf befehl"</code>.</p>
+      <p>4. Gib beide Ergebnisse mit <code>ausgeben(status);</code> und <code>ausgeben(aktion);</code> aus.</p>
+      <p>5. Bonus: Nutze <code>ziel</code> für spätere Erweiterungen.</p>
+
+      <div class="task-check">
+        Ziel: Das Terminal zeigt bei den Startwerten zuerst <b>stabil</b>, danach <b>sensoren aktiv</b>.</div>
+    </div>
+  </div>
+
+  <div class="vscode-container">
+    <div class="vscode-toolbar">
+      <span class="file-title">chapter4.lp</span>
+      <div class="vsc-buttons">
+        <button id="runBtn" class="vsc-btn run">▶ Run</button>
+        <button id="stopBtn" class="vsc-btn stop">⏹ Stop</button>
+      </div>
+    </div>
+
+    <div id="leapEditor" class="vscode-editor-frame"></div>
+
+    <div class="vscode-terminal">
+      <div class="terminal-header-bar">OUTPUT</div>
+      <div id="editorOutput" class="terminal-content">> Warte auf Eingabe...</div>
+    </div>
+
+    <div class="vscode-footer">
+      <span>Ready</span>
+      <span>Leap Language</span>
+    </div>
+  </div>
+
+  <div class="chapter-statusbar">
+    <div class="chapter-status-fill" id="chapterStatusFill"></div>
+    <span id="chapterStatusText">Statement-Mission noch nicht gelöst</span>
+  </div>
+</div>
+</div>
+</body>
+</html>
