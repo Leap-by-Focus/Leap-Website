@@ -62,8 +62,10 @@ function buildMessages(userMessage, imageBase64 = null) {
   }
 
   const userContent = imageBase64
-    ? [{ type: "text", text: userMessage }, { type: "image_url", image_url: 
-      { url: `data:image/png;base64,${imageBase64}` } }]: userMessage;
+    ? [{ type: "text", text: userMessage }, {
+      type: "image_url", image_url:
+        { url: `data:image/png;base64,${imageBase64}` }
+    }] : userMessage;
 
   messages.push({ role: "user", content: userContent });
   return messages;
@@ -81,7 +83,7 @@ app.post("/api/echo", (req, res) => {
   // Simuliere etwas Arbeit (RAG-Lookup, Prompt-Building)
   const context = rag.getIndexStats();
   const delay = Math.random() * 50 + 10; // 10-60ms simulierte Latenz
-  
+
   setTimeout(() => {
     res.json({
       response: `Echo: ${message}`,
@@ -135,10 +137,10 @@ app.post("/api/chat", ollamaGuard, async (req, res) => {
 // ── Bild-Upload Endpoint ───────────────────────────────────────────────────────
 app.post("/api/upload-image", upload.single("image"), (req, res) => {
   if (!req.file) return res.status(400).json({ error: "Kein Bild hochgeladen" });
-  
+
   const base64 = fs.readFileSync(req.file.path, { encoding: "base64" });
   fs.unlinkSync(req.file.path); // Cleanup
-  
+
   logger.info(`Bild hochgeladen: ${req.file.originalname}`);
   res.json({ base64 });
 });
@@ -161,7 +163,7 @@ app.post("/api/feedback", (req, res) => {
 
   fs.appendFileSync(DATASET_PATH, JSON.stringify(feedbackEntry) + "\n");
   logger.info(`Feedback gespeichert: ${rating} für Message ${messageId}`);
-  
+
   res.json({ success: true });
 });
 
@@ -207,6 +209,18 @@ app.get("/api/rag-stats", (_, res) => {
 // ── Statische Seite ────────────────────────────────────────────────────────────
 app.get("/", (_, res) => {
   res.sendFile(path.join(__dirname, "..", "html", "ai.html"));
+});
+
+// ── 404 Error Handler ──────────────────────────────────────────────────────────
+app.use((req, res) => {
+  res.status(404).sendFile(path.join(__dirname, "..", "html", "404.html"));
+});
+
+// ── 500 Error Handler ──────────────────────────────────────────────────────────
+app.use((err, req, res, next) => {
+  console.error("Server Crash abgefangen:", err);
+  logger.error(`Server Crash: ${err.message}`);
+  res.status(500).sendFile(path.join(__dirname, "..", "html", "500.html"));
 });
 
 // ── Server starten ─────────────────────────────────────────────────────────────

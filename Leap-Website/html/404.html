@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Seite verschollen! | Leap</title>
+    <link rel="stylesheet" href="../css/index.css">
+    <script type="module" src="../js/firebaseauth.js" defer></script>
+    <script src="../js/afterLogIn.js" defer></script>
+    <script src="../js/userNameShorter.js" defer></script>
+    <script src="../js/loginFormularDiv.js" defer></script>
+    <script src="../js/openLogin.js" defer></script>
+    <script src="../js/particles.js" defer></script>
+    <script type="module" src="../js/resetPassword.js"></script>
+    <script src="../js/appearance-apply.js" defer></script>
+    <style>
+        .error-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            text-align: center;
+            background: rgba(10, 10, 15, 0.7);
+            backdrop-filter: blur(12px);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .error-container h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #ff416c, #ff4b2b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .error-container p {
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            line-height: 1.5;
+            color: #ddd;
+        }
+
+        .error-container img {
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .error-btn {
+            display: inline-block;
+            background: linear-gradient(90deg, #007bff, #00bfff);
+            color: white;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
+        }
+
+        .error-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.6);
+            color: white;
+        }
+
+        /* Custom Footer Positionierung für die Error Pages, da kein Content scrollbar * /
+        .bottom-footer {
+            position: absolute;
+            bottom: 0px;
+            width: 100%;
+            text-align: center;
+            z-index: 10;
+        }
+        .nav-logo-top {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 20;
+        }
+        .nav-logo-top img {
+            height: 60px;
+            transition: transform 0.3s ease;
+        }
+        .nav-logo-top img:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="Main" style="min-height: 100vh; position: relative;">
+
+        <a href="/" class="nav-logo-top">
+            <img src="../assets/images/Leap.png" alt="Leap Logo">
+        </a>
+
+        <!-- Header / Login Bereich der Hauptseite -->
+        <div class="loginDiv">
+            <div class="loginButton" id="loginButton">Login</div>
+            <div class="registerButton" id="registerButton">Register</div>
+
+            <div class="loginFormularDiv" id="loginFormular">
+                <form class="loginForm">
+                    <label for="logUsername">Benutzername:</label>
+                    <input type="text" id="logUsername" required>
+                    <label for="logPassword">Passwort:</label>
+                    <input type="password" id="logPassword" required>
+                    <button type="submit" class="submitButton" id="submitbuttonlogin">Anmelden</button>
+                    <div id="signInMessage" class="alert"></div>
+                </form>
+                <div class="reset-password-link">
+                    <a href="#" id="forgotLink">Passwort vergessen?</a>
+                </div>
+            </div>
+
+            <div class="resetFormularDiv" id="resetFormular">
+                <form class="loginForm" id="resetForm">
+                    <div id="phase-request">
+                        <label for="resetEmail">E-Mail-Adresse:</label>
+                        <input type="email" id="resetEmail" name="resetEmail" placeholder="dein@mail.tld" required />
+                        <button type="submit" class="submitButton" id="btnSendReset">Link zum Zurücksetzen
+                            senden</button>
+                    </div>
+                    <div id="phase-set" style="display:none">
+                        <p id="emailLine" class="muted"></p>
+                        <label for="pw1">Neues Passwort:</label>
+                        <input type="password" id="pw1" name="newPassword" minlength="6" autocomplete="new-password"
+                            required />
+                        <label for="pw2">Neues Passwort wiederholen:</label>
+                        <input type="password" id="pw2" name="newPasswordRepeat" minlength="6"
+                            autocomplete="new-password" required />
+                        <button type="submit" class="submitButton" id="btnConfirmReset">Passwort speichern</button>
+                    </div>
+                    <div id="resetMessage" class="alert"></div>
+                    <div class="reset-actions">
+                        <button type="button" class="textButton" id="backToLogin">← Zurück zum Login</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="registerFormularDiv">
+                <form class="registerForm" id="registerForm">
+                    <label for="regUsername">Benutzername:</label>
+                    <input type="text" id="regUsername" name="username" placeholder="Benutzername" required>
+                    <label for="regEmail">Email:</label>
+                    <input type="email" id="regEmail" name="email" placeholder="Email" required>
+                    <label for="regPassword">Passwort:</label>
+                    <input type="password" id="regPassword" placeholder="Passwort" required />
+                    <button type="submit" class="submitButton" id="submitbuttonregister">Registrieren</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="userinfo">
+            <div class="character" id="avatarLink"> </div>
+            <div class="welcomeNote"> Willkommen</div>
+            <div class="CharacterName" style="font-size: 18px;"></div>
+            <div id="submitlogout" class="logoutButton" style="display: none;">⎋ Logout</div>
+        </div>
+
+        <div id="welcomeMessage" class="welcomeMessage" style="display: none;">
+            <p>Willkommen, <span id="usernameDisplay"></span>!</p>
+        </div>
+
+        <!-- Canvas für Partikel-Hintergrund -->
+        <canvas id="particleCanvas"></canvas>
+
+        <!-- 404 Content -->
+        <main class="error-container">
+            <h1>404 - Seite verschollen!</h1>
+            <p>Die KI hat diese Seite wohl nur halluziniert... jedenfalls existiert sie im Realraum nicht.</p>
+            <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueGZueGZueGZueGZueGZueGZueGZueGZueGZueGZueGZueGZueCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/VwoJkTcTclN2E/giphy.gif"
+                alt="Lost AI" width="300">
+            <br>
+            <a href="/" class="error-btn">Zurück zur Realität</a>
+        </main>
+
+        <!-- Social Buttons der Hauptseite -->
+        <div class="socialButtons">
+            <a class="socialButtonWrapper" href="https://www.youtube.com/@Focus_Management" target="_blank">
+                <div class="socialButton socialButtonYoutube">
+                    <img src="../assets/images/youtube_logo.png" alt="">
+                </div>
+                <div class="socialInfo">YouTube</div>
+            </a>
+            <a class="socialButtonWrapper" href="https://www.instagram.com/official_focus_management/" target="_blank">
+                <div class="socialButton socialButtonInsta">
+                    <img src="../assets/images/insta_logo.png" alt="">
+                </div>
+                <div class="socialInfo">Instagram</div>
+            </a>
+            <a class="socialButtonWrapper" href="https://x.com/Leap_Management" target="_blank">
+                <div class="socialButton socialButtonTwitter">
+                    <img src="../assets/images/X_logo.jpg" alt="">
+                </div>
+                <div class="socialInfo">X</div>
+            </a>
+        </div>
+
+        <div class="bottom-footer">
+            <footer
+                style="margin: 0; padding: 20px 0; background-color: rgba(0,0,0,0.8); width: 100%; border-top: 1px solid rgba(255,255,255,0.1);">
+                <p style="color: #aaa; font-size: 0.9rem; text-align: center;">© 2026 Leap Project | <a
+                        href="legal.html" style="color: #007bff; text-decoration: none;">Impressum & Datenschutz</a></p>
+            </footer>
+        </div>
+    </div>
+</body>
+
+</html>
