@@ -1510,7 +1510,8 @@ html { scroll-behavior: smooth; }
 /* Controls-Bar direkt unter der Suche */
 .controls-bar {
   margin: 20px auto 10px;   /* auto = zentriert wie Searchbar */
-  width: 50%;              /* gleiche Breite wie Searchbar */
+  width: 50%;
+              /* gleiche Breite wie Searchbar */
   padding: 8px 12px;
   border: 1px solid #2a2a2a;
   border-radius: 10px;
@@ -1522,11 +1523,47 @@ html { scroll-behavior: smooth; }
 }
 
 .controls-row {
-  display: flex;
-  gap: 16px;
-  align-items: center;
-  flex-wrap: wrap;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important; /* Richtet alles am linken Rand aus */
+  gap: 25px !important; /* Erhöht den Abstand zwischen den drei Gruppen (Sortieren, Zeitraum, Checkbox) */
+  width: 100% !important;
 }
+
+.controls-row .checkbox-inline {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 6px !important; /* Zieht Checkbox und Text eng zusammen */
+  cursor: pointer;
+  margin-left: auto !important; /* Schiebt die Checkbox ganz nach rechts, falls gewünscht - sonst löschen */
+}
+/* Verhindert, dass die Checkbox selbst gestreckt wird */
+.controls-row input[type="checkbox"] {
+  width: 16px !important;
+  height: 16px !important;
+  margin: 0 !important;
+  cursor: pointer;
+  flex-shrink: 0 !important;
+}
+
+.controls-row select {
+  width: auto !important;
+  padding: 4px 8px !important;
+  border-radius: 6px !important;
+}
+
+.controls-row label {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  width: auto !important; /* Verhindert das Auth-Styling mit 100% Breite */
+  gap: 8px !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
+}
+
 
 .controls-bar label {
   display: inline-flex;

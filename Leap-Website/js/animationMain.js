@@ -1,15 +1,22 @@
-// animationMain.js
+import { auth } from "./js/leap-auth.js"; 
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+
 (() => {
-  // Liest den Login-Status über localStorage (wird im firebaseauth.js gesetzt)
-  function isLoggedIn() {
-    return !!localStorage.getItem('loggedInUserId');
-  }
+  let authenticatedUser = null;
+  let authChecked = false;
+
+  // Wir hören aktiv auf den Auth-Status
+  onAuthStateChanged(auth, (user) => {
+    authenticatedUser = user;
+    authChecked = true;
+    console.log("Auth-Status aktualisiert:", user ? "Eingeloggt" : "Ausgeloggt");
+  });
 
   const configs = [
-    { id: 'whoarewe-btn', dx: '-100vw', dy: '-100vh' },      // oben links
-    { id: 'docs-btn',       dx: '-100vw', dy: '100vh'   },   // unten links
-    { id: 'forum-btn',      dx: '100vw',  dy: '-100vh'  },   // oben rechts
-    { id: 'link-ai',        dx: '100vw',  dy: '100vh', requiresAuth: true } // unten rechts + Auth
+    { id: 'whoarewe-btn', dx: '-100vw', dy: '-100vh' },
+    { id: 'docs-btn',       dx: '-100vw', dy: '100vh'   },
+    { id: 'forum-btn',      dx: '100vw',  dy: '-100vh'  },
+    { id: 'link-ai',        dx: '100vw',  dy: '100vh', requiresAuth: true }
   ];
 
   configs.forEach(({ id, dx, dy, requiresAuth }) => {
@@ -17,18 +24,28 @@
     if (!btn) return;
 
     btn.addEventListener('click', e => {
-      // 1) Wenn Auth nötig und nicht eingeloggt ➞ Popup + Abbruch
-      if (requiresAuth && !isLoggedIn()) {
-        e.preventDefault();
-        alert('Bitte melde dich an um dies zu benutzen...');
-        return;
+      e.preventDefault();
+
+      // Falls Firebase noch prüft, kurz warten oder ignorieren
+      if (!authChecked) {
+          console.log("Warte auf Firebase...");
+          return;
       }
 
-      // 2) Sonst Animation wie gehabt
-      e.preventDefault();
+      // Die harte Prüfung
+      if (requiresAuth && !authenticatedUser) {
+        const loginPanel = document.getElementById('loginFormular');
+        if (loginPanel) {
+          loginPanel.classList.add('open');
+        } else {
+          alert('Bitte melde dich an.');
+        }
+        return; 
+      }
+
+      // Animation starten (nur wenn eingeloggt oder keine Auth nötig)
       document.documentElement.style.overflow = 'hidden';
       document.body.style.overflow = 'hidden';
-      document.body.getAnimations().forEach(a => a.cancel());
 
       const anim = document.body.animate([
         { transform: 'translate(0, 0)',         opacity: 1 },
@@ -45,7 +62,6 @@
     });
   });
 
-  // 3) Beim Zurück-Navigieren alle Animationen abbrechen & Scroll wieder erlauben
   window.addEventListener('pageshow', () => {
     document.body.getAnimations().forEach(a => a.cancel());
     document.documentElement.style.overflow = '';
